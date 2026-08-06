@@ -63,16 +63,36 @@
 }
 
 /* white content box — near full-width with ~124px side margins; bottom edge
-   sits at the image bottom (matches source: box overlaps the lower image) */
+   sits at the image bottom (matches source: box overlaps the lower image).
+   Kept compact (~189px tall) so more of the image stays visible above it. */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   z-index: 1;
   align-self: stretch;
   margin: 0 124px;
-  padding: 24px 28px 28px;
+  padding: 20px 28px 24px;
   color: var(--text-color);
   background-color: #fff;
   position: relative;
   box-sizing: border-box;
+}
+
+/* compact inner spacing so the box matches the source height */
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content > *:first-child {
+  margin-top: 0;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h1,
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h2,
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h3 {
+  margin: 0 0 8px;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content p {
+  margin: 0 0 16px;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content p:last-child {
+  margin-bottom: 0;
 }
 
 /* control strip BELOW the slides (white), holds dots + arrows (matches source) */
