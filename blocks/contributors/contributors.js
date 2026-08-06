@@ -38,10 +38,17 @@ export default function decorate(block) {
         links.forEach((a) => {
           const item = document.createElement('li');
           a.classList.add('contributors-card-social-link');
-          // Preserve the label as accessible text if the visual is icon-only.
+          // Derive the network from the link text/href for an accessible label
+          // and an icon modifier class (the visual is an icon-only box).
+          const hint = `${a.textContent} ${a.getAttribute('href') || ''}`.toLowerCase();
+          const net = ['facebook', 'twitter', 'instagram', 'youtube', 'linkedin', 'pinterest']
+            .find((n) => hint.includes(n));
           if (!a.getAttribute('aria-label') && a.textContent.trim()) {
             a.setAttribute('aria-label', a.textContent.trim());
           }
+          if (net) a.classList.add(`social-${net}`);
+          // Clear the visible text so only the icon shows (label kept via aria-label).
+          a.textContent = '';
           item.append(a);
           social.append(item);
         });
