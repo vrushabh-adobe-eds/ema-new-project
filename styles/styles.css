@@ -117,6 +117,22 @@ h4 { font-size: var(--heading-font-size-m); }
 h5 { font-size: var(--heading-font-size-s); }
 h6 { font-size: var(--heading-font-size-xs); }
 
+/* WKND section-title accent: a short yellow underline bar beneath default-content
+   section headings (Recent Articles, Next Adventures, etc.), matching the source. */
+main .section > .default-content-wrapper > h2,
+main .section > .default-content-wrapper > h3 {
+  padding-bottom: 16px;
+}
+
+main .section > .default-content-wrapper > h2::after,
+main .section > .default-content-wrapper > h3::after {
+  content: '';
+  display: block;
+  width: 84px;
+  margin-top: 16px;
+  border-bottom: 2px solid var(--brand-primary);
+}
+
 p,
 dl,
 ol,
