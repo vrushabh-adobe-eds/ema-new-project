@@ -110,17 +110,24 @@ footer .footer .footer-social img {
 
 /* ---------- Legal / description ---------- */
 footer .footer .footer-legal {
-  margin-top: 32px;
+  margin-top: 24px;
   max-width: 100%;
 }
 
+/* disclaimer / description text — smaller 12px, matches source */
 footer .footer .footer-legal p {
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.6;
 }
 
 footer .footer .footer-legal p + p {
-  margin-top: 16px;
+  margin-top: 12px;
+}
+
+/* copyright line (first paragraph) — larger, matches source 18px */
+footer .footer .footer-legal p:first-child {
+  font-size: 18px;
+  margin-bottom: 8px;
 }
 
 footer .footer .footer-legal a:any-link {
@@ -135,9 +142,9 @@ footer .footer .footer-legal a:any-link {
     grid-template-areas:
       'brand nav . social'
       'legal legal legal legal';
-    gap: 32px 48px;
+    gap: 16px 48px;
     align-items: center;
-    padding: 24px 32px 32px;
+    padding: 16px 32px 24px;
   }
 
   footer .footer .footer-brand {
