@@ -61,7 +61,18 @@
     display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     column-gap: 64px;
-    align-items: start;
+    max-width: 1264px;
+    margin: 40px auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* children already carry the section's inner max-width/padding; neutralize it
+     so the grid columns control width instead. */
+  .section.accordion-faq-container > div {
+    max-width: none;
+    margin: 0;
+    padding: 0;
   }
 
   .section.accordion-faq-container > .default-content-wrapper:first-child {
@@ -70,10 +81,11 @@
 
   .section.accordion-faq-container > .accordion-faq-wrapper {
     grid-column: 1;
+    align-self: start;
   }
 
   .section.accordion-faq-container > .default-content-wrapper:last-child {
     grid-column: 2;
-    margin-top: 0;
+    align-self: start;
   }
 }
