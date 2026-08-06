@@ -75,13 +75,25 @@
   box-sizing: border-box;
 }
 
-/* indicator dots — centered along the bottom control strip */
+/* control strip BELOW the slides (white), holds dots + arrows (matches source) */
+.carousel-hero .carousel-hero-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 84px;
+  padding: 0 32px;
+  background-color: #fff;
+}
+
+/* indicator dots — centered in the strip */
 .carousel-hero .carousel-hero-slide-indicators {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 16px;
-  padding: 20px 24px;
+  margin: 0;
+  padding: 0;
   line-height: 0;
 }
 
@@ -103,15 +115,15 @@
   background-color: var(--text-color);
 }
 
-/* prev/next arrows — bottom-right, on the same strip as the dots */
+/* prev/next arrows — far right of the same strip */
 .carousel-hero .carousel-hero-navigation-buttons {
   position: absolute;
-  bottom: 12px;
-  right: 24px;
+  top: 50%;
+  right: 32px;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
-  gap: 24px;
-  z-index: 2;
+  gap: 28px;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
