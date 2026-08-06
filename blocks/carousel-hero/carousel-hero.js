@@ -110,12 +110,13 @@ export default async function decorate(block) {
 
   let slideIndicators;
   if (!isSingleSlide) {
+    // Bottom control strip (below the slides): centered dots + right-aligned arrows.
     const slideIndicatorsNav = document.createElement('nav');
+    slideIndicatorsNav.classList.add('carousel-hero-controls');
     slideIndicatorsNav.setAttribute('aria-label', placeholders.carouselSlideControls || 'Carousel Slide Controls');
     slideIndicators = document.createElement('ol');
     slideIndicators.classList.add('carousel-hero-slide-indicators');
     slideIndicatorsNav.append(slideIndicators);
-    block.append(slideIndicatorsNav);
 
     const slideNavButtons = document.createElement('div');
     slideNavButtons.classList.add('carousel-hero-navigation-buttons');
@@ -123,8 +124,9 @@ export default async function decorate(block) {
       <button type="button" class= "slide-prev" aria-label="${placeholders.previousSlide || 'Previous Slide'}"></button>
       <button type="button" class="slide-next" aria-label="${placeholders.nextSlide || 'Next Slide'}"></button>
     `;
+    slideIndicatorsNav.append(slideNavButtons);
 
-    container.append(slideNavButtons);
+    block.append(slideIndicatorsNav);
   }
 
   rows.forEach((row, idx) => {

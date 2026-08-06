@@ -38,8 +38,8 @@
   --heading-font-size-s: 18px;
   --heading-font-size-xs: 16px;
 
-  /* nav height */
-  --nav-height: 118px;
+  /* nav height (black utility bar 25px + white nav row 169px = 194px, matches source) */
+  --nav-height: 194px;
 }
 
 @media (width >= 900px) {
@@ -71,6 +71,14 @@ body {
 
 body.appear {
   display: block;
+}
+
+/* Guard against horizontal overflow from full-bleed blocks that use 100vw
+   (which includes the scrollbar width). overflow-x: clip contains it without
+   breaking position: sticky (unlike overflow: hidden). */
+html,
+body {
+  overflow-x: clip;
 }
 
 header {
@@ -108,6 +116,22 @@ h3 { font-size: var(--heading-font-size-l); }
 h4 { font-size: var(--heading-font-size-m); }
 h5 { font-size: var(--heading-font-size-s); }
 h6 { font-size: var(--heading-font-size-xs); }
+
+/* WKND section-title accent: a short yellow underline bar beneath default-content
+   section headings (Recent Articles, Next Adventures, etc.), matching the source. */
+main .section > .default-content-wrapper > h2,
+main .section > .default-content-wrapper > h3 {
+  padding-bottom: 16px;
+}
+
+main .section > .default-content-wrapper > h2::after,
+main .section > .default-content-wrapper > h3::after {
+  content: '';
+  display: block;
+  width: 84px;
+  margin-top: 16px;
+  border-bottom: 2px solid var(--brand-primary);
+}
 
 p,
 dl,
@@ -201,6 +225,40 @@ button.button:disabled {
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* In-block CTA links (View Trips, Full Article, See Trip, All Articles, All
+   Trips) arrive as a bare <a> alone in a <p>, so the buttonizer skips them.
+   Style such standalone CTA links inside content blocks as WKND yellow
+   buttons to match the source. Scoped to blocks + default-content CTAs. */
+.carousel-hero p > a:only-child:any-link,
+.columns-featured p > a:only-child:any-link,
+.hero-promo p > a:only-child:any-link,
+main .default-content-wrapper p > a:only-child:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--brand-primary);
+  border-radius: 0;
+  padding: 14px 35px;
+  background-color: var(--brand-primary);
+  color: var(--text-color);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/* stylelint-disable no-descending-specificity */
+.carousel-hero p > a:only-child:hover,
+.columns-featured p > a:only-child:hover,
+.hero-promo p > a:only-child:hover,
+main .default-content-wrapper p > a:only-child:hover {
+  background-color: var(--brand-primary-hover);
+  border-color: var(--brand-primary-hover);
+  color: var(--text-color);
+}
+/* stylelint-enable no-descending-specificity */
 
 /* primary = same yellow CTA (boilerplate applies .primary to strong links) */
 a.button.primary,

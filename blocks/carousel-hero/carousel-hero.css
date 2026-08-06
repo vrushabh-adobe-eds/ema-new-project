@@ -1,3 +1,11 @@
+/* full-bleed: break out of the section's centered max-width */
+.carousel-hero {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
 .carousel-hero .carousel-hero-slides-container {
   position: relative;
 }
@@ -26,10 +34,13 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-end;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+
+  /* stable hero height (source ~640px at 1440) so the image can't inflate it */
+  height: clamp(420px, 44vw, 640px);
+  min-height: clamp(420px, 44vw, 640px);
 }
 
 .carousel-hero .carousel-hero-slide:has(.carousel-hero-slide-content[data-align='center']) {
@@ -51,34 +62,73 @@
   object-fit: cover;
 }
 
+/* white content box — fixed width that matches the source (1192px), centered.
+   Like the source, the card stays this width and the side margins grow on
+   wider viewports; on narrower screens it shrinks with a small side gap.
+   Bottom edge sits at the image bottom. */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   z-index: 1;
-  margin: 68px;
-  padding: 16px;
-  color: white;
-  background-color: rgb(19 19 19 / 75%);
+  align-self: center;
+  width: min(100% - 108px, 1192px);
+  margin: 0 auto;
+  padding: 20px 28px 24px;
+  color: var(--text-color);
+  background-color: #fff;
   position: relative;
-  width: var(--slide-content-width, auto);
+  box-sizing: border-box;
 }
 
+/* compact inner spacing so the box matches the source height */
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content > *:first-child {
+  margin-top: 0;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h1,
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h2,
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h3 {
+  margin: 0 0 8px;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content p {
+  margin: 0 0 16px;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* control strip BELOW the slides (white), holds dots + arrows (matches source) */
+.carousel-hero .carousel-hero-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 84px;
+  padding: 0 32px;
+  background-color: #fff;
+}
+
+/* indicator dots — centered in the strip */
 .carousel-hero .carousel-hero-slide-indicators {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 6px 12px;
-  padding: 12px;
-  background-color: var(--light-color);
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
   line-height: 0;
 }
 
 .carousel-hero .carousel-hero-slide-indicator button {
-  width: 24px;
-  height: 24px;
+  width: 10px;
+  height: 10px;
   margin: 0;
   padding: 0;
+  border: 0;
   border-radius: 50%;
-  background-color: #dadada;
+  background-color: #cfcfcf;
   transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 .carousel-hero .carousel-hero-slide-indicator button:disabled,
@@ -87,67 +137,51 @@
   background-color: var(--text-color);
 }
 
+/* prev/next arrows — far right of the same strip */
 .carousel-hero .carousel-hero-navigation-buttons {
   position: absolute;
   top: 50%;
+  right: 32px;
   transform: translateY(-50%);
-  left: 12px;
-  right: 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  z-index: 1;
+  gap: 28px;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
 .carousel-hero .carousel-hero-navigation-buttons button {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 26px;
+  height: 24px;
   margin: 0;
-  border-radius: 50%;
+  border: 0;
+  border-radius: 0;
   padding: 0;
-  background-color: rgb(19 19 19 / 25%);
-  transition: background-color 0.2s;
-}
-
-.carousel-hero .carousel-hero-navigation-buttons button:hover,
-.carousel-hero .carousel-hero-navigation-buttons button:focus-visible {
-  background-color: rgb(19 19 19 / 75%);
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .carousel-hero .carousel-hero-navigation-buttons button::after {
   display: block;
   content: '';
-  border: 2px solid;
+  border: 2px solid var(--text-color);
   border-bottom: 0;
   border-left: 0;
-  height: 12px;
-  width: 12px;
+  height: 11px;
+  width: 11px;
   position: absolute;
   top: 50%;
-  left: calc(50% + 2px);
+  left: calc(50% + 3px);
   transform: translate(-50%, -50%) rotate(-135deg);
 }
 
 .carousel-hero .carousel-hero-navigation-buttons button.slide-next::after {
   transform: translate(-50%, -50%) rotate(45deg);
-  left: calc(50% - 2px);
+  left: calc(50% - 3px);
 }
 
 @media (width >= 600px) {
-  .carousel-hero .carousel-hero-navigation-buttons {
-    left: 24px;
-    right: 24px;
-  }
-
   .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
-    --slide-content-width: calc((100% - 184px) / 2);
-
-    margin: 92px;
-  }
-
-  .carousel-hero .carousel-hero-slide .carousel-hero-slide-content[data-align='justify'] {
     --slide-content-width: auto;
   }
 }
