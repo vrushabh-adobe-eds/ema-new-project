@@ -128,24 +128,24 @@ header nav .nav-locale > p > a {
   gap: 8px;
 }
 
-/* source renders the 48x48 flag SVG at ~24px square (not a cropped rectangle) */
+/* source renders the flag SVG at ~22px wide (48x48 canvas, flag centered) */
 header nav .nav-locale > a img,
 header nav .nav-locale > p > a img {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
   border-radius: 0;
 }
 
 /* thin outline chevron (⌄) to match source — a rotated square with two borders,
-   not a solid triangle glyph */
+   not a solid triangle glyph. Flex parent centers it vertically. */
 header nav .nav-locale > a::after,
 header nav .nav-locale > p > a::after {
   content: '';
-  width: 7px;
-  height: 7px;
-  margin-left: 8px;
-  margin-top: -3px;
+  width: 5px;
+  height: 5px;
+  margin-left: 6px;
+  margin-bottom: 2px;
   border-right: 1px solid var(--wknd-light-text);
   border-bottom: 1px solid var(--wknd-light-text);
   transform: rotate(45deg);
