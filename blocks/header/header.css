@@ -439,6 +439,13 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 
 /* ---------- Sticky shrink on scroll ---------- */
 @media (width >= 900px) {
+  /* When the nav shrinks (sticky), collapse the reserved wrapper height too, so
+     no empty white strip is left below the nav. Utility bar (25px) + shrunk nav
+     row = the sticky total. */
+  header.header-wrapper:has(.header.nav-sticky) {
+    height: calc(25px + var(--nav-main-height-sticky));
+  }
+
   header .header.nav-sticky nav .nav-brand {
     height: var(--nav-main-height-sticky);
   }
