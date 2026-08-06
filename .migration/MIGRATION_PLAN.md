@@ -112,6 +112,13 @@ Source: https://wknd.site/us/en.html → AEM Edge Delivery (`vrushabh-adobe-eds/
 - Assets: content/images/wknd-logo.svg, content/images/flag-us.svg. Lint clean.
 - Validation infra under migration-work/navigation-validation/ (gitignored + eslintignored).
 
+## Global Design System (done — branch feat-design-extract)
+- Extracted WKND tokens from source (home/article/listing) into styles/styles.css.
+- Fonts: Asar (headings, serif, wt 400) + Source Sans Pro (body) via Google Fonts (head.html + fonts.css). Dropped Roboto.
+- Type: h1 40/60, h2 36/54, h3 24/36, body 18/27. Colors: text #202020, links #0045ff, bg #fff, brand #ffea00.
+- Buttons: square yellow CTA #ffea00, dark uppercase text, 14px 35px, no radius. Content max-width 1264px.
+- Verified on preview (fonts load 200, computed values match source). Lint clean. Header styling preserved.
+
 ## Notes / Log
 - Phase 1 complete: 26 URLs, 6 catalog templates → bridged to `tools/importer/page-templates.json` and split `listing-page` into `magazine-landing` + `about-us` → **7 import templates**.
 - Project type = `da` (Document Authoring); block library configured in `.migration/project.json`.
