@@ -21,11 +21,14 @@ header .header .nav-wrapper {
   background-color: #fff;
 }
 
-/* sticky header on the outermost wrapper, with a drop shadow at the bottom */
+/* sticky header on the outermost wrapper, with a drop shadow at the bottom.
+   overflow-x: clip contains the utility bar's full-bleed ::before (which uses
+   negative viewport insets) so it can't create a horizontal page scrollbar. */
 header.header-wrapper {
   position: sticky;
   top: 0;
   z-index: 20;
+  overflow-x: clip;
   background-color: #fff;
   box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
 }

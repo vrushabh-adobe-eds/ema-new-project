@@ -12,7 +12,7 @@ footer {
 footer .footer .footer-inner {
   max-width: 1264px;
   margin: 0 auto;
-  padding: 48px 24px 40px;
+  padding: 24px 24px 32px;
 }
 
 footer .footer a:any-link {
@@ -46,7 +46,7 @@ footer .footer .footer-social ul {
 /* nav links */
 footer .footer .footer-nav ul {
   flex-wrap: wrap;
-  gap: 40px;
+  gap: 24px;
 }
 
 footer .footer .footer-nav a:any-link {
@@ -67,10 +67,11 @@ footer .footer .footer-social,
 footer .footer .footer-social > .default-content-wrapper {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
 footer .footer .footer-social p {
+  margin: 0;
   font-size: 18px;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -127,13 +128,13 @@ footer .footer .footer-legal a:any-link {
 @media (width >= 900px) {
   footer .footer .footer-inner {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto auto 1fr auto;
     grid-template-areas:
-      'brand nav social'
-      'legal legal legal';
-    gap: 40px;
+      'brand nav . social'
+      'legal legal legal legal';
+    gap: 32px 48px;
     align-items: center;
-    padding: 48px 32px 40px;
+    padding: 24px 32px 32px;
   }
 
   footer .footer .footer-brand {
@@ -142,7 +143,7 @@ footer .footer .footer-legal a:any-link {
 
   footer .footer .footer-nav {
     grid-area: nav;
-    justify-self: center;
+    justify-self: start;
   }
 
   footer .footer .footer-social {
