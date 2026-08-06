@@ -1,20 +1,190 @@
+/* WKND Footer — dark section (#202020), light text (#ebebeb).
+   Top row: WKND logo (left), nav links (center), FOLLOW US + social (right).
+   Below: copyright + descriptive paragraphs with links. */
+
 footer {
-  background-color: var(--light-color);
+  background-color: var(--dark-color, #202020);
+  color: var(--wknd-footer-text, #ebebeb);
+  font-family: var(--body-font-family);
   font-size: var(--body-font-size-xs);
 }
 
-footer .footer > div {
-  margin: auto;
-  max-width: 1200px;
-  padding: 40px 24px 24px;
+footer .footer .footer-inner {
+  max-width: 1264px;
+  margin: 0 auto;
+  padding: 24px 24px 32px;
+}
+
+footer .footer a:any-link {
+  color: var(--wknd-footer-text, #ebebeb);
+  text-decoration: none;
+}
+
+footer .footer a:hover {
+  text-decoration: underline;
 }
 
 footer .footer p {
   margin: 0;
 }
 
+/* ---------- Top row: brand | nav | social ---------- */
+footer .footer .footer-brand img {
+  height: 48px;
+  width: auto;
+}
+
+footer .footer .footer-nav ul,
+footer .footer .footer-social ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* nav links */
+footer .footer .footer-nav ul {
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+footer .footer .footer-nav a:any-link {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+footer .footer .footer-nav a:hover {
+  color: var(--wknd-footer-text, #ebebeb);
+  text-decoration: underline;
+}
+
+/* FOLLOW US + social icons.
+   DA/EDS wraps section content in .default-content-wrapper, so flex that
+   wrapper (fall back to the section itself for local/no-wrapper rendering). */
+footer .footer .footer-social,
+footer .footer .footer-social > .default-content-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* FOLLOW US label — source renders it bold uppercase (h4: 600 / 16px) */
+footer .footer .footer-social p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* social icons: flush row of light boxes with dark glyphs (matches source) */
+footer .footer .footer-social ul {
+  gap: 0;
+}
+
+footer .footer .footer-social li {
+  display: flex;
+}
+
+footer .footer .footer-social a:any-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: #ebebeb;
+  transition: background-color 0.15s ease;
+}
+
+footer .footer .footer-social a:hover {
+  background-color: #fff;
+}
+
+footer .footer .footer-social img {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Legal / description ---------- */
+footer .footer .footer-legal {
+  margin-top: 24px;
+  max-width: 100%;
+}
+
+/* disclaimer / description text — smaller 12px, matches source */
+footer .footer .footer-legal p {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+footer .footer .footer-legal p + p {
+  margin-top: 12px;
+}
+
+/* copyright line (first paragraph) — larger, matches source 18px */
+footer .footer .footer-legal p:first-child {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+footer .footer .footer-legal a:any-link {
+  text-decoration: underline;
+}
+
+/* ---------- Desktop layout (>= 900px) ---------- */
 @media (width >= 900px) {
-  footer .footer > div {
-    padding: 40px 32px 24px;
+  footer .footer .footer-inner {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
+    grid-template-areas:
+      'brand nav . social'
+      'legal legal legal legal';
+    gap: 16px 48px;
+    align-items: center;
+    padding: 16px 32px 24px;
+  }
+
+  footer .footer .footer-brand {
+    grid-area: brand;
+  }
+
+  footer .footer .footer-nav {
+    grid-area: nav;
+    justify-self: start;
+  }
+
+  footer .footer .footer-social {
+    grid-area: social;
+  }
+
+  footer .footer .footer-legal {
+    grid-area: legal;
+  }
+}
+
+/* ---------- Mobile layout (< 900px): stacked ---------- */
+@media (width < 900px) {
+  footer .footer .footer-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  footer .footer .footer-nav ul {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  footer .footer .footer-social {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  footer .footer .footer-legal {
+    margin-top: 0;
   }
 }
