@@ -90,10 +90,23 @@
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     column-gap: 64px;
     max-width: 1264px;
-    margin: 40px auto;
+    margin: 64px auto 40px;
     padding: 0 32px;
     box-sizing: border-box;
     align-items: start;
+  }
+
+  /* even as the first section, keep a top margin so the headings sit below the
+     header (the boilerplate zeroes first-section margin). */
+  main > .section.accordion-faq-container:first-of-type {
+    margin-top: 64px;
+  }
+
+  /* nudge the smaller "Need more help?" heading down so its baseline lines up
+     with the larger FAQs title on the same row. */
+  .section.accordion-faq-container > .default-content-wrapper:last-child h2,
+  .section.accordion-faq-container > .default-content-wrapper:last-child h3 {
+    padding-top: 14px;
   }
 
   /* children already carry the section's inner max-width/padding; neutralize it
