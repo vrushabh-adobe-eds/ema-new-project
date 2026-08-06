@@ -104,6 +104,14 @@ Source: https://wknd.site/us/en.html → AEM Edge Delivery (`vrushabh-adobe-eds/
 - [ ] Preview + publish ≥1 page from da.live
 - [ ] Final tracking update
 
+## Header / Navigation (done)
+- WKND header migrated to blocks/header/ (header.js + header.css) + content/nav.plain.html.
+- Exact source styles: utility bar #202020 / text #ebebeb; nav links 14px uppercase #202020; hover/active #ffea00; search bg rgba(235,235,235,0.54), focus border 1px solid #202020.
+- Sticky shrink on scroll (main row 118→72, logo 48→34). Structural similarity 100%.
+- Mobile: hamburger (morph-to-cross) + logo + search; links stack full-width; resize resets state.
+- Assets: content/images/wknd-logo.svg, content/images/flag-us.svg. Lint clean.
+- Validation infra under migration-work/navigation-validation/ (gitignored + eslintignored).
+
 ## Notes / Log
 - Phase 1 complete: 26 URLs, 6 catalog templates → bridged to `tools/importer/page-templates.json` and split `listing-page` into `magazine-landing` + `about-us` → **7 import templates**.
 - Project type = `da` (Document Authoring); block library configured in `.migration/project.json`.
