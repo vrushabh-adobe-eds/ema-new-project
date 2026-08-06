@@ -21,13 +21,13 @@ header .header .nav-wrapper {
   background-color: #fff;
 }
 
-/* sticky header on the outermost wrapper, shadow */
+/* sticky header on the outermost wrapper, with a drop shadow at the bottom */
 header.header-wrapper {
   position: sticky;
   top: 0;
   z-index: 20;
   background-color: #fff;
-  box-shadow: 0 1px 0 rgb(0 0 0 / 6%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
 }
 
 header nav {
@@ -60,18 +60,23 @@ header nav .nav-utility {
   justify-content: flex-end;
   gap: 24px;
   height: 25px;
+  background-color: var(--wknd-dark);
 }
 
-/* full-bleed black background behind the utility bar */
+/* extend the black background full-bleed to both edges of the viewport.
+   Painted above the white wrapper backgrounds (no negative z-index), so the
+   bar stays black regardless of the header container's background. */
 header nav .nav-utility::before {
   content: '';
   position: absolute;
-  left: -50vw;
-  right: -50vw;
-  top: 0;
-  height: 25px;
+  inset: 0 -50vw;
   background-color: var(--wknd-dark);
-  z-index: -1;
+}
+
+/* keep the utility content (links, locale) above the full-bleed pseudo */
+header nav .nav-utility > * {
+  position: relative;
+  z-index: 1;
 }
 
 header nav .nav-utility p,
