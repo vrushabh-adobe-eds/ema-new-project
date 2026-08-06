@@ -62,16 +62,16 @@
   object-fit: cover;
 }
 
-/* white content box — a small, constant side gap on each edge (like the
-   source, which shows only a thin image sliver beside the box) instead of the
-   gap growing with the viewport. Centered; bottom edge sits at the image
-   bottom. */
+/* white content box — fixed width that matches the source (1192px), centered.
+   Like the source, the card stays this width and the side margins grow on
+   wider viewports; on narrower screens it shrinks with a small side gap.
+   Bottom edge sits at the image bottom. */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   z-index: 1;
   align-self: center;
-  width: calc(100% - 112px);
+  width: min(100% - 108px, 1192px);
   margin: 0 auto;
-  padding: 20px 40px 24px;
+  padding: 20px 28px 24px;
   color: var(--text-color);
   background-color: #fff;
   position: relative;
