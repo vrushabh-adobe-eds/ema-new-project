@@ -1,33 +1,62 @@
+/* WKND Featured Article teaser — image LEFT, text in a light-grey panel RIGHT
+   (matches wknd.site featured teaser). */
+
 .columns-featured > div {
   display: flex;
   flex-direction: column;
 }
 
 .columns-featured img {
+  display: block;
   width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
+/* text column (grey panel) */
 .columns-featured > div > div {
   order: 1;
+  background-color: var(--light-color, #ebebeb);
+  padding: 40px;
+  box-sizing: border-box;
 }
 
+/* image column first */
 .columns-featured > div > .columns-featured-img-col {
   order: 0;
+  background-color: transparent;
+  padding: 0;
+  line-height: 0;
 }
 
-.columns-featured > div > .columns-featured-img-col img {
-  display: block;
+/* eyebrow "Featured Article" — bold, matches source */
+.columns-featured > div > div > p:first-child {
+  margin: 0 0 24px;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.columns-featured > div > div h1,
+.columns-featured > div > div h2,
+.columns-featured > div > div h3 {
+  margin: 0 0 16px;
 }
 
 @media (width >= 900px) {
   .columns-featured > div {
-    align-items: center;
+    align-items: stretch;
     flex-direction: unset;
-    gap: 24px;
+    gap: 0;
   }
 
   .columns-featured > div > div {
     flex: 1;
-    order: unset;
+    order: 1;
+    padding: 48px 56px;
+  }
+
+  .columns-featured > div > .columns-featured-img-col {
+    flex: 1;
+    order: 0;
   }
 }
