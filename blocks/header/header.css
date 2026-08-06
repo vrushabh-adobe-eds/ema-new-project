@@ -137,14 +137,18 @@ header nav .nav-locale > p > a img {
   border-radius: 0;
 }
 
-/* thin chevron to match source */
+/* thin outline chevron (⌄) to match source — a rotated square with two borders,
+   not a solid triangle glyph */
 header nav .nav-locale > a::after,
 header nav .nav-locale > p > a::after {
-  content: '\25be';
-  font-size: 11px;
-  line-height: 1;
-  margin-left: 6px;
-  opacity: 0.9;
+  content: '';
+  width: 7px;
+  height: 7px;
+  margin-left: 8px;
+  margin-top: -3px;
+  border-right: 1px solid var(--wknd-light-text);
+  border-bottom: 1px solid var(--wknd-light-text);
+  transform: rotate(45deg);
 }
 
 /* submenu — hidden by default, shown when the <li> has .locale-open */
