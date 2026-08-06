@@ -63,6 +63,17 @@ header nav .nav-utility {
   background-color: var(--wknd-dark);
 }
 
+/* DA/EDS wraps utility content in a .default-content-wrapper; make that (or
+   the direct content when there is no wrapper) the flex row so Sign In and the
+   locale sit side by side and stay centered within the 25px bar. */
+header nav .nav-utility > .default-content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  width: 100%;
+}
+
 /* extend the black background full-bleed to both edges of the viewport.
    Painted above the white wrapper backgrounds (no negative z-index), so the
    bar stays black regardless of the header container's background. */
