@@ -18,13 +18,13 @@ indices:
         select: head > meta[property="og:image"]
         value: attribute(el, "content")
       author:
-        select: head > meta[name="Author"]
+        select: head > meta[name="author"]
         value: attribute(el, "content")
       publicationDate:
-        select: head > meta[name="Publication Date"]
+        select: head > meta[name="publication-date"]
         value: attribute(el, "content")
       template:
-        select: head > meta[name="Template"]
+        select: head > meta[name="template"]
         value: attribute(el, "content")
       lastModified:
         select: none
