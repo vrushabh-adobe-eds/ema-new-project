@@ -56,8 +56,8 @@ footer .footer .footer-nav a:any-link {
 }
 
 footer .footer .footer-nav a:hover {
-  color: var(--brand-primary, #ffea00);
-  text-decoration: none;
+  color: var(--wknd-footer-text, #ebebeb);
+  text-decoration: underline;
 }
 
 /* FOLLOW US + social icons.
@@ -72,14 +72,13 @@ footer .footer .footer-social > .default-content-wrapper {
 
 footer .footer .footer-social p {
   font-size: 18px;
-  text-transform: uppercase;
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
 
+/* social icons: flush row of light boxes with dark glyphs (matches source) */
 footer .footer .footer-social ul {
-  gap: 8px;
-  border: 1px solid rgb(255 255 255 / 25%);
+  gap: 0;
 }
 
 footer .footer .footer-social li {
@@ -92,16 +91,17 @@ footer .footer .footer-social a:any-link {
   justify-content: center;
   width: 48px;
   height: 48px;
+  background-color: #ebebeb;
   transition: background-color 0.15s ease;
 }
 
 footer .footer .footer-social a:hover {
-  background-color: rgb(255 255 255 / 10%);
+  background-color: #fff;
 }
 
 footer .footer .footer-social img {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 /* ---------- Legal / description ---------- */
