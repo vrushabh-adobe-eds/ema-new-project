@@ -62,16 +62,17 @@
   object-fit: cover;
 }
 
-/* white content box, bottom-left with left/right margins (matches source) */
+/* white content box — near full-width with ~124px side margins, anchored
+   to the bottom (matches source: box spans 124px..vw-124px) */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   z-index: 1;
-  margin: 0 124px 90px;
-  padding: 40px 48px 48px;
+  align-self: stretch;
+  margin: 0 124px 88px;
+  padding: 48px 56px 56px;
   color: var(--text-color);
   background-color: #fff;
   position: relative;
-  width: var(--slide-content-width, auto);
-  max-width: 620px;
+  box-sizing: border-box;
 }
 
 /* indicator dots — centered along the bottom control strip */
