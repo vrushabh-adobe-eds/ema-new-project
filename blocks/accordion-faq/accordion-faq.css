@@ -30,6 +30,12 @@
   display: none;
 }
 
+/* the question text arrives wrapped in a <p>; strip its default margins so the
+   summary row hugs the text (matches the source's compact rows). */
+.accordion-faq details summary p {
+  margin: 0;
+}
+
 /* +/- toggle icon (source uses a plus that becomes a minus when open) */
 .accordion-faq details summary::after {
   content: '';
