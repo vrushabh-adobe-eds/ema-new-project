@@ -70,9 +70,12 @@ footer .footer .footer-social > .default-content-wrapper {
   gap: 16px;
 }
 
+/* FOLLOW US label — source renders it bold uppercase (h4: 600 / 16px) */
 footer .footer .footer-social p {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
   letter-spacing: 0.02em;
   white-space: nowrap;
 }
