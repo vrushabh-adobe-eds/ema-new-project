@@ -10,10 +10,10 @@
   --wknd-light-text: #ebebeb;
   --wknd-yellow: #ffea00;
   --wknd-search-bg: rgb(235 235 235 / 54%);
-  --nav-main-height: 118px;
-  --nav-main-height-sticky: 72px;
+  --nav-main-height: 169px;
+  --nav-main-height-sticky: 89px;
   --nav-logo-height: 48px;
-  --nav-logo-height-sticky: 34px;
+  --nav-logo-height-sticky: 48px;
 }
 
 header .header,
