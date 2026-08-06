@@ -37,7 +37,10 @@
   justify-content: flex-end;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+
+  /* stable hero height (source ~640px at 1440) so the image can't inflate it */
+  height: clamp(420px, 44vw, 640px);
+  min-height: clamp(420px, 44vw, 640px);
 }
 
 .carousel-hero .carousel-hero-slide:has(.carousel-hero-slide-content[data-align='center']) {
