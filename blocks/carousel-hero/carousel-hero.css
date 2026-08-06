@@ -62,17 +62,16 @@
   object-fit: cover;
 }
 
-/* white content box — spans the full slide width (edge to edge, no image
-   sliver on the sides). The text is aligned to the page content column via
-   generous horizontal padding, so the large side gaps are eliminated while the
-   copy still lines up with the rest of the page. Bottom edge sits at the image
+/* white content box — a small, constant side gap on each edge (like the
+   source, which shows only a thin image sliver beside the box) instead of the
+   gap growing with the viewport. Centered; bottom edge sits at the image
    bottom. */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   z-index: 1;
-  align-self: stretch;
-  width: 100%;
-  margin: 0;
-  padding: 20px clamp(24px, 4.2vw, 152px) 24px;
+  align-self: center;
+  width: calc(100% - 112px);
+  margin: 0 auto;
+  padding: 20px 40px 24px;
   color: var(--text-color);
   background-color: #fff;
   position: relative;
