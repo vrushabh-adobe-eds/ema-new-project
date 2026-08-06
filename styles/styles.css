@@ -73,6 +73,14 @@ body.appear {
   display: block;
 }
 
+/* Guard against horizontal overflow from full-bleed blocks that use 100vw
+   (which includes the scrollbar width). overflow-x: clip contains it without
+   breaking position: sticky (unlike overflow: hidden). */
+html,
+body {
+  overflow-x: clip;
+}
+
 header {
   height: var(--nav-height);
 }
