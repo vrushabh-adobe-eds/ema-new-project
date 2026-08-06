@@ -62,13 +62,13 @@
   object-fit: cover;
 }
 
-/* white content box — near full-width with ~124px side margins, anchored
-   to the bottom (matches source: box spans 124px..vw-124px) */
+/* white content box — near full-width with ~124px side margins; bottom edge
+   sits at the image bottom (matches source: box overlaps the lower image) */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   z-index: 1;
   align-self: stretch;
-  margin: 0 124px 88px;
-  padding: 48px 56px 56px;
+  margin: 0 124px;
+  padding: 32px 56px 36px;
   color: var(--text-color);
   background-color: #fff;
   position: relative;
