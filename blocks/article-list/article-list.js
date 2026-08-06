@@ -75,6 +75,28 @@ export default async function decorate(block) {
   const { indexPath, limit } = readConfig(block);
   const landingPath = indexPath.replace(/\/query-index\.json$/, '');
 
+  // Parse a human date like "Wednesday, 30 Sep 2020" into a sortable timestamp.
+  const parseDate = (s) => {
+    if (!s) return 0;
+    const t = Date.parse(s.replace(/^[A-Za-z]+,\s*/, ''));
+    return Number.isNaN(t) ? 0 : t;
+  };
+
+  // Curated feature order (matches the source homepage). Articles listed here
+  // lead in this exact sequence; anything else falls back to newest-first so
+  // new articles still appear automatically.
+  const CURATED = [
+    'guide-la-skateparks',
+    'ski-touring',
+    'arctic-surfing',
+    'san-diego-surf',
+  ];
+  const slug = (p) => (p || '').split('/').pop();
+  const rank = (p) => {
+    const i = CURATED.indexOf(slug(p));
+    return i === -1 ? CURATED.length : i;
+  };
+
   let items = [];
   try {
     const resp = await fetch(indexPath);
@@ -83,7 +105,10 @@ export default async function decorate(block) {
       items = (json.data || [])
         // only real articles nested under the magazine path; exclude the landing page itself
         .filter((it) => it.path && it.path !== landingPath && /\/magazine\/[^/]+$/.test(it.path))
-        .sort((a, b) => (b.publicationDate || '').localeCompare(a.publicationDate || ''));
+        // curated order first; then newest-first; then stable path tiebreak
+        .sort((a, b) => (rank(a.path) - rank(b.path))
+          || (parseDate(b.publicationDate) - parseDate(a.publicationDate))
+          || (a.path || '').localeCompare(b.path || ''));
       if (limit > 0) items = items.slice(0, limit);
     }
   } catch (e) {
