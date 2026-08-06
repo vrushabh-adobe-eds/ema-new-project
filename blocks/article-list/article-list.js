@@ -1,38 +1,118 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { moveInstrumentation } from '../../scripts/scripts.js';
 
+const DEFAULT_INDEX = '/us/en/magazine/query-index.json';
+
+/**
+ * Reads block config from single-cell rows (an index path and/or a limit).
+ * @param {Element} block
+ * @returns {{ indexPath: string, limit: number }}
+ */
+function readConfig(block) {
+  let indexPath = DEFAULT_INDEX;
+  let limit = 0;
+  block.querySelectorAll(':scope > div').forEach((row) => {
+    const text = row.textContent.trim();
+    const link = row.querySelector('a');
+    if (link && /query-index\.json/.test(link.getAttribute('href') || '')) {
+      indexPath = new URL(link.getAttribute('href'), window.location.origin).pathname;
+    } else if (/query-index\.json$/.test(text)) {
+      indexPath = new URL(text, window.location.origin).pathname;
+    } else if (/^\d+$/.test(text)) {
+      limit = parseInt(text, 10);
+    }
+  });
+  return { indexPath, limit };
+}
+
+/**
+ * Builds one article card <li> from a query-index entry.
+ * @param {object} item
+ * @returns {HTMLLIElement}
+ */
+function buildCard(item) {
+  const li = document.createElement('li');
+
+  const imageCell = document.createElement('div');
+  imageCell.className = 'article-list-card-image';
+  if (item.image) {
+    const link = document.createElement('a');
+    link.href = item.path;
+    const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '750' }]);
+    link.append(pic);
+    imageCell.append(link);
+  }
+
+  const body = document.createElement('div');
+  body.className = 'article-list-card-body';
+  const h3 = document.createElement('h3');
+  const titleLink = document.createElement('a');
+  titleLink.href = item.path;
+  titleLink.textContent = item.title || item.path;
+  h3.append(titleLink);
+  body.append(h3);
+  if (item.description) {
+    const p = document.createElement('p');
+    p.textContent = item.description;
+    body.append(p);
+  }
+
+  li.append(imageCell, body);
+  return li;
+}
+
 /**
  * loads and decorates the article-list block.
  *
- * NOTE (Phase 3): article-list is a DYNAMIC listing block. Its final
- * implementation will read the magazine query index (helix-query.yaml) and
- * render one card per magazine article automatically, so the author only
- * places a single empty `article-list` block on the page.
- *
- * This initial implementation mirrors the vanilla cards decoration so that
- * any statically authored rows (used for local testing / fallback) still
- * render as a card grid. The query-index fetch + render is added in Phase 3.
+ * Dynamic listing block: fetches the magazine query index (helix-query.yaml
+ * target) and renders one card per magazine article, so the author only
+ * places a single `article-list` block. Falls back to statically authored
+ * rows when the index is unavailable.
  *
  * @param {Element} block The block element
  */
-export default function decorate(block) {
-  /* change to ul, li */
+export default async function decorate(block) {
+  const { indexPath, limit } = readConfig(block);
+  const landingPath = indexPath.replace(/\/query-index\.json$/, '');
+
+  let items = [];
+  try {
+    const resp = await fetch(indexPath);
+    if (resp.ok) {
+      const json = await resp.json();
+      items = (json.data || [])
+        // only real articles nested under the magazine path; exclude the landing page itself
+        .filter((it) => it.path && it.path !== landingPath && /\/magazine\/[^/]+$/.test(it.path))
+        .sort((a, b) => (b.publicationDate || '').localeCompare(a.publicationDate || ''));
+      if (limit > 0) items = items.slice(0, limit);
+    }
+  } catch (e) {
+    // network/index unavailable — fall back to static rows below
+  }
+
   const ul = document.createElement('ul');
-  [...block.children].forEach((row) => {
-    const li = document.createElement('li');
-    moveInstrumentation(row, li);
-    while (row.firstElementChild) li.append(row.firstElementChild);
-    [...li.children].forEach((div) => {
-      if (div.children.length === 1 && div.querySelector('picture')) div.className = 'article-list-card-image';
-      else div.className = 'article-list-card-body';
+
+  if (items.length) {
+    items.forEach((item) => ul.append(buildCard(item)));
+  } else {
+    // Fallback: decorate any statically authored rows as cards.
+    [...block.children].forEach((row) => {
+      const li = document.createElement('li');
+      moveInstrumentation(row, li);
+      while (row.firstElementChild) li.append(row.firstElementChild);
+      [...li.children].forEach((div) => {
+        if (div.children.length === 1 && div.querySelector('picture')) div.className = 'article-list-card-image';
+        else div.className = 'article-list-card-body';
+      });
+      ul.append(li);
     });
-    ul.append(li);
-  });
-  ul.querySelectorAll('picture > img').forEach((img) => {
-    const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-    moveInstrumentation(img, optimizedPic.querySelector('img'));
-    img.closest('picture').replaceWith(optimizedPic);
-  });
+    ul.querySelectorAll('picture > img').forEach((img) => {
+      const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+      moveInstrumentation(img, optimizedPic.querySelector('img'));
+      img.closest('picture').replaceWith(optimizedPic);
+    });
+  }
+
   block.textContent = '';
   block.append(ul);
 }
