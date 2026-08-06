@@ -34,19 +34,25 @@ function toggleMobileMenu(nav) {
 function decorateLocale(utility) {
   const localeTop = utility.querySelector('ul > li');
   if (!localeTop) return;
-  const trigger = localeTop.querySelector(':scope > a');
+  // The trigger anchor may be a direct child or wrapped in a <p> by the
+  // content pipeline (DA/EDS wraps it, local dev does not). The submenu <ul>
+  // is the nested list. Find both without assuming the wrapper.
   const submenu = localeTop.querySelector(':scope > ul');
+  const trigger = localeTop.querySelector(':scope > a, :scope > p > a');
   if (!trigger || !submenu) return;
   localeTop.classList.add('nav-locale');
   trigger.setAttribute('aria-expanded', 'false');
   trigger.setAttribute('aria-haspopup', 'true');
   trigger.addEventListener('click', (e) => {
     e.preventDefault();
-    const open = trigger.getAttribute('aria-expanded') === 'true';
-    trigger.setAttribute('aria-expanded', open ? 'false' : 'true');
+    const open = localeTop.classList.toggle('locale-open');
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
   document.addEventListener('click', (e) => {
-    if (!localeTop.contains(e.target)) trigger.setAttribute('aria-expanded', 'false');
+    if (!localeTop.contains(e.target)) {
+      localeTop.classList.remove('locale-open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
   });
 }
 

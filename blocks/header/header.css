@@ -81,6 +81,12 @@ header nav .nav-utility ul {
   list-style: none;
 }
 
+/* defensive: nested locale submenu is hidden until decorated/opened, so an
+   undecorated list can never bleed across the header */
+header nav .nav-utility ul ul {
+  display: none;
+}
+
 header nav .nav-utility,
 header nav .nav-utility a:any-link {
   color: var(--wknd-light-text);
@@ -94,24 +100,33 @@ header nav .nav-locale {
   position: relative;
 }
 
-header nav .nav-locale > a {
+/* trigger anchor — may be a direct child or wrapped in a <p> by the pipeline */
+header nav .nav-locale > p {
+  margin: 0;
+}
+
+header nav .nav-locale > a,
+header nav .nav-locale > p > a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
-header nav .nav-locale > a img {
+header nav .nav-locale > a img,
+header nav .nav-locale > p > a img {
   width: 20px;
   height: 14px;
   object-fit: cover;
 }
 
-header nav .nav-locale > a::after {
+header nav .nav-locale > a::after,
+header nav .nav-locale > p > a::after {
   content: '\25be';
   font-size: 10px;
   margin-left: 4px;
 }
 
+/* submenu — hidden by default, shown when the <li> has .locale-open */
 header nav .nav-locale > ul {
   display: none;
   position: absolute;
@@ -124,7 +139,7 @@ header nav .nav-locale > ul {
   z-index: 30;
 }
 
-header nav .nav-locale > a[aria-expanded='true'] + ul {
+header nav .nav-locale.locale-open > ul {
   display: block;
 }
 
