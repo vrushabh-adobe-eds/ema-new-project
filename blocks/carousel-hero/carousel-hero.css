@@ -62,13 +62,13 @@
   object-fit: cover;
 }
 
-/* white content box — capped at the content width and centered, so at wide
-   viewports the side margins grow (like source: box stays ~1192px, not
-   stretched edge-to-edge). Bottom edge sits at the image bottom. */
+/* white content box — near full-width with only a thin image sliver on each
+   side (fixed ~120px inset), centered, so the large side gaps are removed on
+   wide viewports. Bottom edge sits at the image bottom. */
 .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
   z-index: 1;
   align-self: stretch;
-  width: min(100% - 248px, 1192px);
+  width: min(100% - 240px, 1680px);
   margin: 0 auto;
   padding: 20px 28px 24px;
   color: var(--text-color);
