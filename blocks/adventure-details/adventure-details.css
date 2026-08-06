@@ -1,0 +1,67 @@
+.adventure-details.block {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.adventure-details.block table {
+  width: 100%;
+  max-width: 100%;
+  border-collapse: collapse;
+  font-size: var(--body-font-size-xs);
+}
+
+@media (width >= 600px) {
+  .adventure-details.block table {
+    font-size: var(--body-font-size-s);
+  }
+}
+
+@media (width >= 900px) {
+  .adventure-details.block table {
+    font-size: var(--body-font-size-m);
+  }
+}
+
+.adventure-details.block table thead tr {
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+}
+
+.adventure-details.block table tbody tr {
+  border-bottom: 1px solid;
+}
+
+.adventure-details.block table th {
+  font-weight: 700;
+}
+
+.adventure-details.block table th,
+.adventure-details.block table td {
+  padding: 0.5em;
+  text-align: left;
+}
+
+.adventure-details table th p,
+.adventure-details table td p {
+  margin: 0;
+}
+
+.adventure-details table td p + p {
+  margin-top: 0.25em;
+}
+
+/* no header variant */
+.adventure-details.block.no-header table tbody tr {
+  border-top: 1px solid;
+}
+
+/* striped variant */
+.adventure-details.block.striped tbody tr:nth-child(odd) {
+  background-color: var(--overlay-background-color);
+}
+
+/* bordered variant */
+.adventure-details.block.bordered table th,
+.adventure-details.block.bordered table td {
+  border: 1px solid;
+}

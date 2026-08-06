@@ -1,0 +1,41 @@
+{
+  "variantName": "columns-featured",
+  "baseBlock": "columns",
+  "version": "1.0.0",
+  "created": "2026-08-06T06:22:29.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en.html",
+    "originPage": "WKND Adventures homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "grey",
+    "density": "spacious",
+    "purpose": "feature",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "image + (pretitle + heading + description + CTA)",
+    "buttonCount": 1,
+    "imageCount": 1,
+    "columnCount": 2
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "single featured-article teasers with image beside text",
+      "highlighted side-by-side promo blocks on a contained background",
+      "two-column image + text callouts"
+    ],
+    "notSuitableFor": [
+      "repeating grids of items (use cards)",
+      "full-width banners (use hero)",
+      "rotating slides (use carousel)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en", "/us/en/magazine"],
+    "reuseCount": 2,
+    "lastUsed": "2026-08-06T07:02:00.000Z",
+    "note": "Reused on the Magazine landing page for the 'Camping in Western Australia' featured-article teaser."
+  }
+}

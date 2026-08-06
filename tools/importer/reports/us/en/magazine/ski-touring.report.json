@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://wknd.site/us/en/magazine/ski-touring.html",
+  "path": "us/en/magazine/ski-touring",
+  "timestamp": "2026-08-06T08:25:43.664Z",
+  "title": "Ski Touring",
+  "template": "magazine-article",
+  "author": "Sofia Sjöberg",
+  "publicationDate": "2020-09-30",
+  "blocks": [
+    "article-author",
+    "cards-related"
+  ]
+}

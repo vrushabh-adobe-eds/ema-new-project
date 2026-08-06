@@ -1,0 +1,85 @@
+{
+  "templates": [
+    {
+      "name": "listing-page",
+      "representativePages": [
+        "https://wknd.site/us/en/about-us.html",
+        "https://wknd.site/us/en/magazine.html"
+      ],
+      "urls": [
+        "https://wknd.site/us/en/about-us.html",
+        "https://wknd.site/us/en/magazine.html"
+      ],
+      "description": "Section landing page with an intro heading followed by a grid of teaser cards (magazine landing, about-us contributors)"
+    },
+    {
+      "name": "adventure-detail",
+      "representativePages": [
+        "https://wknd.site/us/en/adventures/bali-surf-camp.html"
+      ],
+      "urls": [
+        "https://wknd.site/us/en/adventures/bali-surf-camp.html",
+        "https://wknd.site/us/en/adventures/beervana-portland.html",
+        "https://wknd.site/us/en/adventures/climbing-new-zealand.html",
+        "https://wknd.site/us/en/adventures/colorado-rock-climbing.html",
+        "https://wknd.site/us/en/adventures/cycling-southern-utah.html",
+        "https://wknd.site/us/en/adventures/cycling-tuscany.html",
+        "https://wknd.site/us/en/adventures/downhill-skiing-wyoming.html",
+        "https://wknd.site/us/en/adventures/gastronomic-marais-tour.html",
+        "https://wknd.site/us/en/adventures/napa-wine-tasting.html",
+        "https://wknd.site/us/en/adventures/riverside-camping-australia.html",
+        "https://wknd.site/us/en/adventures/ski-touring-mont-blanc.html",
+        "https://wknd.site/us/en/adventures/surf-camp-costa-rica.html",
+        "https://wknd.site/us/en/adventures/tahoe-skiing.html",
+        "https://wknd.site/us/en/adventures/west-coast-cycling.html",
+        "https://wknd.site/us/en/adventures/whistler-mountain-biking.html",
+        "https://wknd.site/us/en/adventures/yosemite-backpacking.html"
+      ],
+      "description": "Adventure detail page with hero image, itinerary/details block and body content sections"
+    },
+    {
+      "name": "adventure-listing",
+      "representativePages": [
+        "https://wknd.site/us/en/adventures.html"
+      ],
+      "urls": [
+        "https://wknd.site/us/en/adventures.html"
+      ],
+      "description": "Adventure section landing page with a heading and a grid of adventure teaser cards"
+    },
+    {
+      "name": "faq-page",
+      "representativePages": [
+        "https://wknd.site/us/en/faqs.html"
+      ],
+      "urls": [
+        "https://wknd.site/us/en/faqs.html"
+      ],
+      "description": "Simple content page with a heading followed by question and answer text sequences"
+    },
+    {
+      "name": "homepage",
+      "representativePages": [
+        "https://wknd.site/us/en.html"
+      ],
+      "urls": [
+        "https://wknd.site/us/en.html"
+      ],
+      "description": "Landing page with hero carousel, featured article, article grid and adventure cards"
+    },
+    {
+      "name": "magazine-article",
+      "representativePages": [
+        "https://wknd.site/us/en/magazine/arctic-surfing.html"
+      ],
+      "urls": [
+        "https://wknd.site/us/en/magazine/arctic-surfing.html",
+        "https://wknd.site/us/en/magazine/guide-la-skateparks.html",
+        "https://wknd.site/us/en/magazine/san-diego-surf.html",
+        "https://wknd.site/us/en/magazine/ski-touring.html",
+        "https://wknd.site/us/en/magazine/western-australia.html"
+      ],
+      "description": "Editorial article page with hero image, title, byline, body sections with inline images and an author credit block"
+    }
+  ]
+}

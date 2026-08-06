@@ -1,0 +1,45 @@
+{
+  "variantName": "article-author",
+  "baseBlock": "article-author",
+  "version": "1.0.0",
+  "created": "2026-08-06T06:42:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/magazine/arctic-surfing.html",
+    "originPage": "WKND magazine article (Arctic Surfing)",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "author-credit",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "avatar image + author name (heading) + role + social links",
+    "buttonCount": 0,
+    "imageCount": 1,
+    "socialLinkCount": 3
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "author / contributor credit at the end of an article",
+      "byline cards with avatar, name, role and social links",
+      "any 'about the author' block with a photo and social handles"
+    ],
+    "notSuitableFor": [
+      "grids of multiple contributor profiles (use cards)",
+      "standalone social-link clusters unrelated to a person",
+      "hero/banner style author intros with large background images"
+    ]
+  },
+  "socialLinks": {
+    "handling": "folded-into-article-author",
+    "reason": "The Facebook/Twitter/Instagram cluster appears only inside this author credit within article scope, so social-links is NOT a standalone block; the links are decorated inside article-author."
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/magazine/arctic-surfing"],
+    "reuseCount": 1,
+    "lastUsed": "2026-08-06T06:42:00.000Z",
+    "note": "New custom block (no vanilla base). Models the end-of-article author credit: avatar + name + role + inline social links."
+  }
+}

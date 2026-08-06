@@ -1,0 +1,73 @@
+/*
+ * article-author — author credit card shown at the end of a magazine article.
+ * Round avatar on the left; name, role and social links on the right.
+ */
+
+.article-author {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 0;
+}
+
+.article-author .article-author-avatar {
+  flex: 0 0 auto;
+}
+
+.article-author .article-author-avatar img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.article-author .article-author-info {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.article-author .article-author-info h1,
+.article-author .article-author-info h2,
+.article-author .article-author-info h3,
+.article-author .article-author-info h4 {
+  margin: 0;
+  font-size: var(--body-font-size-l);
+}
+
+.article-author .article-author-info p {
+  margin: 0;
+  color: #6f6f6f;
+  font-size: var(--body-font-size-s);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.article-author .article-author-social {
+  list-style: none;
+  display: flex;
+  gap: 16px;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.article-author .article-author-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.article-author .article-author-social-link:hover {
+  text-decoration: underline;
+}
+
+@media (width >= 900px) {
+  .article-author .article-author-social {
+    /* keep social links inline with the author info on wider screens */
+    margin-top: 8px;
+  }
+}

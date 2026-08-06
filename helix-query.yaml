@@ -1,0 +1,31 @@
+version: 1
+
+indices:
+  magazine:
+    include:
+      - '/us/en/magazine/**'
+    exclude:
+      - '/us/en/magazine/members-only/**'
+    target: /us/en/magazine/query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[property="og:description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      author:
+        select: head > meta[name="Author"]
+        value: attribute(el, "content")
+      publicationDate:
+        select: head > meta[name="Publication Date"]
+        value: attribute(el, "content")
+      template:
+        select: head > meta[name="Template"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")

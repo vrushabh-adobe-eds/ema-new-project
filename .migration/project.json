@@ -1,0 +1,10 @@
+{
+  "type": "da",
+  "sites": {
+    "ema-new-project": {
+      "previewOrg": "vrushabh-adobe-eds",
+      "previewSite": "ema-new-project",
+      "libraryUrl": "https://main--sta-boilerplate--aemdemos.aem.page/tools/sidekick/library.json"
+    }
+  }
+}
