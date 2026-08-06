@@ -56,6 +56,13 @@
 /* FAQ page 2-column layout (matches source): the intro/title+hero stays
    full-width on top, then the accordion (left) and the "Need more help?" panel
    (right, the trailing default-content-wrapper) sit side by side on desktop. */
+/* "Need more help?" heading has NO yellow underline (unlike other section
+   headings). Cancel the global section-title accent for this heading. */
+.section.accordion-faq-container > .default-content-wrapper:last-child h2::after,
+.section.accordion-faq-container > .default-content-wrapper:last-child h3::after {
+  content: none;
+}
+
 @media (width >= 900px) {
   .section.accordion-faq-container {
     display: grid;
@@ -65,6 +72,7 @@
     margin: 40px auto;
     padding: 0 32px;
     box-sizing: border-box;
+    align-items: start;
   }
 
   /* children already carry the section's inner max-width/padding; neutralize it
@@ -75,17 +83,17 @@
     padding: 0;
   }
 
-  .section.accordion-faq-container > .default-content-wrapper:first-child {
-    grid-column: 1 / -1;
-  }
-
+  /* left column: title + hero + intro (first wrapper) and the accordion below
+     it both live in column 1 (matches source: everything left, help right). */
+  .section.accordion-faq-container > .default-content-wrapper:first-child,
   .section.accordion-faq-container > .accordion-faq-wrapper {
     grid-column: 1;
-    align-self: start;
   }
 
+  /* right column: the "Need more help?" panel, pinned to the top row so it
+     aligns with the FAQs title. */
   .section.accordion-faq-container > .default-content-wrapper:last-child {
     grid-column: 2;
-    align-self: start;
+    grid-row: 1 / span 2;
   }
 }
