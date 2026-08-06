@@ -49,3 +49,29 @@ indices:
       lastModified:
         select: none
         value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")
+  contributors:
+    include:
+      - '/us/en/contributors/**'
+    target: /us/en/contributors/query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: attribute(el, "content")
+      role:
+        select: head > meta[name="role"]
+        value: attribute(el, "content")
+      type:
+        select: head > meta[name="type"]
+        value: attribute(el, "content")
+      facebook:
+        select: head > meta[name="facebook"]
+        value: attribute(el, "content")
+      twitter:
+        select: head > meta[name="twitter"]
+        value: attribute(el, "content")
+      instagram:
+        select: head > meta[name="instagram"]
+        value: attribute(el, "content")
