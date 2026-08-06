@@ -147,8 +147,19 @@ var CustomImportScript = (() => {
     element.replaceWith(block);
   }
 
-  // tools/importer/parsers/hero-promo.js
+  // tools/importer/parsers/article-list.js
   function parse4(element, { document }) {
+    const firstLink = element.querySelector("a[href]");
+    const href = firstLink ? firstLink.getAttribute("href") : "";
+    let indexPath = "/us/en/magazine/query-index.json";
+    if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
+    const cells = [["4"], [indexPath]];
+    const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
+    element.replaceWith(block);
+  }
+
+  // tools/importer/parsers/hero-promo.js
+  function parse5(element, { document }) {
     const image = element.querySelector(".cmp-teaser__image img, .cmp-image__image, img");
     const titleEl = element.querySelector(".cmp-teaser__title, .cmp-title__text, h1, h2, h3");
     const descEl = element.querySelector('.cmp-teaser__description, [class*="description"], p');
@@ -319,7 +330,8 @@ var CustomImportScript = (() => {
     "carousel-hero": parse,
     "columns-featured": parse2,
     "cards-teaser": parse3,
-    "hero-promo": parse4
+    "article-list": parse4,
+    "hero-promo": parse5
   };
   var PAGE_TEMPLATE = {
     "name": "homepage",
@@ -342,7 +354,7 @@ var CustomImportScript = (() => {
         ]
       },
       {
-        "name": "cards-teaser",
+        "name": "article-list",
         "instances": [
           "#container-9c4899b718 .cmp-image-list",
           "#container-4d3fed64ff .cmp-image-list"
@@ -389,7 +401,7 @@ var CustomImportScript = (() => {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list"
         ],
         "defaultContent": [
           "#title-c2d2b28d00",
@@ -419,7 +431,7 @@ var CustomImportScript = (() => {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list"
         ],
         "defaultContent": [
           "#title-ca6ac0fe65",

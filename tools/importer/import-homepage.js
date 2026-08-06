@@ -5,6 +5,7 @@
 import carouselHeroParser from "./parsers/carousel-hero.js";
 import columnsFeaturedParser from "./parsers/columns-featured.js";
 import cardsTeaserParser from "./parsers/cards-teaser.js";
+import articleListParser from "./parsers/article-list.js";
 import heroPromoParser from "./parsers/hero-promo.js";
 
 // TRANSFORMER IMPORTS
@@ -16,6 +17,7 @@ const parsers = {
   "carousel-hero": carouselHeroParser,
   "columns-featured": columnsFeaturedParser,
   "cards-teaser": cardsTeaserParser,
+  "article-list": articleListParser,
   "hero-promo": heroPromoParser,
 };
 
@@ -41,7 +43,7 @@ const PAGE_TEMPLATE = {
         ]
       },
       {
-        "name": "cards-teaser",
+        "name": "article-list",
         "instances": [
           "#container-9c4899b718 .cmp-image-list",
           "#container-4d3fed64ff .cmp-image-list"
@@ -88,7 +90,7 @@ const PAGE_TEMPLATE = {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list"
         ],
         "defaultContent": [
           "#title-c2d2b28d00",
@@ -118,7 +120,7 @@ const PAGE_TEMPLATE = {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list"
         ],
         "defaultContent": [
           "#title-ca6ac0fe65",
