@@ -202,6 +202,40 @@ button.button:disabled {
   pointer-events: none;
 }
 
+/* In-block CTA links (View Trips, Full Article, See Trip, All Articles, All
+   Trips) arrive as a bare <a> alone in a <p>, so the buttonizer skips them.
+   Style such standalone CTA links inside content blocks as WKND yellow
+   buttons to match the source. Scoped to blocks + default-content CTAs. */
+.carousel-hero p > a:only-child:any-link,
+.columns-featured p > a:only-child:any-link,
+.hero-promo p > a:only-child:any-link,
+main .default-content-wrapper p > a:only-child:any-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--brand-primary);
+  border-radius: 0;
+  padding: 14px 35px;
+  background-color: var(--brand-primary);
+  color: var(--text-color);
+  font-size: var(--body-font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/* stylelint-disable no-descending-specificity */
+.carousel-hero p > a:only-child:hover,
+.columns-featured p > a:only-child:hover,
+.hero-promo p > a:only-child:hover,
+main .default-content-wrapper p > a:only-child:hover {
+  background-color: var(--brand-primary-hover);
+  border-color: var(--brand-primary-hover);
+  color: var(--text-color);
+}
+/* stylelint-enable no-descending-specificity */
+
 /* primary = same yellow CTA (boilerplate applies .primary to strong links) */
 a.button.primary,
 button.button.primary {

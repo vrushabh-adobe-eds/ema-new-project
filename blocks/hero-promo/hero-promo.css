@@ -5,21 +5,27 @@
 
 .hero-promo {
   position: relative;
+  display: flex;
+  align-items: flex-end;
   padding: 40px 24px;
-  min-height: 300px;
+  min-height: 480px;
 }
 
-.hero-promo h1,
-.hero-promo h2,
-.hero-promo h3,
-.hero-promo h4,
-.hero-promo h5,
-.hero-promo h6,
-.hero-promo p {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  color: var(--background-color);
+/* text content sits in an overlaid white box (matches source), dark text */
+.hero-promo > div:last-child {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  margin: 0;
+  padding: 28px 28px 32px;
+  background-color: #fff;
+  color: var(--text-color);
+}
+
+.hero-promo > div:last-child :is(h1, h2, h3, h4, h5, h6, p) {
+  color: var(--text-color);
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .hero-promo.no-image * {
