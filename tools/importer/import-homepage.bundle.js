@@ -154,6 +154,38 @@ var CustomImportScript = (() => {
     let indexPath = "/us/en/magazine/query-index.json";
     if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
     const cells = [["4"], [indexPath]];
+    const items = Array.from(element.querySelectorAll(
+      ":scope .cmp-image-list__item, :scope .cmp-list__item, :scope li"
+    ));
+    items.forEach((item) => {
+      const image = item.querySelector("img");
+      const titleEl = item.querySelector(
+        '.cmp-image-list__item-title, .cmp-list__item-title, [class*="title"]'
+      );
+      const titleLink = item.querySelector(
+        ".cmp-image-list__item-title-link, .cmp-image-list__item-image-link, a[href]"
+      );
+      const descEl = item.querySelector(
+        '.cmp-image-list__item-description, .cmp-list__item-description, [class*="description"]'
+      );
+      if (!image) return;
+      const textCell = [];
+      if (titleEl) {
+        const heading = document.createElement("h3");
+        const linkHref = titleLink ? titleLink.getAttribute("href") : null;
+        if (linkHref) {
+          const a = document.createElement("a");
+          a.setAttribute("href", linkHref);
+          a.textContent = titleEl.textContent.trim();
+          heading.appendChild(a);
+        } else {
+          heading.textContent = titleEl.textContent.trim();
+        }
+        textCell.push(heading);
+      }
+      if (descEl && descEl.textContent.trim()) textCell.push(descEl);
+      cells.push([image, textCell.length ? textCell : ""]);
+    });
     const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     element.replaceWith(block);
   }
