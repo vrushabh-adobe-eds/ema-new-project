@@ -190,11 +190,19 @@ header nav .nav-brand {
   align-items: center;
 }
 
-header nav .nav-brand p {
+/* The logo may arrive wrapped in a .default-content-wrapper > p > a (DA/EDS).
+   Neutralize that wrapper's line-height/margins so the inline <img> can't add a
+   baseline descender gap below the logo (which made the bottom margin larger
+   than the top in the sticky header). */
+header nav .nav-brand p,
+header nav .nav-brand .default-content-wrapper,
+header nav .nav-brand a {
   margin: 0;
+  line-height: 0;
 }
 
 header nav .nav-brand img {
+  display: block;
   height: var(--nav-logo-height);
   width: auto;
   transition: height 0.2s ease;
