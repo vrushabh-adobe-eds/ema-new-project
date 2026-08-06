@@ -1,0 +1,56 @@
+{
+  "variantName": "contributors",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-08-06T06:52:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/about-us.html",
+    "originPage": "WKND About Us page",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "person-profile-grid",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "avatar image + name (heading) + role + social links",
+    "buttonCount": 0,
+    "imageCount": 1,
+    "socialLinkCount": 3,
+    "cardCount": 4,
+    "note": "Cards-style grid of person profiles. Each card: circular avatar + name (h3) + role/title (e.g. 'Artist | Photographer | Traveler') + a row of 3 icon-only social links (Facebook/Twitter/Instagram). Used twice on the About Us page: 'Our Contributors' (4) and 'WKND Guides' (3)."
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "team / contributor / author profile grids (multiple people)",
+      "person-profile grids with avatar + name + role + social links",
+      "'meet the team' / 'our guides' style repeating profile cards"
+    ],
+    "notSuitableFor": [
+      "single author/contributor credit at the end of an article (use article-author)",
+      "article/product teaser grids with rectangular images + descriptions (use cards-teaser)",
+      "no-image text link lists (use cards-related)"
+    ]
+  },
+  "socialLinks": {
+    "handling": "folded-into-contributors",
+    "reason": "The Facebook/Twitter/Instagram cluster appears only inside each person profile card, so a standalone 'social-links' sub-block is NOT warranted. Links are authored inline in the card body and decorated in place (grouped into .contributors-card-social). This mirrors article-author's social handling.",
+    "recommendation": "Do not create a separate social-links block for this scope."
+  },
+  "relatedBlocks": {
+    "article-author": "Single-person author credit (avatar + name + role + social). Same conceptual person-profile fields, but singular and article-scoped; its metadata explicitly directs multi-profile grids to cards. This 'contributors' variant is the grid counterpart and satisfies the Phase-3 'writer/photographer details' requirement (name, avatar, title) in a grid layout.",
+    "similarityScores": {
+      "cards-teaser": "~35% (purpose person-profile vs article-teaser; imagePattern icon/avatar vs large; structure differs) - below 80% threshold",
+      "cards-related": "~20% (noimg link list vs avatar profile grid) - below 80% threshold",
+      "article-author": "not a grid; single credit - not reusable for a multi-profile grid"
+    }
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/about-us"],
+    "reuseCount": 2,
+    "lastUsed": "2026-08-06T06:52:00.000Z",
+    "note": "New custom variant of cards. Used twice on the About Us page: 'Our Contributors' grid (4 people) and 'WKND Guides' grid (3 people)."
+  }
+}

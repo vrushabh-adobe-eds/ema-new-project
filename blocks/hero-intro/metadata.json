@@ -1,0 +1,46 @@
+{
+  "variantName": "hero-intro",
+  "baseBlock": "hero",
+  "version": "1.0.0",
+  "created": "2026-08-06T07:16:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/adventures.html",
+    "originPage": "WKND Adventures landing page",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "intro-hero",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "large background image + heading + short description (no CTA)",
+    "buttonCount": 0,
+    "imageCount": 1,
+    "note": "Full-width background photograph with an overlapping white content panel (heading + one-line description) at the lower-left. Introductory banner below the page title; distinct from hero-promo which is dark and carries a CTA."
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "light introductory hero banners at the top of a landing/listing page",
+      "full-width image banners with a heading + short description and NO call-to-action",
+      "page-intro heroes where the text sits in an overlapping light panel over the photo"
+    ],
+    "notSuitableFor": [
+      "dark promotional banners with a CTA button (use hero-promo)",
+      "rotating multi-slide banners (use carousel-hero)",
+      "repeating image + title + description grids (use cards-teaser)",
+      "single contained image-beside-text teasers (use columns-featured)"
+    ]
+  },
+  "relatedBlocks": {
+    "hero-promo": "Dark mid-page promotional hero using the cmp-teaser--imagebottom layout with a 'See Trip' CTA. Same hero base block but different color scheme (dark vs light), purpose (promo vs intro), and it has a CTA whereas hero-intro does not. Similarity ~38% (below the 80% reuse threshold), so hero-intro is a separate variant.",
+    "carousel-hero": "Rotating multi-slide top hero (homepage). Not reusable here - this is a single static intro banner."
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/adventures"],
+    "reuseCount": 1,
+    "lastUsed": "2026-08-06T07:16:00.000Z",
+    "note": "New light intro-hero variant of the hero block. Models the 'Experience the world with us' banner below the Adventures page title (full-width image + heading + one-line description, no CTA)."
+  }
+}

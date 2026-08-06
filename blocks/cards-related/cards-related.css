@@ -1,0 +1,57 @@
+/*
+ * cards-related — compact "up next" / related-articles list variant of cards.
+ * No images: each card is a linked title + publication date, stacked as a
+ * lightweight list rather than an image grid.
+ */
+
+.cards-related > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cards-related > ul > li {
+  border-bottom: 1px solid #dadada;
+  background-color: var(--background-color);
+}
+
+.cards-related > ul > li:first-child {
+  border-top: 1px solid #dadada;
+}
+
+.cards-related .cards-related-card-body {
+  margin: 16px 0;
+}
+
+.cards-related .cards-related-card-body h2,
+.cards-related .cards-related-card-body h3,
+.cards-related .cards-related-card-body h4 {
+  margin: 0 0 4px;
+  font-size: var(--body-font-size-m);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cards-related .cards-related-card-body a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cards-related .cards-related-card-body a:hover {
+  text-decoration: underline;
+}
+
+/* publication date rendered below the linked title */
+.cards-related .cards-related-card-body p {
+  margin: 0;
+  color: #6f6f6f;
+  font-size: var(--body-font-size-s);
+}
+
+/* no-images variant: hide any stray image cell if one is authored */
+.cards-related .cards-related-card-image {
+  display: none;
+}

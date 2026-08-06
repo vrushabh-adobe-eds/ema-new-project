@@ -1,0 +1,41 @@
+{
+  "variantName": "cards-teaser",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-08-06T06:22:29.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en.html",
+    "originPage": "WKND Adventures homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "article-teaser",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "image + title + description",
+    "buttonCount": 0,
+    "imageCount": 1,
+    "cardCount": 4
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "article teaser grids (magazine/recent articles)",
+      "adventure/product teaser card grids",
+      "any repeated image + title + short description grid where the whole card links out"
+    ],
+    "notSuitableFor": [
+      "single featured items (use columns)",
+      "rotating slides (use carousel)",
+      "cards without images (use cards no-images variant)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en", "/us/en/magazine", "/us/en/adventures"],
+    "reuseCount": 4,
+    "lastUsed": "2026-08-06T07:16:00.000Z",
+    "note": "Used twice on the homepage ('Recent Articles' and 'Where do you want to go?' grids), once on the Magazine landing page for the two 'Members Only' teaser cards, and once on the Adventures listing page for the 16-card 'Current Adventures' grid (the source's category tabs were collapsed - they are filtered subsets of the same adventures)."
+  }
+}

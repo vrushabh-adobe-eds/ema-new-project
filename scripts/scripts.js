@@ -10,7 +10,70 @@ import {
   loadSections,
   loadCSS,
   buildBlock,
+  toCamelCase,
 } from './aem.js';
+
+/**
+ * Move a set of attributes from one element to another.
+ * @param {Element} from Source element
+ * @param {Element} to Target element
+ * @param {string[]} [attributes] Attribute names to move (defaults to all)
+ */
+export function moveAttributes(from, to, attributes) {
+  const attrs = attributes || [...from.attributes].map(({ nodeName }) => nodeName);
+  attrs.forEach((attr) => {
+    const value = from.getAttribute(attr);
+    if (value) {
+      to.setAttribute(attr, value);
+      from.removeAttribute(attr);
+    }
+  });
+}
+
+/**
+ * Move instrumentation attributes (Universal Editor) from one element to another.
+ * @param {Element} from Source element
+ * @param {Element} to Target element
+ */
+export function moveInstrumentation(from, to) {
+  moveAttributes(
+    from,
+    to,
+    [...from.attributes]
+      .map(({ nodeName }) => nodeName)
+      .filter((attr) => attr.startsWith('data-aue-') || attr.startsWith('data-richtext-')),
+  );
+}
+
+/**
+ * Fetches and caches placeholders for a given prefix.
+ * @param {string} [prefix] Location of placeholders
+ * @returns {Promise<object>} Placeholders keyed by camelCased key
+ */
+export async function fetchPlaceholders(prefix = 'default') {
+  window.placeholders = window.placeholders || {};
+  if (!window.placeholders[prefix]) {
+    window.placeholders[prefix] = new Promise((resolve) => {
+      fetch(`${prefix === 'default' ? '' : prefix}/placeholders.json`)
+        .then((resp) => (resp.ok ? resp.json() : {}))
+        .then((json) => {
+          const placeholders = {};
+          (json.data || [])
+            .filter((placeholder) => placeholder.Key)
+            .forEach((placeholder) => {
+              placeholders[toCamelCase(placeholder.Key)] = placeholder.Text;
+            });
+          window.placeholders[prefix] = placeholders;
+          resolve(window.placeholders[prefix]);
+        })
+        .catch(() => {
+          window.placeholders[prefix] = {};
+          resolve(window.placeholders[prefix]);
+        });
+    });
+  }
+  return window.placeholders[prefix];
+}
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
@@ -146,7 +209,6 @@ function decorateButtons(main) {
  * Decorates the main element.
  * @param {Element} main The main element
  */
-// eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   decorateIcons(main);
   buildAutoBlocks(main);

@@ -1,0 +1,14 @@
+{
+  "status": "success",
+  "url": "https://wknd.site/us/en/magazine/san-diego-surf.html",
+  "path": "us/en/magazine/san-diego-surf",
+  "timestamp": "2026-08-06T08:25:39.721Z",
+  "title": "San Diego Surf Spots",
+  "template": "magazine-article",
+  "author": "Justin Barr",
+  "publicationDate": "2020-09-30",
+  "blocks": [
+    "article-author",
+    "cards-related"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "variantName": "cards-related",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-08-06T06:42:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en/magazine/arctic-surfing.html",
+    "originPage": "WKND magazine article (Arctic Surfing)",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "related-articles",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "linked title + date",
+    "buttonCount": 0,
+    "imageCount": 0,
+    "cardCount": 4
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "related-articles / 'up next' lists at the end of an article",
+      "compact text-only link lists with a title and a supporting date/label",
+      "no-image card lists where the whole item links out"
+    ],
+    "notSuitableFor": [
+      "image + title + description teaser grids (use cards-teaser)",
+      "single featured items (use columns-featured)",
+      "rotating slides (use carousel-hero)"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["/us/en/magazine/arctic-surfing"],
+    "reuseCount": 1,
+    "lastUsed": "2026-08-06T06:42:00.000Z",
+    "note": "No-images cards variant for the magazine article 'up next' related-stories list (title + date). Distinct from cards-teaser, which is an image-heavy spacious teaser grid (similarity to cards-teaser ~20%, below the 80% reuse threshold)."
+  }
+}
