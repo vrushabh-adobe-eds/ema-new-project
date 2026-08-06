@@ -78,11 +78,12 @@ Source: https://wknd.site/us/en.html → AEM Edge Delivery (`vrushabh-adobe-eds/
 - faq-page: accordion-faq
 - Phase-3 standalone blocks still to build: social-links, article-list dynamic logic (query index)
 
-### Phase 3 — New blocks
-- [ ] social-links
-- [ ] article-author
-- [ ] article-list
-- [ ] About Us contributors/guides wiring
+### Phase 3 — New blocks ✅
+- [x] article-list — dynamic, query-index driven; curated feature order + parsed-date/path fallback
+- [x] article-author — avatar + name + role + inline socials; wired into all 5 magazine articles
+- [x] contributors — person-profile grid; wired into about-us (Our Contributors + WKND Guides)
+- [x] social-links — NEW standalone reusable block (Follow Us + icon links, footer-style 48px light boxes; text-glyph fallback for icon-less links). Built without refactoring the working inline social usages (footer/article-author/contributors). Verified: decorate output + CSS (48px boxes, #ebebeb, 18px icons); full `npm run lint` green.
+  - Note: inline social usages left as-is by design; optional consolidation to reuse this block deferred to post-Phase-5.
 
 ### Phase 4 — Styling / design
 - [ ] Design tokens → global styles

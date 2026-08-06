@@ -1,0 +1,50 @@
+{
+  "variantName": "social-links",
+  "baseBlock": "social-links",
+  "version": "1.0.0",
+  "created": "2026-08-06T16:20:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://wknd.site/us/en.html",
+    "originPage": "WKND footer / article footers",
+    "blockPosition": "footer / end-of-content"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "social-network-icon-links",
+    "imagePattern": "icon"
+  },
+  "contentPattern": {
+    "structure": "optional heading (e.g. 'Follow Us') + a list of social icon links",
+    "buttonCount": 0,
+    "imageCount": 3,
+    "socialLinkCount": 3,
+    "note": "Reusable standalone 'Follow Us' row. Optional first text-only row becomes the heading; remaining links (each optionally wrapping an <img> icon) render as flush light-grey icon boxes with dark glyphs, matching the footer social cluster. Bare links with no icon fall back to a text glyph derived from the network (Facebook/Twitter/Instagram/YouTube/LinkedIn/...)."
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "standalone 'Follow Us' / social row in a section, sidebar, or article footer",
+      "any place needing a reusable row of social-network icon links"
+    ],
+    "notSuitableFor": [
+      "per-person social links inside a profile card (already handled inline by contributors / article-author)",
+      "generic nav or CTA link lists (use default content / buttons)"
+    ]
+  },
+  "socialLinks": {
+    "handling": "standalone-block",
+    "reason": "This IS the standalone reusable social block. The footer, article-author and contributors keep their existing inline social handling to avoid regressing verified blocks; they can be refactored to reuse this block later if desired.",
+    "recommendation": "Use for new standalone social clusters; do not refactor working inline usages in this phase."
+  },
+  "relatedBlocks": {
+    "footer": "Footer has an equivalent inline social cluster (.footer-social) with the same 48px light-box visual — this block mirrors that look as a reusable unit.",
+    "article-author": "Decorates per-author social links inline; not reusable standalone.",
+    "contributors": "Decorates per-person social links inline within each profile card."
+  },
+  "usage": {
+    "pagesUsing": [],
+    "reuseCount": 0,
+    "lastUsed": "2026-08-06T16:20:00.000Z",
+    "note": "New reusable block. Available for authoring; no page wired yet (existing social usages remain inline)."
+  }
+}
