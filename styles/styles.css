@@ -541,24 +541,26 @@ body.magazine-article .article-list:not(.related) > ul {
 }
 
 .article-list.related > ul > li {
-  border-left: 2px solid #d8d8d8;
   margin: 0 0 28px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.article-list.related > ul > li a {
+  /* source accent bar: 5px light-grey left border on the link, spanning its
+     full height (16px padding). Turns black + card yellow on hover. */
+  display: block;
+  padding: 16px 20px;
+  border-left: 5px solid #ebebeb;
+  text-decoration: none;
+  color: var(--text-color);
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 /* whole card turns yellow on hover, with a solid black left accent bar
    (matches the source "ULTIMATE GUIDE TO LA SKATEPARKS" hover) */
-.article-list.related > ul > li:hover {
+.article-list.related > ul > li a:hover {
   border-left-color: var(--text-color);
   background-color: var(--brand-primary);
-}
-
-/* stylelint-disable-next-line no-descending-specificity */
-.article-list.related > ul > li a {
-  display: block;
-  padding: 16px 20px;
-  text-decoration: none;
-  color: var(--text-color);
 }
 
 .article-list.related .article-list-related-title {
