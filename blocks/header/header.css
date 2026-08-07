@@ -34,10 +34,9 @@ header.header-wrapper {
   transition: height 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* drop shadow only when the nav has shrunk into its sticky state */
-header.header-wrapper:has(.header.nav-sticky) {
-  box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
-}
+/* drop shadow only when the nav has shrunk into its sticky state — desktop
+   only. The source's mobile sticky header is flat (no shadow), so the shadow
+   is scoped to >=900px below. */
 
 header nav {
   position: relative;
@@ -467,9 +466,10 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 @media (width >= 900px) {
   /* When the nav shrinks (sticky), collapse the reserved wrapper height too, so
      no empty white strip is left below the nav. Utility bar (25px) + shrunk nav
-     row = the sticky total. */
+     row = the sticky total. Desktop-only drop shadow on the sticky header. */
   header.header-wrapper:has(.header.nav-sticky) {
     height: calc(25px + var(--nav-main-height-sticky));
+    box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
   }
 
   header .header.nav-sticky nav .nav-brand {
