@@ -449,10 +449,17 @@ body.magazine-article main .default-content-wrapper > h3:first-child {
     box-sizing: border-box;
   }
 
-  /* lead image + breadcrumb span the full width (rows 1 and 2) */
+  /* lead image + breadcrumb span the full width (rows 1 and 2); the author
+     byline also spans full width as a wide horizontal row below the article. */
   body.magazine-article main > .section.lead-image,
-  body.magazine-article main > .section.breadcrumb-container {
+  body.magazine-article main > .section.breadcrumb-container,
+  body.magazine-article main > .section.article-author-container {
     grid-column: 1 / -1;
+  }
+
+  /* the author byline sits below the article + sidebar (last row) */
+  body.magazine-article main > .section.article-author-container {
+    grid-row: 5;
   }
 
   /* related sidebar → right column, starting level with the title (row 3) */
@@ -463,7 +470,7 @@ body.magazine-article main .default-content-wrapper > h3:first-child {
   }
 
   /* all other content → left column */
-  body.magazine-article main > .section:not(.lead-image, .breadcrumb-container, .article-list-container) {
+  body.magazine-article main > .section:not(.lead-image, .breadcrumb-container, .article-list-container, .article-author-container) {
     grid-column: 1;
   }
 
