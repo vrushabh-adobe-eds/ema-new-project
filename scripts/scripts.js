@@ -177,16 +177,17 @@ function buildBreadcrumb(main) {
   wrapper.append(nav);
 
   if (section === 'magazine') {
-    // Source order: lead image → breadcrumb → title. Insert right after the
-    // section that contains the lead image.
-    const leadImg = main.querySelector(':scope > .section img, :scope > .section picture');
-    const leadSection = leadImg ? leadImg.closest('.section') : null;
-    const anchor = leadSection && leadSection.parentElement === main
-      ? leadSection
-      : main.querySelector(':scope > .section');
-    if (anchor) {
-      anchor.classList.add('lead-image');
-      anchor.after(wrapper);
+    // Source order: lead image → breadcrumb → title. buildAutoBlocks runs
+    // BEFORE decorateSections, so main's children are still the raw per-section
+    // <div>s (not .section wrappers). Insert after the raw div that holds the
+    // lead image, and tag it so CSS can widen that section's banner.
+    const leadImg = main.querySelector(':scope > div img, :scope > div picture');
+    const leadDiv = leadImg
+      ? [...main.children].find((d) => d.contains(leadImg))
+      : null;
+    if (leadDiv) {
+      leadDiv.classList.add('lead-image');
+      leadDiv.after(wrapper);
     } else {
       main.prepend(wrapper);
     }
