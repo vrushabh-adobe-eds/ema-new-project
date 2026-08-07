@@ -13,6 +13,11 @@
   margin-bottom: 28px;
 }
 
+/* align the first spec item's label with the tabs row on the right */
+.adventure-details .adventure-details-item:first-child {
+  padding-top: 0;
+}
+
 .adventure-details .adventure-details-item dt {
   margin: 0 0 4px;
   font-size: 12px;
