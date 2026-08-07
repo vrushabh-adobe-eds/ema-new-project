@@ -36,13 +36,15 @@
 .article-author .article-author-info h4 {
   margin: 0;
   font-family: var(--heading-font-family);
-  font-size: var(--body-font-size-l);
+  font-size: 24px; /* source name size */
+  line-height: 36px;
 }
 
 .article-author .article-author-info p {
   margin: 0;
-  color: #6f6f6f;
-  font-size: var(--body-font-size-s);
+  color: #696969;
+  font-size: 12px; /* source role size */
+  line-height: 1.5;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -60,8 +62,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   background-color: var(--text-color);
   text-decoration: none;
 }
