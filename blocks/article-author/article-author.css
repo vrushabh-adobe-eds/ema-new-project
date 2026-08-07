@@ -5,10 +5,15 @@
  */
 
 .article-author {
+  padding: 24px 0;
+}
+
+/* the block wraps its cells in a single row <div>; that row is the flex
+   container (avatar + info on the left, socials pushed far right). */
+.article-author > div {
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 24px 0;
 }
 
 .article-author .article-author-avatar {
