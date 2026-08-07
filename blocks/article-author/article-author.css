@@ -6,8 +6,8 @@
 
 .article-author {
   /* thin divider line above the byline (source has an <hr> separator between
-     the article body and the author credit) + generous space below before footer */
-  margin: 32px 0 64px;
+     the article body and the author credit); modest space below before footer */
+  margin: 32px 0 8px;
   border-top: 1px solid #e6e6e6;
   padding: 40px 0 0;
 }
