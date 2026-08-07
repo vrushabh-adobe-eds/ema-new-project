@@ -1,67 +1,78 @@
-.adventure-details.block {
-  width: 100%;
-  overflow-x: auto;
-}
+/* adventure-details — spec sidebar (label/value list) matching the source:
+   each item has an uppercase grey label and a bold value, with a left accent
+   border. */
 
-.adventure-details.block table {
-  width: 100%;
-  max-width: 100%;
-  border-collapse: collapse;
-  font-size: var(--body-font-size-xs);
-}
-
-@media (width >= 600px) {
-  .adventure-details.block table {
-    font-size: var(--body-font-size-s);
-  }
-}
-
-@media (width >= 900px) {
-  .adventure-details.block table {
-    font-size: var(--body-font-size-m);
-  }
-}
-
-.adventure-details.block table thead tr {
-  border-top: 2px solid;
-  border-bottom: 2px solid;
-}
-
-.adventure-details.block table tbody tr {
-  border-bottom: 1px solid;
-}
-
-.adventure-details.block table th {
-  font-weight: 700;
-}
-
-.adventure-details.block table th,
-.adventure-details.block table td {
-  padding: 0.5em;
-  text-align: left;
-}
-
-.adventure-details table th p,
-.adventure-details table td p {
+.adventure-details .adventure-details-list {
   margin: 0;
+  padding: 0;
 }
 
-.adventure-details table td p + p {
-  margin-top: 0.25em;
+.adventure-details .adventure-details-item {
+  padding: 4px 0 4px 16px;
+  border-left: 2px solid #dadada;
+  margin-bottom: 28px;
 }
 
-/* no header variant */
-.adventure-details.block.no-header table tbody tr {
-  border-top: 1px solid;
+.adventure-details .adventure-details-item dt {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #696969;
 }
 
-/* striped variant */
-.adventure-details.block.striped tbody tr:nth-child(odd) {
-  background-color: var(--overlay-background-color);
+.adventure-details .adventure-details-item dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-color);
 }
 
-/* bordered variant */
-.adventure-details.block.bordered table th,
-.adventure-details.block.bordered table td {
-  border: 1px solid;
+/* ---- Page 2-column layout: details sidebar (left) + tabs (right) ----
+   The detail section holds: [title/underline], [adventure-details], [share
+   heading], [tabs]. On desktop the details + share stack in a narrow left
+   column and the tabs fill the wider right column. */
+@media (width >= 900px) {
+  .section.adventure-details-container.tabs-adventure-container {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    column-gap: 56px;
+    align-items: start;
+    max-width: 1264px;
+    margin: 40px auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  .section.adventure-details-container.tabs-adventure-container > div {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* row 1: the title/underline spans both columns */
+  .section.adventure-details-container.tabs-adventure-container
+    > .default-content-wrapper:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* left column: the details list and the "Share this Adventure" heading */
+  .section.adventure-details-container.tabs-adventure-container
+    > .adventure-details-wrapper {
+    grid-column: 1;
+  }
+
+  .section.adventure-details-container.tabs-adventure-container
+    > .default-content-wrapper:nth-child(3) {
+    grid-column: 1;
+  }
+
+  /* right column: the tabs panel */
+  .section.adventure-details-container.tabs-adventure-container
+    > .tabs-adventure-wrapper {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+  }
 }

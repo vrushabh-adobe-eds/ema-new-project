@@ -1,8 +1,8 @@
 /*
  * Adventure Details Block
- * A key/value specification panel (Activity, Adventure Type, Trip Length,
- * Group Size, Difficulty, Price) rendered as a two-column label/value table.
- * Variant of the Table block.
+ * A specification sidebar (Activity, Adventure Type, Trip Length, Group Size,
+ * Difficulty, Price). Rendered as a vertical label/value list with a left
+ * accent border, matching the source adventure detail page.
  */
 
 import { moveInstrumentation } from '../../scripts/scripts.js';
@@ -12,25 +12,24 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
  * @param {Element} block The block element
  */
 export default async function decorate(block) {
-  const table = document.createElement('table');
-  const thead = document.createElement('thead');
-  const tbody = document.createElement('tbody');
-  const header = !block.classList.contains('no-header');
+  const dl = document.createElement('dl');
+  dl.className = 'adventure-details-list';
 
-  [...block.children].forEach((row, i) => {
-    const tr = document.createElement('tr');
-    moveInstrumentation(row, tr);
+  [...block.children].forEach((row) => {
+    const cells = [...row.children];
+    if (cells.length < 2) return;
+    const item = document.createElement('div');
+    item.className = 'adventure-details-item';
+    moveInstrumentation(row, item);
 
-    [...row.children].forEach((cell) => {
-      const td = document.createElement(i === 0 && header ? 'th' : 'td');
+    const dt = document.createElement('dt');
+    dt.textContent = cells[0].textContent.trim();
+    const dd = document.createElement('dd');
+    dd.textContent = cells[1].textContent.trim();
 
-      if (i === 0) td.setAttribute('scope', 'column');
-      td.innerHTML = cell.innerHTML;
-      tr.append(td);
-    });
-    if (i === 0 && header) thead.append(tr);
-    else tbody.append(tr);
+    item.append(dt, dd);
+    dl.append(item);
   });
-  table.append(thead, tbody);
-  block.replaceChildren(table);
+
+  block.replaceChildren(dl);
 }

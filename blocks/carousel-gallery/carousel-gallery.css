@@ -29,7 +29,11 @@
   justify-content: center;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
+
+  /* stable hero height (source ~640px at 1440); avoids collapse from an
+     undefined --header-height in the previous calc(). */
+  height: clamp(320px, 44vw, 640px);
+  min-height: clamp(320px, 44vw, 640px);
 }
 
 .carousel-gallery .carousel-gallery-slide:has(.carousel-gallery-slide-content[data-align='center']) {

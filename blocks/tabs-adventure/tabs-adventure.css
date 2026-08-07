@@ -21,35 +21,44 @@
 .tabs-adventure .tabs-adventure-list button {
   flex: 0 0 max-content;
   margin: 0;
-  border: 1px solid #dadada;
+  border: 0;
   border-radius: 0;
-  padding: 0.5em;
-  background-color: var(--light-color);
-  color: initial;
-  font-weight: bold;
-  line-height: unset;
-  text-align: initial;
-  text-overflow: unset;
-  overflow: unset;
-  white-space: unset;
-  transition: background-color 0.2s;
+  padding: 10px 18px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .tabs-adventure .tabs-adventure-list button p {
   margin: 0;
 }
 
+.tabs-adventure .tabs-adventure-list button:hover {
+  background-color: var(--brand-primary);
+}
+
 .tabs-adventure .tabs-adventure-list button[aria-selected='true'] {
-  border-bottom: 1px solid var(--background-color);
-  background-color: var(--background-color);
+  background-color: var(--text-color);
+  color: #fff;
   cursor: initial;
 }
 
 .tabs-adventure .tabs-adventure-panel {
-  margin-top: -1px;
-  padding: 24px;
-  border: 1px solid #dadada;
+  margin-top: 16px;
+  padding: 0;
   overflow: auto;
+}
+
+/* the panel content repeats the adventure title (h1/h2/h3) which is already
+   shown above the tabs; hide it to avoid a duplicate heading. */
+.tabs-adventure .tabs-adventure-panel > :is(h1, h2, h3):first-child {
+  display: none;
 }
 
 .tabs-adventure .tabs-adventure-panel[aria-hidden='true'] {
