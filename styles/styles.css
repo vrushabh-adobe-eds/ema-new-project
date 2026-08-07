@@ -558,7 +558,8 @@ body.magazine-article .article-list:not(.related) > ul {
 .article-list.related .article-list-related-title {
   display: block;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 400; /* source uses regular weight */
+  line-height: 27px;
   text-transform: uppercase;
   letter-spacing: 0.01em;
 }
@@ -566,7 +567,8 @@ body.magazine-article .article-list:not(.related) > ul {
 .article-list.related .article-list-related-date {
   display: block;
   margin-top: 6px;
-  font-size: 14px;
+  font-size: 12px; /* source date size */
+  line-height: 18px;
   text-transform: uppercase;
   color: #696969;
 }
