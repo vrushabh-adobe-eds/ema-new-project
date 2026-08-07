@@ -435,7 +435,7 @@ body.magazine-article main > .section {
 
 body.magazine-article main .default-content-wrapper p {
   line-height: 1.6; /* tighter than the source's airy 2.5, for readability */
-  text-align: justify;
+  text-align: left; /* left-aligned (ragged-right) — no uneven justified word gaps */
 }
 
 /* Hide the duplicate article title: the body content fragment repeats the page
