@@ -137,9 +137,11 @@ function buildWidgetAutoBlocks(main) {
 }
 
 /**
- * Builds a breadcrumb for adventure detail pages (/us/en/adventures/{slug}),
- * derived from the URL + page title, matching the source ("Adventures ›
- * {Title}"). Inserted at the top of main so it sits above the hero.
+ * Builds a breadcrumb for adventure detail (/us/en/adventures/{slug}) and
+ * magazine article (/us/en/magazine/{slug}) pages, derived from the URL + page
+ * title, matching the source ("Adventures › {Title}" / "Magazine › {Title}").
+ * Adventure pages get it at the top (above the hero); magazine articles get it
+ * after the lead image, above the title.
  * @param {Element} main The container element
  */
 function buildBreadcrumb(main) {
@@ -147,9 +149,10 @@ function buildBreadcrumb(main) {
   // fragments, which must not receive a breadcrumb.
   if (main !== document.querySelector('main')) return;
   const { pathname } = window.location;
-  const m = pathname.match(/^(\/[a-z-]+\/[a-z-]+\/adventures)\/([^/]+)$/);
+  const m = pathname.match(/^(\/[a-z-]+\/[a-z-]+\/(adventures|magazine))\/([^/]+)$/);
   if (!m) return;
-  const [, adventuresPath] = m;
+  const [, parentPath, section] = m;
+  const parentLabel = section === 'magazine' ? 'Magazine' : 'Adventures';
   const title = (document.querySelector('main h1')?.textContent
     || document.title || '').trim();
   if (!title) return;
@@ -160,8 +163,8 @@ function buildBreadcrumb(main) {
   const ol = document.createElement('ol');
   const parent = document.createElement('li');
   const a = document.createElement('a');
-  a.href = adventuresPath;
-  a.textContent = 'Adventures';
+  a.href = parentPath;
+  a.textContent = parentLabel;
   parent.append(a);
   const current = document.createElement('li');
   current.setAttribute('aria-current', 'page');
@@ -172,7 +175,19 @@ function buildBreadcrumb(main) {
   const wrapper = document.createElement('div');
   wrapper.className = 'section breadcrumb-container';
   wrapper.append(nav);
-  main.prepend(wrapper);
+
+  if (section === 'magazine') {
+    // Source order: lead image → breadcrumb → title. Insert after the first
+    // section (the lead image), before the title/body section.
+    const firstSection = main.querySelector(':scope > .section');
+    if (firstSection && firstSection.nextElementSibling) {
+      firstSection.after(wrapper);
+    } else {
+      main.prepend(wrapper);
+    }
+  } else {
+    main.prepend(wrapper);
+  }
 }
 
 /**

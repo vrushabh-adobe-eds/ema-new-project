@@ -13,6 +13,7 @@ function readConfig(block) {
   let indexPath = DEFAULT_INDEX;
   let limit = 0;
   let members = false;
+  let related = false;
   block.querySelectorAll(':scope > div').forEach((row) => {
     const text = row.textContent.trim();
     const link = row.querySelector('a');
@@ -24,9 +25,37 @@ function readConfig(block) {
       limit = parseInt(text, 10);
     } else if (/^members$/i.test(text)) {
       members = true;
+    } else if (/^related$/i.test(text)) {
+      related = true;
     }
   });
-  return { indexPath, limit, members };
+  return {
+    indexPath, limit, members, related,
+  };
+}
+
+/**
+ * Builds one "related" list item (title link + date, no image) — matches the
+ * source article sidebar "SHARE THIS STORY" list.
+ * @param {object} item
+ * @returns {HTMLLIElement}
+ */
+function buildRelatedItem(item) {
+  const li = document.createElement('li');
+  const a = document.createElement('a');
+  a.href = item.path;
+  const title = document.createElement('span');
+  title.className = 'article-list-related-title';
+  title.textContent = item.title || item.path;
+  a.append(title);
+  if (item.publicationDate) {
+    const date = document.createElement('span');
+    date.className = 'article-list-related-date';
+    date.textContent = item.publicationDate;
+    a.append(date);
+  }
+  li.append(a);
+  return li;
 }
 
 /**
@@ -122,7 +151,9 @@ const CURATED_ORDER = {
 };
 
 export default async function decorate(block) {
-  const { indexPath, limit, members } = readConfig(block);
+  const {
+    indexPath, limit, members, related,
+  } = readConfig(block);
   const landingPath = indexPath.replace(/\/query-index\.json$/, '');
   // Collection segment (last path part of the landing path) drives both the
   // "direct child" filter and the curated order — so the same block is reusable
@@ -184,6 +215,15 @@ export default async function decorate(block) {
   }
 
   const ul = document.createElement('ul');
+
+  // Related mode: title + date list (no images), for the article sidebar.
+  if (related) {
+    block.classList.add('related');
+    items.forEach((item) => ul.append(buildRelatedItem(item)));
+    block.textContent = '';
+    block.append(ul);
+    return;
+  }
 
   // Members Only mode: render locked secure cards (title + desc + READ MORE,
   // image below), reusing the cards-teaser "secure" visual. No tabs.

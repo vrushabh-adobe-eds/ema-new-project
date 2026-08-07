@@ -436,7 +436,67 @@ body.magazine-article main .default-content-wrapper p {
   text-align: justify;
 }
 
+/* pull-quote grey box (source: #ebebeb panel around the blockquote) */
+body.magazine-article main .default-content-wrapper blockquote {
+  background-color: #ebebeb;
+  margin: 24px 0;
+  padding: 40px 48px;
+  border: 0;
+  font-family: var(--heading-font-family);
+  font-size: 36px;
+  line-height: 54px;
+  text-align: left;
+}
+
+body.magazine-article main .default-content-wrapper blockquote p {
+  margin: 0;
+  line-height: 54px;
+  text-align: left;
+}
+
 /* related list keeps the section's narrow column too */
-body.magazine-article .article-list > ul {
+body.magazine-article .article-list:not(.related) > ul {
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+/* related mode: title + date list with a left accent bar (source sidebar) */
+/* stylelint-disable-next-line no-descending-specificity */
+.article-list.related > ul {
+  display: block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.article-list.related > ul > li {
+  border-left: 2px solid #d8d8d8;
+  padding: 4px 0 4px 20px;
+  margin: 0 0 28px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.article-list.related > ul > li a {
+  display: block;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.article-list.related .article-list-related-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.article-list.related > ul > li a:hover .article-list-related-title {
+  background-color: var(--brand-primary);
+}
+
+.article-list.related .article-list-related-date {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #696969;
 }

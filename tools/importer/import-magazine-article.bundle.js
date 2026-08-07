@@ -48,19 +48,43 @@ var CustomImportScript = (() => {
     const role = element.querySelector(
       '.cmp-byline__occupations, .cmp-teaser__description, [class*="occupation"], [class*="role"], p'
     );
-    const socialLinks = Array.from(element.querySelectorAll(
-      '.cmp-byline__social a[href], [class*="social"] a[href], a[href*="facebook"], a[href*="twitter"], a[href*="instagram"]'
-    ));
-    const contentCell = [];
-    if (image) contentCell.push(image);
-    if (name) contentCell.push(name);
-    if (role) contentCell.push(role);
-    contentCell.push(...socialLinks);
-    if (!image && !name && !role && socialLinks.length === 0) {
+    const socialLinks = [];
+    const pushSocials = (root) => {
+      root.querySelectorAll("a[href]").forEach((a) => {
+        const label = (a.getAttribute("aria-label") || a.textContent || "").trim();
+        if (/facebook|twitter|instagram/i.test(label) || /facebook|twitter|instagram/i.test(a.getAttribute("href") || "")) {
+          socialLinks.push(a);
+        }
+      });
+    };
+    pushSocials(element);
+    if (element.parentElement) {
+      element.parentElement.querySelectorAll(':scope > a[href], :scope > p > a[href], [class*="social"] a[href]').forEach((a) => {
+        const label = (a.getAttribute("aria-label") || a.textContent || "").trim();
+        if (/facebook|twitter|instagram/i.test(label) && !socialLinks.includes(a)) {
+          socialLinks.push(a);
+        }
+      });
+    }
+    const socialCell = socialLinks.map((a) => {
+      const label = (a.getAttribute("aria-label") || a.textContent || "").trim();
+      const net = /facebook/i.test(label) ? "facebook" : /twitter/i.test(label) ? "twitter" : /instagram/i.test(label) ? "instagram" : "";
+      const link = document.createElement("a");
+      link.setAttribute("href", a.getAttribute("href") || "#");
+      if (net) link.className = `article-author-social-${net}`;
+      link.setAttribute("aria-label", label || net);
+      link.textContent = label || net;
+      return link;
+    });
+    const infoCell = [];
+    if (name) infoCell.push(name);
+    if (role) infoCell.push(role);
+    infoCell.push(...socialCell);
+    if (!image && !name && !role && socialCell.length === 0) {
       element.replaceWith(...element.childNodes);
       return;
     }
-    const cells = [[contentCell]];
+    const cells = [[image || "", infoCell.length ? infoCell : ""]];
     const block = WebImporter.Blocks.createBlock(document, { name: "article-author", cells });
     element.replaceWith(block);
   }
@@ -71,8 +95,16 @@ var CustomImportScript = (() => {
     const href = firstLink ? firstLink.getAttribute("href") : "";
     let indexPath = "/us/en/magazine/query-index.json";
     if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
+    const isRelated = !!element.closest('.cmp-layoutcontainer--sidebar, [class*="sidebar"]');
     const isLanding = !!element.closest(".image-list");
-    const cells = isLanding ? [[indexPath]] : [["4"], [indexPath]];
+    let cells;
+    if (isRelated) {
+      cells = [["related"], ["4"], [indexPath]];
+    } else if (isLanding) {
+      cells = [[indexPath]];
+    } else {
+      cells = [["4"], [indexPath]];
+    }
     const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     element.replaceWith(block);
   }

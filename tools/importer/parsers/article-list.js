@@ -24,12 +24,23 @@ export default function parse(element, { document }) {
   let indexPath = '/us/en/magazine/query-index.json';
   if (/\/adventures\//.test(href)) indexPath = '/us/en/adventures/query-index.json';
 
+  // Article sidebar "SHARE THIS STORY" related list → related mode (title+date,
+  // no images), rendered as the source sidebar list. Detected by the sidebar
+  // layout container.
+  const isRelated = !!element.closest('.cmp-layoutcontainer--sidebar, [class*="sidebar"]');
+
   // Landing pages (the full ".image-list" grid) list ALL entries — no limit.
   // Homepage teaser grids cap at 4.
   const isLanding = !!element.closest('.image-list');
 
-  // Config-only: (optional limit) + index path. No static card rows.
-  const cells = isLanding ? [[indexPath]] : [['4'], [indexPath]];
+  let cells;
+  if (isRelated) {
+    cells = [['related'], ['4'], [indexPath]];
+  } else if (isLanding) {
+    cells = [[indexPath]];
+  } else {
+    cells = [['4'], [indexPath]];
+  }
 
   const block = WebImporter.Blocks.createBlock(document, { name: 'article-list', cells });
   element.replaceWith(block);
