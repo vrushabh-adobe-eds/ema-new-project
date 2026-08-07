@@ -418,3 +418,25 @@ main > .section.breadcrumb-container {
 .breadcrumb li[aria-current="page"] {
   color: #696969;
 }
+
+/* ---------- magazine article page (body.magazine-article) ----------
+   Source: narrow centered reading column (~800px), airy justified body copy
+   (18px/45), contained lead image. */
+body.magazine-article main > .section > div {
+  max-width: 800px;
+}
+
+/* lead image sits full content width but contained (not edge-to-edge) */
+body.magazine-article main > .section:first-of-type > div {
+  max-width: 1200px;
+}
+
+body.magazine-article main .default-content-wrapper p {
+  line-height: 45px;
+  text-align: justify;
+}
+
+/* related list keeps the section's narrow column too */
+body.magazine-article .article-list > ul {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
