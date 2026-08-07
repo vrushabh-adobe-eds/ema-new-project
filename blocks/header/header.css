@@ -333,8 +333,11 @@ header nav .nav-hamburger-icon::before {
   top: -7px;
 }
 
+/* source menu glyph is tapered: top + middle bars full width, bottom bar
+   shorter (left-aligned). */
 header nav .nav-hamburger-icon::after {
   top: 7px;
+  width: 15px;
 }
 
 /* hamburger -> cross */
@@ -349,6 +352,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::before {
 
 header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   top: 0;
+  width: 24px; /* restore full width so the close (X) is symmetric */
   transform: rotate(-45deg);
 }
 
@@ -393,7 +397,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   }
 
   header nav .nav-brand img {
-    height: 40px;
+    height: 36px; /* source mobile logo is ~36px tall */
   }
 
   header nav .nav-search {
@@ -402,7 +406,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   }
 
   header nav .nav-search-form input {
-    width: 130px;
+    width: 160px; /* source mobile search field is ~160px wide */
   }
 
   /* nav links hidden until the hamburger opens them */
