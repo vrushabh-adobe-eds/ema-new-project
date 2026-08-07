@@ -96,6 +96,28 @@ var CustomImportScript = (() => {
       return;
     }
     const cells = [["members"], ["/us/en/magazine/query-index.json"]];
+    teasers.forEach((teaser) => {
+      const image = teaser.querySelector("img");
+      const titleEl = teaser.querySelector('.cmp-teaser__title, [class*="title"], h1, h2, h3');
+      const descEl = teaser.querySelector('.cmp-teaser__description, [class*="description"], p');
+      const body = [];
+      if (titleEl) {
+        const h = document.createElement("h3");
+        h.textContent = titleEl.textContent.trim();
+        body.push(h);
+      }
+      if (descEl && descEl.textContent.trim()) {
+        const p = document.createElement("p");
+        p.textContent = descEl.textContent.trim();
+        body.push(p);
+      }
+      const cta = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = "Read More";
+      cta.append(strong);
+      body.push(cta);
+      cells.push([body, image || ""]);
+    });
     const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     teasers.slice(1).forEach((t) => {
       if (t.parentNode) t.remove();
