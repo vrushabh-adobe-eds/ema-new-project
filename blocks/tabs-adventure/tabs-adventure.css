@@ -56,8 +56,9 @@
 }
 
 /* the panel content repeats the adventure title (h1/h2/h3) which is already
-   shown above the tabs; hide it to avoid a duplicate heading. */
-.tabs-adventure .tabs-adventure-panel > :is(h1, h2, h3):first-child {
+   shown above the tabs; hide the first heading in each panel to avoid a
+   duplicate. */
+.tabs-adventure .tabs-adventure-panel :is(h1, h2, h3):first-child {
   display: none;
 }
 
