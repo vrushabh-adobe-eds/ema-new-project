@@ -79,20 +79,28 @@
   width: var(--slide-content-width, auto);
 }
 
-/* indicators overlaid on the image bottom-center (matches source) */
+/* control strip BELOW the image (matches source): dots centered, arrows
+   far-right, dark on white. */
+.carousel-gallery .carousel-gallery-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 24px;
+}
+
 .carousel-gallery .carousel-gallery-slide-indicators {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 20px;
-  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   margin: 0;
   padding: 0;
-  background-color: transparent;
+
+  /* center the dots across the strip, independent of the right-aligned arrows */
+  position: absolute;
+  left: 0;
+  right: 0;
   line-height: 0;
 }
 
@@ -115,28 +123,24 @@
 }
 
 .carousel-gallery .carousel-gallery-navigation-buttons {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 12px;
-  right: 12px;
+  margin-left: auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 20px;
   z-index: 1;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
 .carousel-gallery .carousel-gallery-navigation-buttons button {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 28px;
+  height: 28px;
   margin: 0;
   border: 0;
   border-radius: 0;
   padding: 0;
   background-color: transparent;
-  color: #fff;
+  color: var(--text-color);
   cursor: pointer;
   transition: opacity 0.2s;
 }
@@ -167,11 +171,6 @@
 }
 
 @media (width >= 600px) {
-  .carousel-gallery .carousel-gallery-navigation-buttons {
-    left: 24px;
-    right: 24px;
-  }
-
   .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content {
     --slide-content-width: calc((100% - 184px) / 2);
 

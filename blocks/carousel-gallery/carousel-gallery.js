@@ -108,13 +108,16 @@ export default async function decorate(block) {
   block.prepend(slidesWrapper);
 
   // Always render slide controls (dots + arrows), even for a single image, to
-  // match the source WKND carousel. With one slide they simply loop in place.
+  // match the source WKND carousel. Controls sit in a strip BELOW the image
+  // (dots centered, arrows far-right).
+  const controls = document.createElement('div');
+  controls.classList.add('carousel-gallery-controls');
+
   const slideIndicatorsNav = document.createElement('nav');
   slideIndicatorsNav.setAttribute('aria-label', placeholders.carouselSlideControls || 'Carousel Slide Controls');
   const slideIndicators = document.createElement('ol');
   slideIndicators.classList.add('carousel-gallery-slide-indicators');
   slideIndicatorsNav.append(slideIndicators);
-  block.append(slideIndicatorsNav);
 
   const slideNavButtons = document.createElement('div');
   slideNavButtons.classList.add('carousel-gallery-navigation-buttons');
@@ -123,7 +126,8 @@ export default async function decorate(block) {
     <button type="button" class="slide-next" aria-label="${placeholders.nextSlide || 'Next Slide'}"></button>
   `;
 
-  container.append(slideNavButtons);
+  controls.append(slideIndicatorsNav, slideNavButtons);
+  block.append(controls);
 
   rows.forEach((row, idx) => {
     const slide = createSlide(row, idx, carouselId);
