@@ -165,26 +165,51 @@ footer .footer .footer-legal a:any-link {
   }
 }
 
-/* ---------- Mobile layout (< 900px): stacked ---------- */
+/* ---------- Mobile layout (< 900px) ----------
+   Matches source: logo (left) and the nav links (a left-aligned vertical
+   list) share the top row; FOLLOW US and the social icons stack below it,
+   left-aligned with the logo; then the legal/description text. */
 @media (width < 900px) {
   footer .footer .footer-inner {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'brand nav'
+      'social social'
+      'legal legal';
     gap: 28px;
+    align-items: start;
   }
 
-  footer .footer .footer-nav ul {
-    flex-direction: column;
-    gap: 16px;
+  footer .footer .footer-brand {
+    grid-area: brand;
+  }
+
+  footer .footer .footer-nav {
+    grid-area: nav;
   }
 
   footer .footer .footer-social {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    grid-area: social;
   }
 
   footer .footer .footer-legal {
+    grid-area: legal;
     margin-top: 0;
+  }
+
+  /* nav links: left-aligned vertical list beside the logo */
+  footer .footer .footer-nav ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  /* FOLLOW US label sits ABOVE the social icons (stacked), both left-aligned */
+  footer .footer .footer-social,
+  footer .footer .footer-social > .default-content-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 }
