@@ -3,11 +3,11 @@
    questions, and a +/- toggle icon (no box, no chevron). */
 
 .accordion-faq details {
-  border-bottom: 1px solid #dadada;
+  border-bottom: 2px solid #ebebeb; /* source divider: 2px solid #ebebeb */
 }
 
 .accordion-faq details:first-of-type {
-  border-top: 1px solid #dadada;
+  border-top: 2px solid #ebebeb;
 }
 
 .accordion-faq details p {
