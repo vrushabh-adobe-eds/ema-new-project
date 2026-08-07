@@ -88,6 +88,9 @@ export default function decorate(block) {
       li.append(a);
       social.append(li);
     });
-    infoCell.append(social);
+    // Append to the row (flex parent), not the info column, so the social bar
+    // sits as a top-level cell — top-aligned with the name row and pushed far
+    // right (matches the source layout).
+    row.append(social);
   }
 }
