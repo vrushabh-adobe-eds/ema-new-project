@@ -66,6 +66,11 @@
   display: none;
 }
 
+/* panel section heading (e.g. "The Essentials") — source margins 27px / 13.5px */
+.tabs-adventure .tabs-adventure-panel :is(h1, h2, h3) {
+  margin: 27px 0 13.5px;
+}
+
 /* panel body copy — airy line-height like the source */
 /* stylelint-disable-next-line no-descending-specificity */
 .tabs-adventure .tabs-adventure-panel p {
