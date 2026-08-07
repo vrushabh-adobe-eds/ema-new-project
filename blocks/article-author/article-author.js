@@ -49,13 +49,30 @@ export default function decorate(block) {
   (infoCell ? [...infoCell.querySelectorAll('a')] : []).forEach((a) => {
     if (isSocial(a)) collectedLinks.push(a);
   });
-  // trailing sibling <p><a> social links
-  let sib = block.nextElementSibling;
-  while (sib && sib.tagName === 'P' && sib.querySelector('a') && isSocial(sib.querySelector('a'))) {
-    collectedLinks.push(sib.querySelector('a'));
-    const next = sib.nextElementSibling;
-    sib.remove();
-    sib = next;
+
+  // The pipeline renders the social links as sibling <p><a> AFTER the block —
+  // either directly after it, or (because EDS wraps each block) in the next
+  // .default-content-wrapper. Adopt whichever we find, removing the now-empty
+  // source paragraphs/wrappers.
+  const adoptFrom = (container, stopAtBlock) => {
+    if (!container) return;
+    let node = stopAtBlock ? block.nextElementSibling : container.firstElementChild;
+    while (node && node.tagName === 'P' && node.querySelector('a') && isSocial(node.querySelector('a'))) {
+      collectedLinks.push(node.querySelector('a'));
+      const next = node.nextElementSibling;
+      node.remove();
+      node = next;
+    }
+  };
+  // (a) directly after the block within the same wrapper
+  adoptFrom(block.parentElement, true);
+  // (b) the wrapper that immediately follows the block's wrapper
+  const wrapper = block.closest('.article-author-wrapper') || block.parentElement;
+  const nextWrapper = wrapper ? wrapper.nextElementSibling : null;
+  if (collectedLinks.length === 0 && nextWrapper) {
+    adoptFrom(nextWrapper, false);
+    // remove the wrapper if it's now empty
+    if (nextWrapper.children.length === 0) nextWrapper.remove();
   }
 
   if (collectedLinks.length && infoCell) {
