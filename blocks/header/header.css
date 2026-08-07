@@ -21,7 +21,8 @@ header .header .nav-wrapper {
   background-color: #fff;
 }
 
-/* sticky header on the outermost wrapper, with a drop shadow at the bottom.
+/* sticky header on the outermost wrapper. The drop shadow only appears once the
+   header is sticky (on scroll) — no shadow in the initial resting state.
    overflow-x: clip contains the utility bar's full-bleed ::before (which uses
    negative viewport insets) so it can't create a horizontal page scrollbar. */
 header.header-wrapper {
@@ -30,6 +31,10 @@ header.header-wrapper {
   z-index: 20;
   overflow-x: clip;
   background-color: #fff;
+}
+
+/* drop shadow only when the nav has shrunk into its sticky state */
+header.header-wrapper:has(.header.nav-sticky) {
   box-shadow: 0 2px 8px rgb(0 0 0 / 12%);
 }
 
