@@ -73,52 +73,59 @@ var CustomImportScript = (() => {
 
   // tools/importer/parsers/article-list.js
   function parse2(element, { document }) {
-    const cells = [[""]];
+    const firstLink = element.querySelector("a[href]");
+    const href = firstLink ? firstLink.getAttribute("href") : "";
+    let indexPath = "/us/en/magazine/query-index.json";
+    if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
+    const cells = [["4"], [indexPath]];
     const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     element.replaceWith(block);
   }
 
-  // tools/importer/parsers/cards-teaser.js
+  // tools/importer/parsers/cards-teaser-secure.js
   function parse3(element, { document }) {
-    const items = Array.from(element.querySelectorAll(
-      ":scope .cmp-image-list__item, :scope .cmp-list__item, :scope li"
-    ));
-    const cells = [];
-    items.forEach((item) => {
-      const image = item.querySelector("img");
-      const titleEl = item.querySelector(
-        '.cmp-image-list__item-title, .cmp-list__item-title, [class*="title"]'
-      );
-      const titleLink = item.querySelector(
-        ".cmp-image-list__item-title-link, .cmp-image-list__item-image-link, a[href]"
-      );
-      const descEl = item.querySelector(
-        '.cmp-image-list__item-description, .cmp-list__item-description, [class*="description"]'
-      );
-      if (!image && !titleEl && !descEl) return;
-      const textCell = [];
-      if (titleEl) {
-        const titleText = titleEl.textContent.trim();
-        const heading = document.createElement("h3");
-        const href = titleLink ? titleLink.getAttribute("href") : null;
-        if (href) {
-          const a = document.createElement("a");
-          a.setAttribute("href", href);
-          a.textContent = titleText;
-          heading.appendChild(a);
-        } else {
-          heading.textContent = titleText;
-        }
-        textCell.push(heading);
-      }
-      if (descEl && descEl.textContent.trim()) textCell.push(descEl);
-      cells.push([image || "", textCell.length ? textCell : ""]);
-    });
-    if (cells.length === 0) {
+    const SEL = ".cmp-teaser--secure";
+    const teasers = Array.from(document.querySelectorAll(SEL));
+    if (!teasers.length) {
       element.replaceWith(...element.childNodes);
       return;
     }
-    const block = WebImporter.Blocks.createBlock(document, { name: "cards-teaser", cells });
+    if (teasers[0] !== element) {
+      if (element.parentNode) element.remove();
+      return;
+    }
+    const cells = [];
+    teasers.forEach((teaser) => {
+      const image = teaser.querySelector("img");
+      const titleEl = teaser.querySelector('.cmp-teaser__title, [class*="title"], h1, h2, h3');
+      const descEl = teaser.querySelector('.cmp-teaser__description, [class*="description"], p');
+      const cta = teaser.querySelector(".cmp-teaser__action-link, a.cmp-button, a[href]");
+      const textCell = [];
+      if (titleEl) {
+        const h = document.createElement("h3");
+        h.textContent = titleEl.textContent.trim();
+        textCell.push(h);
+      }
+      if (descEl && descEl.textContent.trim()) {
+        const p2 = document.createElement("p");
+        p2.textContent = descEl.textContent.trim();
+        textCell.push(p2);
+      }
+      const ctaText = cta && cta.textContent.trim() || "Read More";
+      const p = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = ctaText;
+      p.append(strong);
+      textCell.push(p);
+      cells.push([image || "", textCell.length ? textCell : ""]);
+    });
+    const block = WebImporter.Blocks.createBlock(document, {
+      name: "cards-teaser (secure)",
+      cells
+    });
+    teasers.slice(1).forEach((t) => {
+      if (t.parentNode) t.remove();
+    });
     element.replaceWith(block);
   }
 
