@@ -171,11 +171,6 @@
 }
 
 @media (width >= 600px) {
-  .carousel-gallery .carousel-gallery-navigation-buttons {
-    left: 24px;
-    right: 24px;
-  }
-
   .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content {
     --slide-content-width: calc((100% - 184px) / 2);
 
