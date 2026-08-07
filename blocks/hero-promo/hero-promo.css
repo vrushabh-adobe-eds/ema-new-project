@@ -5,6 +5,8 @@
 
 .hero-promo {
   position: relative;
+  display: flex;
+  flex-direction: column;
   padding: 0;
 }
 
@@ -24,14 +26,20 @@
   object-fit: cover;
 }
 
-/* content card: centered white box pulled up to overlap the image bottom */
+/* content card: centered white box anchored to the image bottom, overlapping
+   it (source: card bottom sits exactly on the image bottom, fully over the
+   image). Absolute positioning makes the bottom align regardless of card
+   height, so no image strip peeks out below. */
 .hero-promo > div:last-child {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
   z-index: 1;
   box-sizing: border-box;
   width: calc(100% - 48px);
   max-width: 1192px;
-  margin: -56px auto 0;
+  margin: 0;
   padding: 24px 28px 28px;
   background-color: #fff;
   color: var(--text-color);
@@ -54,12 +62,14 @@
   margin-bottom: 0;
 }
 
-/* no-image variant: plain dark-on-light content block */
+/* no-image variant: plain dark-on-light content block (card back to flow) */
 .hero-promo.no-image {
   padding: 40px 24px;
 }
 
 .hero-promo.no-image > div:last-child {
+  position: static;
+  transform: none;
   margin: 0 auto;
 }
 
@@ -69,7 +79,6 @@
 
 @media (width >= 900px) {
   .hero-promo > div:last-child {
-    margin-top: -180px;
     padding: 32px 28px 36px;
   }
 

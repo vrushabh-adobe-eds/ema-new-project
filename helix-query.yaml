@@ -46,6 +46,9 @@ indices:
       template:
         select: head > meta[name="template"]
         value: attribute(el, "content")
+      categories:
+        select: head > meta[name="categories"]
+        value: attribute(el, "content")
       lastModified:
         select: none
         value: parseTimestamp(headers("last-modified"), "ddd, DD MMM YYYY hh:mm:ss GMT")
