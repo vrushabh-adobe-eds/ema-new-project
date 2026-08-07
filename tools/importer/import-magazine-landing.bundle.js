@@ -77,7 +77,8 @@ var CustomImportScript = (() => {
     const href = firstLink ? firstLink.getAttribute("href") : "";
     let indexPath = "/us/en/magazine/query-index.json";
     if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
-    const cells = [["4"], [indexPath]];
+    const isLanding = !!element.closest(".image-list");
+    const cells = isLanding ? [[indexPath]] : [["4"], [indexPath]];
     const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     element.replaceWith(block);
   }
