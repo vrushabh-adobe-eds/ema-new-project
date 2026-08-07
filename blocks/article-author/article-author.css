@@ -49,11 +49,12 @@
   letter-spacing: 0.04em;
 }
 
-/* social icon boxes — pushed to the far right, dark boxes with white glyphs */
+/* social icon boxes — pushed to the far right; flush (no gap) so the three
+   48px dark boxes form one connected bar, matching the source. */
 .article-author .article-author-social {
   list-style: none;
   display: flex;
-  gap: 8px;
+  gap: 0;
   margin: 0 0 0 auto;
   padding: 0;
 }
