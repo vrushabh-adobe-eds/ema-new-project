@@ -426,8 +426,10 @@ body.magazine-article main > .section > div {
   max-width: 800px;
 }
 
-/* lead image sits full content width but contained (not edge-to-edge) */
-body.magazine-article main > .section:first-of-type > div {
+/* lead image spans a wide banner (source ~1136px) with only small side margins,
+   not the narrow 800px reading column. The lead-image section is tagged in
+   scripts.js (buildBreadcrumb). */
+body.magazine-article main > .section.lead-image > div {
   max-width: 1200px;
 }
 

@@ -177,11 +177,16 @@ function buildBreadcrumb(main) {
   wrapper.append(nav);
 
   if (section === 'magazine') {
-    // Source order: lead image → breadcrumb → title. Insert after the first
-    // section (the lead image), before the title/body section.
-    const firstSection = main.querySelector(':scope > .section');
-    if (firstSection && firstSection.nextElementSibling) {
-      firstSection.after(wrapper);
+    // Source order: lead image → breadcrumb → title. Insert right after the
+    // section that contains the lead image.
+    const leadImg = main.querySelector(':scope > .section img, :scope > .section picture');
+    const leadSection = leadImg ? leadImg.closest('.section') : null;
+    const anchor = leadSection && leadSection.parentElement === main
+      ? leadSection
+      : main.querySelector(':scope > .section');
+    if (anchor) {
+      anchor.classList.add('lead-image');
+      anchor.after(wrapper);
     } else {
       main.prepend(wrapper);
     }
