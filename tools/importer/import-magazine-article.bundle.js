@@ -65,55 +65,15 @@ var CustomImportScript = (() => {
     element.replaceWith(block);
   }
 
-  // tools/importer/parsers/cards-related.js
+  // tools/importer/parsers/article-list.js
   function parse2(element, { document }) {
-    const items = Array.from(element.querySelectorAll(
-      ":scope .cmp-list__item, :scope .cmp-image-list__item, :scope li"
-    ));
-    const parsed = items.map((item) => {
-      const image = item.querySelector("img");
-      const link = item.querySelector("a[href]");
-      const titleEl = item.querySelector(
-        '.cmp-list__item-title, .cmp-image-list__item-title, [class*="title"]'
-      );
-      const dateEl = item.querySelector(
-        '.cmp-list__item-date, [class*="date"]'
-      );
-      const descEl = item.querySelector(
-        '.cmp-list__item-description, .cmp-image-list__item-description, [class*="description"]'
-      );
-      return { image, link, titleEl, dateEl, descEl };
-    }).filter((p) => p.titleEl || p.image || p.link);
-    const hasImages = parsed.some((p) => p.image);
-    const cells = [];
-    parsed.forEach((p) => {
-      const textCell = [];
-      if (p.titleEl) {
-        const titleText = p.titleEl.textContent.trim();
-        if (p.link && p.link.getAttribute("href")) {
-          const a = document.createElement("a");
-          a.setAttribute("href", p.link.getAttribute("href"));
-          a.textContent = titleText;
-          textCell.push(a);
-        } else {
-          textCell.push(p.titleEl);
-        }
-      } else if (p.link && p.link.getAttribute("href")) {
-        textCell.push(p.link);
-      }
-      if (p.descEl && p.descEl.textContent.trim()) textCell.push(p.descEl);
-      if (p.dateEl && p.dateEl.textContent.trim()) textCell.push(p.dateEl);
-      if (hasImages) {
-        cells.push([p.image || "", textCell.length ? textCell : ""]);
-      } else {
-        cells.push([textCell.length ? textCell : ""]);
-      }
-    });
-    if (cells.length === 0) {
-      element.replaceWith(...element.childNodes);
-      return;
-    }
-    const block = WebImporter.Blocks.createBlock(document, { name: "cards-related", cells });
+    const firstLink = element.querySelector("a[href]");
+    const href = firstLink ? firstLink.getAttribute("href") : "";
+    let indexPath = "/us/en/magazine/query-index.json";
+    if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
+    const isLanding = !!element.closest(".image-list");
+    const cells = isLanding ? [[indexPath]] : [["4"], [indexPath]];
+    const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     element.replaceWith(block);
   }
 
@@ -260,7 +220,7 @@ var CustomImportScript = (() => {
   // tools/importer/import-magazine-article.js
   var parsers = {
     "article-author": parse,
-    "cards-related": parse2
+    "article-list": parse2
   };
   var PAGE_TEMPLATE = {
     "name": "magazine-article",
@@ -281,7 +241,7 @@ var CustomImportScript = (() => {
         ]
       },
       {
-        "name": "cards-related",
+        "name": "article-list",
         "instances": [
           ".cmp-layoutcontainer--sidebar .cmp-list",
           ".cmp-list--related"
@@ -362,7 +322,7 @@ var CustomImportScript = (() => {
         ],
         "style": null,
         "blocks": [
-          "cards-related"
+          "article-list"
         ],
         "defaultContent": []
       }

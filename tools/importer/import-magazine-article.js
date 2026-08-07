@@ -3,7 +3,7 @@
 
 // PARSER IMPORTS
 import articleAuthorParser from "./parsers/article-author.js";
-import cardsRelatedParser from "./parsers/cards-related.js";
+import articleListParser from "./parsers/article-list.js";
 
 // TRANSFORMER IMPORTS
 import wkndCleanupTransformer from "./transformers/wknd-cleanup.js";
@@ -12,7 +12,7 @@ import wkndSectionsTransformer from "./transformers/wknd-sections.js";
 // PARSER REGISTRY
 const parsers = {
   "article-author": articleAuthorParser,
-  "cards-related": cardsRelatedParser,
+  "article-list": articleListParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION (embedded from page-templates.json)
@@ -35,7 +35,7 @@ const PAGE_TEMPLATE = {
         ]
       },
       {
-        "name": "cards-related",
+        "name": "article-list",
         "instances": [
           ".cmp-layoutcontainer--sidebar .cmp-list",
           ".cmp-list--related"
@@ -116,7 +116,7 @@ const PAGE_TEMPLATE = {
         ],
         "style": null,
         "blocks": [
-          "cards-related"
+          "article-list"
         ],
         "defaultContent": []
       }

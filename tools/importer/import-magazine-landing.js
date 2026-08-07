@@ -4,17 +4,20 @@
 // PARSER IMPORTS
 import columnsFeaturedParser from "./parsers/columns-featured.js";
 import articleListParser from "./parsers/article-list.js";
-import cardsTeaserSecureParser from "./parsers/cards-teaser-secure.js";
+import articleListMembersParser from "./parsers/article-list-members.js";
 
 // TRANSFORMER IMPORTS
 import wkndCleanupTransformer from "./transformers/wknd-cleanup.js";
 import wkndSectionsTransformer from "./transformers/wknd-sections.js";
 
 // PARSER REGISTRY
+// Two distinct block keys route to two article-list modes:
+//   "article-list"          → All Articles listing (m2)
+//   "article-list-members"  → Members Only, dynamic members mode (m3)
 const parsers = {
   "columns-featured": columnsFeaturedParser,
   "article-list": articleListParser,
-  "cards-teaser": cardsTeaserSecureParser,
+  "article-list-members": articleListMembersParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION (embedded from page-templates.json)
@@ -39,7 +42,7 @@ const PAGE_TEMPLATE = {
         ]
       },
       {
-        "name": "cards-teaser",
+        "name": "article-list-members",
         "instances": [
           ".cmp-teaser--secure"
         ]
@@ -82,7 +85,7 @@ const PAGE_TEMPLATE = {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list-members"
         ],
         "defaultContent": [
           "h2",

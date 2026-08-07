@@ -64,14 +64,18 @@
 }
 
 /* ---------- secure variant (Members Only locked teasers) ---------- */
+
+/* Source: fixed ~388px cards, left-aligned (not full-width), image locked to
+   ~200px tall (no 13/10 aspect that balloons on wide screens). */
 .cards-teaser.secure > ul {
   grid-template-columns: 1fr;
   gap: 48px 56px;
+  justify-content: start;
 }
 
 @media (width >= 900px) {
   .cards-teaser.secure > ul {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 388px));
   }
 }
 
@@ -79,6 +83,12 @@
 .cards-teaser.secure > ul > li {
   display: flex;
   flex-direction: column;
+}
+
+/* fixed image height (matches source ~200px); override the teaser 13/10 ratio */
+.cards-teaser.secure > ul > li img {
+  aspect-ratio: auto;
+  height: 200px;
 }
 
 .cards-teaser.secure .cards-teaser-card-body {

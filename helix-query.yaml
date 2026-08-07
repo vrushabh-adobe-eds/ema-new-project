@@ -4,8 +4,6 @@ indices:
   magazine:
     include:
       - '/us/en/magazine/**'
-    exclude:
-      - '/us/en/magazine/members-only/**'
     target: /us/en/magazine/query-index.json
     properties:
       title:
@@ -25,6 +23,9 @@ indices:
         value: attribute(el, "content")
       template:
         select: head > meta[name="template"]
+        value: attribute(el, "content")
+      members:
+        select: head > meta[name="members"]
         value: attribute(el, "content")
       lastModified:
         select: none
