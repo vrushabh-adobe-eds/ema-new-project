@@ -31,6 +31,7 @@ header.header-wrapper {
   z-index: 20;
   overflow-x: clip;
   background-color: #fff;
+  transition: height 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* drop shadow only when the nav has shrunk into its sticky state */
@@ -193,6 +194,7 @@ header nav .nav-brand {
   grid-area: brand;
   display: flex;
   align-items: center;
+  transition: height 0.2s ease;
 }
 
 /* The logo may arrive wrapped in a .default-content-wrapper > p > a (DA/EDS).
@@ -233,7 +235,7 @@ header nav .nav-sections li a:any-link {
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--wknd-dark);
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, padding 0.2s ease;
 }
 
 /* yellow hover / active highlight — matches source #ffea00 */
