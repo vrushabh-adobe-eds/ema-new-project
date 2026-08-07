@@ -2,18 +2,12 @@
   "status": "success",
   "url": "https://wknd.site/us/en/adventures.html",
   "path": "us/en/adventures",
-  "timestamp": "2026-08-06T08:10:07.880Z",
+  "timestamp": "2026-08-07T03:09:28.549Z",
   "title": "Adventures",
   "template": "adventure-listing",
   "blocks": [
-    "hero-intro",
-    "hero-intro",
-    "cards-teaser",
-    "cards-teaser",
-    "cards-teaser",
-    "cards-teaser",
-    "cards-teaser",
-    "cards-teaser",
-    "cards-teaser"
+    "hero-promo",
+    "hero-promo",
+    "article-list"
   ]
 }

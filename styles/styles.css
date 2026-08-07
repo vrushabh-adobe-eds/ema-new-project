@@ -369,7 +369,10 @@ main .section.highlight {
    element in main and would otherwise sit beneath it. */
 main > .section.breadcrumb-container {
   max-width: 1264px;
-  margin: 24px auto 0;
+
+  /* top margin clears the sticky header (reserved --nav-height); the breadcrumb
+     is always the first content on adventure detail pages. */
+  margin: calc(var(--nav-height) + 24px) auto 0;
   padding: 0 24px;
 }
 
