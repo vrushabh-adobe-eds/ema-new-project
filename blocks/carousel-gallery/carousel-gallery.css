@@ -1,3 +1,16 @@
+/* full-bleed: break out of the section's centered max-width so the hero
+   spans the full viewport width (matches source). */
+.carousel-gallery-container .carousel-gallery-wrapper,
+.carousel-gallery {
+  max-width: unset;
+}
+
+.carousel-gallery {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
 .carousel-gallery .carousel-gallery-slides-container {
   position: relative;
 }
