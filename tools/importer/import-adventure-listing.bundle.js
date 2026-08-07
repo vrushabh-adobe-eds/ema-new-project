@@ -41,7 +41,7 @@ var CustomImportScript = (() => {
     default: () => import_adventure_listing_default
   });
 
-  // tools/importer/parsers/hero-intro.js
+  // tools/importer/parsers/hero-promo.js
   function parse(element, { document }) {
     const image = element.querySelector(".cmp-teaser__image img, .cmp-image__image, img");
     const titleEl = element.querySelector(".cmp-teaser__title, .cmp-title__text, h1, h2, h3");
@@ -64,52 +64,20 @@ var CustomImportScript = (() => {
     if (descEl && descEl.textContent.trim()) contentCell.push(descEl);
     contentCell.push(...ctas);
     cells.push([contentCell]);
-    const block = WebImporter.Blocks.createBlock(document, { name: "hero-intro", cells });
+    const block = WebImporter.Blocks.createBlock(document, { name: "hero-promo", cells });
     element.replaceWith(block);
   }
 
-  // tools/importer/parsers/cards-teaser.js
+  // tools/importer/parsers/article-list-adventures.js
   function parse2(element, { document }) {
-    const items = Array.from(element.querySelectorAll(
-      ":scope .cmp-image-list__item, :scope .cmp-list__item, :scope li"
-    ));
-    const cells = [];
-    items.forEach((item) => {
-      const image = item.querySelector("img");
-      const titleEl = item.querySelector(
-        '.cmp-image-list__item-title, .cmp-list__item-title, [class*="title"]'
-      );
-      const titleLink = item.querySelector(
-        ".cmp-image-list__item-title-link, .cmp-image-list__item-image-link, a[href]"
-      );
-      const descEl = item.querySelector(
-        '.cmp-image-list__item-description, .cmp-list__item-description, [class*="description"]'
-      );
-      if (!image && !titleEl && !descEl) return;
-      const textCell = [];
-      if (titleEl) {
-        const titleText = titleEl.textContent.trim();
-        const heading = document.createElement("h3");
-        const href = titleLink ? titleLink.getAttribute("href") : null;
-        if (href) {
-          const a = document.createElement("a");
-          a.setAttribute("href", href);
-          a.textContent = titleText;
-          heading.appendChild(a);
-        } else {
-          heading.textContent = titleText;
-        }
-        textCell.push(heading);
-      }
-      if (descEl && descEl.textContent.trim()) textCell.push(descEl);
-      cells.push([image || "", textCell.length ? textCell : ""]);
-    });
-    if (cells.length === 0) {
-      element.replaceWith(...element.childNodes);
-      return;
+    const heading = element.querySelector("h1, h2, h3");
+    const cells = [["/us/en/adventures/query-index.json"]];
+    const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
+    if (heading) {
+      element.replaceWith(heading, block);
+    } else {
+      element.replaceWith(block);
     }
-    const block = WebImporter.Blocks.createBlock(document, { name: "cards-teaser", cells });
-    element.replaceWith(block);
   }
 
   // tools/importer/transformers/wknd-cleanup.js
@@ -254,8 +222,8 @@ var CustomImportScript = (() => {
 
   // tools/importer/import-adventure-listing.js
   var parsers = {
-    "hero-intro": parse,
-    "cards-teaser": parse2
+    "hero-promo": parse,
+    "article-list": parse2
   };
   var PAGE_TEMPLATE = {
     "name": "adventure-listing",
@@ -265,17 +233,16 @@ var CustomImportScript = (() => {
     ],
     "blocks": [
       {
-        "name": "hero-intro",
+        "name": "hero-promo",
         "instances": [
           "#teaser-e27d55d295",
           ".cmp-teaser--hero"
         ]
       },
       {
-        "name": "cards-teaser",
+        "name": "article-list",
         "instances": [
-          "#container-7ea6258004 .cmp-image-list",
-          ".cmp-tabs__tabpanel--active .cmp-image-list"
+          "#container-7ea6258004"
         ]
       }
     ],
@@ -288,7 +255,7 @@ var CustomImportScript = (() => {
         ],
         "style": null,
         "blocks": [
-          "hero-intro"
+          "hero-promo"
         ],
         "defaultContent": [
           "h1"
@@ -302,7 +269,7 @@ var CustomImportScript = (() => {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list"
         ],
         "defaultContent": [
           "h2"

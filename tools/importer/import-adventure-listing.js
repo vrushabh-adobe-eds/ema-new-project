@@ -2,8 +2,8 @@
 /* global WebImporter */
 
 // PARSER IMPORTS
-import heroIntroParser from "./parsers/hero-intro.js";
-import cardsTeaserParser from "./parsers/cards-teaser.js";
+import heroPromoParser from "./parsers/hero-promo.js";
+import articleListAdventuresParser from "./parsers/article-list-adventures.js";
 
 // TRANSFORMER IMPORTS
 import wkndCleanupTransformer from "./transformers/wknd-cleanup.js";
@@ -11,8 +11,8 @@ import wkndSectionsTransformer from "./transformers/wknd-sections.js";
 
 // PARSER REGISTRY
 const parsers = {
-  "hero-intro": heroIntroParser,
-  "cards-teaser": cardsTeaserParser,
+  "hero-promo": heroPromoParser,
+  "article-list": articleListAdventuresParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION (embedded from page-templates.json)
@@ -24,17 +24,16 @@ const PAGE_TEMPLATE = {
     ],
     "blocks": [
       {
-        "name": "hero-intro",
+        "name": "hero-promo",
         "instances": [
           "#teaser-e27d55d295",
           ".cmp-teaser--hero"
         ]
       },
       {
-        "name": "cards-teaser",
+        "name": "article-list",
         "instances": [
-          "#container-7ea6258004 .cmp-image-list",
-          ".cmp-tabs__tabpanel--active .cmp-image-list"
+          "#container-7ea6258004"
         ]
       }
     ],
@@ -47,7 +46,7 @@ const PAGE_TEMPLATE = {
         ],
         "style": null,
         "blocks": [
-          "hero-intro"
+          "hero-promo"
         ],
         "defaultContent": [
           "h1"
@@ -61,7 +60,7 @@ const PAGE_TEMPLATE = {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list"
         ],
         "defaultContent": [
           "h2"
