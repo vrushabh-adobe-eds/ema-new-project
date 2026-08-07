@@ -91,7 +91,16 @@
    headings) and aligns on the same top line as the FAQs title. */
 .section.accordion-faq-container > .default-content-wrapper:last-child h2,
 .section.accordion-faq-container > .default-content-wrapper:last-child h3 {
-  margin-top: 0;
+  margin: 0 0 13.5px;
+}
+
+/* "Need more help?" body copy: the source renders this at 14px with an airy
+   35px line-height (not the larger default body size), so the phone/email
+   lines sit apart. */
+.section.accordion-faq-container > .default-content-wrapper:last-child p {
+  margin: 0 0 13.5px;
+  font-size: 14px;
+  line-height: 35px;
 }
 
 .section.accordion-faq-container > .default-content-wrapper:last-child h2::after,
