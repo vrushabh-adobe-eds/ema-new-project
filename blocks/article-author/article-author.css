@@ -6,17 +6,18 @@
 
 .article-author {
   /* thin divider line above the byline (source has an <hr> separator between
-     the article body and the author credit) */
-  margin-top: 32px;
+     the article body and the author credit) + generous space below before footer */
+  margin: 32px 0 64px;
   border-top: 1px solid #e6e6e6;
-  padding: 40px 0 24px;
+  padding: 40px 0 0;
 }
 
 /* the block wraps its cells in a single row <div>; that row is the flex
-   container (avatar + info on the left, socials pushed far right). */
+   container (avatar + info on the left, socials pushed far right). Top-aligned
+   so the social box sits level with the name (matches source). */
 .article-author > div {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 24px;
 }
 
