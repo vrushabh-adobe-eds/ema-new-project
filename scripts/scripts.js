@@ -143,6 +143,9 @@ function buildWidgetAutoBlocks(main) {
  * @param {Element} main The container element
  */
 function buildBreadcrumb(main) {
+  // only for the real page <main> — decorateMain also runs on header/footer
+  // fragments, which must not receive a breadcrumb.
+  if (main !== document.querySelector('main')) return;
   const { pathname } = window.location;
   const m = pathname.match(/^(\/[a-z-]+\/[a-z-]+\/adventures)\/([^/]+)$/);
   if (!m) return;
