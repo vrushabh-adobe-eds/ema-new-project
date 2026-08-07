@@ -5,7 +5,11 @@
  */
 
 .article-author {
-  padding: 24px 0;
+  /* thin divider line above the byline (source has an <hr> separator between
+     the article body and the author credit) */
+  margin-top: 32px;
+  border-top: 1px solid #e6e6e6;
+  padding: 40px 0 24px;
 }
 
 /* the block wraps its cells in a single row <div>; that row is the flex
