@@ -65,3 +65,36 @@
 .tabs-adventure .tabs-adventure-panel[aria-hidden='true'] {
   display: none;
 }
+
+/* panel body copy — airy line-height like the source */
+.tabs-adventure .tabs-adventure-panel p {
+  font-size: 18px;
+  line-height: 2.5;
+  margin: 0 0 14px;
+}
+
+/* lists (e.g. "What to Bring") — triangle marker, no default bullet, roomy */
+.tabs-adventure .tabs-adventure-panel ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tabs-adventure .tabs-adventure-panel ul li {
+  position: relative;
+  padding-left: 28px;
+  font-size: 18px;
+  line-height: 2;
+}
+
+.tabs-adventure .tabs-adventure-panel ul li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.7em;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 7px solid var(--text-color);
+}
