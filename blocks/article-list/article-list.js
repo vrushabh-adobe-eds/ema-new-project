@@ -124,7 +124,47 @@ export default async function decorate(block) {
   const ul = document.createElement('ul');
 
   if (items.length) {
-    items.forEach((item) => ul.append(buildCard(item)));
+    items.forEach((item) => {
+      const li = buildCard(item);
+      // tag the card with its categories so the tab bar can filter it
+      const cats = (item.categories || '').split(',').map((c) => c.trim()).filter(Boolean);
+      if (cats.length) li.dataset.categories = cats.join('|');
+      ul.append(li);
+    });
+
+    // Build category tabs (All + each distinct category) when categories exist.
+    const allCats = [...new Set(items.flatMap(
+      (it) => (it.categories || '').split(',').map((c) => c.trim()).filter(Boolean),
+    ))];
+    if (allCats.length) {
+      const tabs = document.createElement('div');
+      tabs.className = 'article-list-tabs';
+      tabs.setAttribute('role', 'tablist');
+      const makeTab = (label, value) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'article-list-tab';
+        btn.textContent = label;
+        btn.dataset.filter = value;
+        btn.setAttribute('role', 'tab');
+        btn.addEventListener('click', () => {
+          tabs.querySelectorAll('.article-list-tab').forEach((t) => t.classList.remove('active'));
+          btn.classList.add('active');
+          ul.querySelectorAll(':scope > li').forEach((li) => {
+            const liCats = (li.dataset.categories || '').split('|');
+            li.hidden = value !== 'all' && !liCats.includes(value);
+          });
+        });
+        return btn;
+      };
+      const allTab = makeTab('All', 'all');
+      allTab.classList.add('active');
+      tabs.append(allTab);
+      allCats.forEach((c) => tabs.append(makeTab(c, c)));
+      block.textContent = '';
+      block.append(tabs, ul);
+      return;
+    }
   } else {
     // Fallback: decorate any statically authored rows as cards. Only rows that
     // actually carry an image are real cards — config-only rows (a bare limit
