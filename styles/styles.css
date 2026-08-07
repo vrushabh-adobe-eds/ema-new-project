@@ -428,7 +428,7 @@ body.magazine-article main > .section > div {
 }
 
 body.magazine-article main .default-content-wrapper p {
-  line-height: 45px;
+  line-height: 1.6; /* tighter than the source's airy 2.5, for readability */
   text-align: justify;
 }
 
