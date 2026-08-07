@@ -111,8 +111,11 @@
 @media (width >= 900px) {
   .section.accordion-faq-container {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-    column-gap: 64px;
+
+    /* match source proportions: left content 8/12, ~1/12 gap, help panel 3/12
+       (≈25%) flush to the right edge. */
+    grid-template-columns: minmax(0, 8fr) minmax(0, 3fr);
+    column-gap: 96px;
     max-width: 1264px;
     margin: 64px auto 40px;
     padding: 0 32px;
