@@ -140,10 +140,13 @@ Source: https://wknd.site/us/en.html → AEM Edge Delivery (`vrushabh-adobe-eds/
   **VERIFIED on branch preview**: 2 secure cards render (388px card / 200px image, lock
   badge, READ MORE) — matches source. Auto-upgrades to fully index-driven once
   helix-query.yaml lands on main.
-- **Optional follow-up (fully dynamic)**: merge mag-limit-fix → main so helix-query.yaml
-  (members field) takes effect; then reindex the 2 member pages. `gh` not installed and
-  the injected git token isn't exposed for API use, so the PR must be opened via the
-  GitHub UI. Not required for correct rendering — the fallback already shows the cards.
+- **MERGED to main** (merge commit 6982723, git ff + --no-ff merge, pushed). Code sync
+  deployed; index config reloaded (members column present). Published + bulk-reindexed
+  the 2 member pages → live index now 8 rows incl. both with members=true.
+- **VERIFIED fully dynamic on main preview**: Members Only renders 2 index-driven cards
+  (Alaskan Adventure, Fly Fishing the Amazon; 388px / 200px, READ MORE, lock badge);
+  All Articles shows 5 regular articles (members correctly excluded); no h-overflow.
+  DONE — no fallback needed anymore (fallback retained as a safety net).
 
 ## Header / Navigation (done)
 - WKND header migrated to blocks/header/ (header.js + header.css) + content/nav.plain.html.
