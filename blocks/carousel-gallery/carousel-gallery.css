@@ -6,6 +6,7 @@
 }
 
 .carousel-gallery {
+  position: relative;
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
@@ -78,30 +79,39 @@
   width: var(--slide-content-width, auto);
 }
 
+/* indicators overlaid on the image bottom-center (matches source) */
 .carousel-gallery .carousel-gallery-slide-indicators {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 20px;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 6px 12px;
-  padding: 12px;
-  background-color: var(--light-color);
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
   line-height: 0;
 }
 
 .carousel-gallery .carousel-gallery-slide-indicator button {
-  width: 24px;
-  height: 24px;
+  width: 10px;
+  height: 10px;
   margin: 0;
   padding: 0;
+  border: 1px solid rgb(0 0 0 / 40%);
   border-radius: 50%;
-  background-color: #dadada;
+  background-color: transparent;
   transition: background-color 0.2s;
 }
 
 .carousel-gallery .carousel-gallery-slide-indicator button:disabled,
 .carousel-gallery .carousel-gallery-slide-indicator button:hover,
 .carousel-gallery .carousel-gallery-slide-indicator button:focus-visible {
-  background-color: var(--text-color);
+  background-color: rgb(0 0 0 / 80%);
+  border-color: rgb(0 0 0 / 80%);
 }
 
 .carousel-gallery .carousel-gallery-navigation-buttons {
@@ -122,15 +132,17 @@
   width: 44px;
   height: 44px;
   margin: 0;
-  border-radius: 50%;
+  border-radius: 0;
   padding: 0;
-  background-color: rgb(19 19 19 / 25%);
-  transition: background-color 0.2s;
+  background-color: transparent;
+  color: #fff;
+  transition: opacity 0.2s;
 }
 
 .carousel-gallery .carousel-gallery-navigation-buttons button:hover,
 .carousel-gallery .carousel-gallery-navigation-buttons button:focus-visible {
-  background-color: rgb(19 19 19 / 75%);
+  background-color: transparent;
+  opacity: 0.7;
 }
 
 .carousel-gallery .carousel-gallery-navigation-buttons button::after {
@@ -139,8 +151,8 @@
   border: 2px solid;
   border-bottom: 0;
   border-left: 0;
-  height: 12px;
-  width: 12px;
+  height: 14px;
+  width: 14px;
   position: absolute;
   top: 50%;
   left: calc(50% + 2px);
