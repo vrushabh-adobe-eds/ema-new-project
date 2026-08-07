@@ -376,6 +376,14 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
     min-height: var(--nav-height);
   }
 
+  /* utility bar: on mobile the source spreads its items — SIGN IN pinned to
+     the far left, locale/flag to the far right (desktop keeps them clustered
+     right). */
+  header nav .nav-utility,
+  header nav .nav-utility > .default-content-wrapper {
+    justify-content: space-between;
+  }
+
   header nav .nav-hamburger {
     justify-self: start;
   }
