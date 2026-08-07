@@ -355,15 +355,26 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
 
 /* ---------- Mobile layout (< 900px) ---------- */
 @media (width < 900px) {
-  /* main row: hamburger (left) | logo | search (right); links drop below */
+  /* The global --nav-height (194px) is sized for the tall desktop nav; on
+     mobile the header is much shorter, so shrink the reserved height to match
+     the source (~117px = 25px utility bar + ~92px logo/search row). Without
+     this the header leaves a large empty white band below the logo. */
+  :root {
+    --nav-height: 117px;
+  }
+
+  /* main row: hamburger (left) | logo | search (right); links drop below.
+     The middle row takes the space left after the 25px utility bar so the
+     logo/search sit vertically centered in the white bar (no empty band). */
   header nav {
-    grid-template-areas:
-      'utility utility utility'
-      'hamburger brand search'
-      'sections sections sections';
-    grid-template-columns: auto 1fr auto;
+    grid-template:
+      'utility utility utility' 25px
+      'hamburger brand search' 1fr
+      'sections sections sections' auto
+      / auto 1fr auto;
     column-gap: 12px;
     align-items: center;
+    min-height: var(--nav-height);
   }
 
   header nav .nav-hamburger {
