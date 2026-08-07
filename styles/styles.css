@@ -364,11 +364,17 @@ main .section.highlight {
   padding: 40px 0;
 }
 
-/* breadcrumb (adventure detail pages) — "Adventures › Title", uppercase */
+/* breadcrumb (adventure detail pages) — "Adventures › Title", uppercase.
+   Clears the sticky header (reserved --nav-height) since it is the first
+   element in main and would otherwise sit beneath it. */
 main > .section.breadcrumb-container {
   max-width: 1264px;
   margin: 24px auto 0;
   padding: 0 24px;
+}
+
+main > .section.breadcrumb-container:first-child {
+  margin-top: calc(var(--nav-height) + 24px);
 }
 
 @media (width >= 900px) {
