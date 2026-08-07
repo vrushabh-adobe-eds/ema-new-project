@@ -420,22 +420,53 @@ main > .section.breadcrumb-container {
 }
 
 /* ---------- magazine article page (body.magazine-article) ----------
-   Source: narrow centered reading column (~800px), airy justified body copy
-   (18px/45), contained lead image. */
+   Source: two-column layout — article body on the LEFT, "SHARE THIS STORY"
+   related sidebar on the RIGHT (from the top), airy justified body copy (18/45),
+   wide lead-image banner. */
 body.magazine-article main > .section > div {
-  max-width: 800px;
-}
-
-/* lead image spans a wide banner (source ~1136px) with only small side margins,
-   not the narrow 800px reading column. The lead-image section is tagged in
-   scripts.js (buildBreadcrumb). */
-body.magazine-article main > .section.lead-image > div {
   max-width: 1200px;
 }
 
 body.magazine-article main .default-content-wrapper p {
   line-height: 45px;
   text-align: justify;
+}
+
+@media (width >= 900px) {
+  body.magazine-article main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    column-gap: 64px;
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* lead image + breadcrumb span the full width (rows 1 and 2) */
+  body.magazine-article main > .section.lead-image,
+  body.magazine-article main > .section.breadcrumb-container {
+    grid-column: 1 / -1;
+  }
+
+  /* related sidebar → right column, starting level with the title (row 3) */
+  body.magazine-article main > .section.article-list-container {
+    grid-column: 2;
+    grid-row: 3 / span 100;
+    align-self: start;
+  }
+
+  /* all other content → left column */
+  body.magazine-article main > .section:not(.lead-image, .breadcrumb-container, .article-list-container) {
+    grid-column: 1;
+  }
+
+  /* inside the grid, sections fill their cell (no centered narrow column) */
+  body.magazine-article main > .section > div {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 /* pull-quote grey box (source: #ebebeb panel around the blockquote) */
