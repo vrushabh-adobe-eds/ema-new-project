@@ -499,6 +499,16 @@ body.magazine-article main .default-content-wrapper blockquote p {
   text-align: left;
 }
 
+/* short yellow accent bar below the quote text (source: blockquote::after,
+   80px wide, 2px solid #ffea00) */
+body.magazine-article main .default-content-wrapper blockquote::after {
+  content: '';
+  display: block;
+  width: 80px;
+  margin-top: 16px;
+  border-bottom: 2px solid var(--brand-primary);
+}
+
 /* related list keeps the section's narrow column too */
 body.magazine-article .article-list:not(.related) > ul {
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
