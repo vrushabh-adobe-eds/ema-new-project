@@ -363,3 +363,56 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+
+/* breadcrumb (adventure detail pages) — "Adventures › Title", uppercase */
+main > .section.breadcrumb-container {
+  max-width: 1264px;
+  margin: 24px auto 0;
+  padding: 0 24px;
+}
+
+@media (width >= 900px) {
+  main > .section.breadcrumb-container {
+    padding: 0 32px;
+  }
+}
+
+.breadcrumb ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-color);
+}
+
+.breadcrumb li + li::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 6px solid var(--brand-primary);
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.breadcrumb a:any-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.breadcrumb li[aria-current="page"] {
+  color: #696969;
+}

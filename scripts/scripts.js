@@ -137,11 +137,48 @@ function buildWidgetAutoBlocks(main) {
 }
 
 /**
+ * Builds a breadcrumb for adventure detail pages (/us/en/adventures/{slug}),
+ * derived from the URL + page title, matching the source ("Adventures ›
+ * {Title}"). Inserted at the top of main so it sits above the hero.
+ * @param {Element} main The container element
+ */
+function buildBreadcrumb(main) {
+  const { pathname } = window.location;
+  const m = pathname.match(/^(\/[a-z-]+\/[a-z-]+\/adventures)\/([^/]+)$/);
+  if (!m) return;
+  const [, adventuresPath] = m;
+  const title = (document.querySelector('main h1')?.textContent
+    || document.title || '').trim();
+  if (!title) return;
+
+  const nav = document.createElement('nav');
+  nav.className = 'breadcrumb';
+  nav.setAttribute('aria-label', 'Breadcrumb');
+  const ol = document.createElement('ol');
+  const parent = document.createElement('li');
+  const a = document.createElement('a');
+  a.href = adventuresPath;
+  a.textContent = 'Adventures';
+  parent.append(a);
+  const current = document.createElement('li');
+  current.setAttribute('aria-current', 'page');
+  current.textContent = title;
+  ol.append(parent, current);
+  nav.append(ol);
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'section breadcrumb-container';
+  wrapper.append(nav);
+  main.prepend(wrapper);
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
+    buildBreadcrumb(main);
     // auto load `*/fragments/*` references
     const fragments = [...main.querySelectorAll('a[href*="/fragments/"]')].filter((f) => !f.closest('.fragment'));
     if (fragments.length > 0) {
