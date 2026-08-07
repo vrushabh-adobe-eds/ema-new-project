@@ -94,7 +94,6 @@ export default async function decorate(block) {
   carouselId += 1;
   block.setAttribute('id', `carousel-gallery-${carouselId}`);
   const rows = block.querySelectorAll(':scope > div');
-  const isSingleSlide = rows.length < 2;
 
   const placeholders = await fetchPlaceholders();
 
@@ -108,24 +107,23 @@ export default async function decorate(block) {
   slidesWrapper.classList.add('carousel-gallery-slides');
   block.prepend(slidesWrapper);
 
-  let slideIndicators;
-  if (!isSingleSlide) {
-    const slideIndicatorsNav = document.createElement('nav');
-    slideIndicatorsNav.setAttribute('aria-label', placeholders.carouselSlideControls || 'Carousel Slide Controls');
-    slideIndicators = document.createElement('ol');
-    slideIndicators.classList.add('carousel-gallery-slide-indicators');
-    slideIndicatorsNav.append(slideIndicators);
-    block.append(slideIndicatorsNav);
+  // Always render slide controls (dots + arrows), even for a single image, to
+  // match the source WKND carousel. With one slide they simply loop in place.
+  const slideIndicatorsNav = document.createElement('nav');
+  slideIndicatorsNav.setAttribute('aria-label', placeholders.carouselSlideControls || 'Carousel Slide Controls');
+  const slideIndicators = document.createElement('ol');
+  slideIndicators.classList.add('carousel-gallery-slide-indicators');
+  slideIndicatorsNav.append(slideIndicators);
+  block.append(slideIndicatorsNav);
 
-    const slideNavButtons = document.createElement('div');
-    slideNavButtons.classList.add('carousel-gallery-navigation-buttons');
-    slideNavButtons.innerHTML = `
-      <button type="button" class= "slide-prev" aria-label="${placeholders.previousSlide || 'Previous Slide'}"></button>
-      <button type="button" class="slide-next" aria-label="${placeholders.nextSlide || 'Next Slide'}"></button>
-    `;
+  const slideNavButtons = document.createElement('div');
+  slideNavButtons.classList.add('carousel-gallery-navigation-buttons');
+  slideNavButtons.innerHTML = `
+    <button type="button" class= "slide-prev" aria-label="${placeholders.previousSlide || 'Previous Slide'}"></button>
+    <button type="button" class="slide-next" aria-label="${placeholders.nextSlide || 'Next Slide'}"></button>
+  `;
 
-    container.append(slideNavButtons);
-  }
+  container.append(slideNavButtons);
 
   rows.forEach((row, idx) => {
     const slide = createSlide(row, idx, carouselId);
@@ -145,7 +143,5 @@ export default async function decorate(block) {
   container.append(slidesWrapper);
   block.prepend(container);
 
-  if (!isSingleSlide) {
-    bindEvents(block);
-  }
+  bindEvents(block);
 }
