@@ -427,6 +427,12 @@ body.magazine-article main > .section > div {
   max-width: 1200px;
 }
 
+/* Tighten the vertical gaps between the article's sections (title/byline → body)
+   — the source flows them together (~20px), not the boilerplate's stacked 40+40. */
+body.magazine-article main > .section {
+  margin: 12px 0;
+}
+
 body.magazine-article main .default-content-wrapper p {
   line-height: 1.6; /* tighter than the source's airy 2.5, for readability */
   text-align: justify;
