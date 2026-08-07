@@ -481,11 +481,13 @@ body.magazine-article main .default-content-wrapper p {
   }
 }
 
-/* pull-quote grey box (source: #ebebeb panel around the blockquote) */
+/* pull-quote grey box (source: #ebebeb panel around the blockquote).
+   The "noun" label is authored as the paragraph immediately after the
+   blockquote; extend the grey box over it so they read as one card. */
 body.magazine-article main .default-content-wrapper blockquote {
   background-color: #ebebeb;
-  margin: 24px 0;
-  padding: 40px 48px;
+  margin: 24px 0 0;
+  padding: 40px 48px 0;
   border: 0;
   font-family: var(--heading-font-family);
   font-size: 36px;
@@ -507,6 +509,15 @@ body.magazine-article main .default-content-wrapper blockquote::after {
   width: 80px;
   margin-top: 16px;
   border-bottom: 2px solid var(--brand-primary);
+}
+
+/* the "noun" paragraph directly after the quote is part of the same grey box */
+body.magazine-article main .default-content-wrapper blockquote + p {
+  margin: 0 0 24px;
+  padding: 16px 48px 40px;
+  background-color: #ebebeb;
+  line-height: 27px;
+  text-align: left;
 }
 
 /* related list keeps the section's narrow column too */
