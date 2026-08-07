@@ -67,6 +67,7 @@
 }
 
 /* panel body copy — airy line-height like the source */
+/* stylelint-disable-next-line no-descending-specificity */
 .tabs-adventure .tabs-adventure-panel p {
   font-size: 18px;
   line-height: 2.5;
