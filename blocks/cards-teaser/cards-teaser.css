@@ -62,3 +62,66 @@
   aspect-ratio: 13 / 10;
   object-fit: cover;
 }
+
+/* ---------- secure variant (Members Only locked teasers) ---------- */
+.cards-teaser.secure > ul {
+  grid-template-columns: 1fr;
+  gap: 48px 56px;
+}
+
+@media (width >= 900px) {
+  .cards-teaser.secure > ul {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* body (title + desc + READ MORE) sits above the image */
+.cards-teaser.secure > ul > li {
+  display: flex;
+  flex-direction: column;
+}
+
+.cards-teaser.secure .cards-teaser-card-body {
+  order: 0;
+  margin: 0 0 20px;
+}
+
+.cards-teaser.secure .cards-teaser-card-image {
+  order: 1;
+}
+
+/* lock badge: yellow corner triangle + padlock glyph before the title */
+.cards-teaser.secure .cards-teaser-card-body h3 {
+  position: relative;
+  padding-left: 44px;
+  color: #9b9b9b;
+  -webkit-line-clamp: 2;
+}
+
+.cards-teaser.secure .cards-teaser-card-body h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 34px;
+  height: 34px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23202020'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 8H9V6a3 3 0 0 1 6 0z'/%3E%3C/svg%3E") no-repeat 2px 8px / 16px 16px,
+    linear-gradient(45deg, var(--brand-primary) 50%, transparent 50%);
+}
+
+.cards-teaser.secure .cards-teaser-card-body p {
+  color: #9b9b9b;
+}
+
+/* READ MORE button (grey, source style — non-link locked affordance) */
+.cards-teaser.secure .cards-teaser-card-body p:last-child strong {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 12px 28px;
+  background-color: #ebebeb;
+  color: #9b9b9b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}

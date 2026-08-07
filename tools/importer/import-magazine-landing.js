@@ -4,7 +4,7 @@
 // PARSER IMPORTS
 import columnsFeaturedParser from "./parsers/columns-featured.js";
 import articleListParser from "./parsers/article-list.js";
-import cardsTeaserParser from "./parsers/cards-teaser.js";
+import cardsTeaserSecureParser from "./parsers/cards-teaser-secure.js";
 
 // TRANSFORMER IMPORTS
 import wkndCleanupTransformer from "./transformers/wknd-cleanup.js";
@@ -14,7 +14,7 @@ import wkndSectionsTransformer from "./transformers/wknd-sections.js";
 const parsers = {
   "columns-featured": columnsFeaturedParser,
   "article-list": articleListParser,
-  "cards-teaser": cardsTeaserParser,
+  "cards-teaser": cardsTeaserSecureParser,
 };
 
 // PAGE TEMPLATE CONFIGURATION (embedded from page-templates.json)
