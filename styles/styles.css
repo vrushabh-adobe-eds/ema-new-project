@@ -432,6 +432,12 @@ body.magazine-article main .default-content-wrapper p {
   text-align: justify;
 }
 
+/* Hide the duplicate article title: the body content fragment repeats the page
+   H1 as an <h3> at the very start of the body — the source doesn't show it. */
+body.magazine-article main .default-content-wrapper > h3:first-child {
+  display: none;
+}
+
 @media (width >= 900px) {
   body.magazine-article main {
     display: grid;
