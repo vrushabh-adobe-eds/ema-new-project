@@ -135,7 +135,7 @@
           ]
         },
         {
-          "name": "cards-teaser",
+          "name": "article-list-members",
           "instances": [
             ".cmp-teaser--secure"
           ]
@@ -178,7 +178,7 @@
           ],
           "style": null,
           "blocks": [
-            "cards-teaser"
+            "article-list-members"
           ],
           "defaultContent": [
             "h2",
@@ -208,7 +208,7 @@
           ]
         },
         {
-          "name": "cards-related",
+          "name": "article-list",
           "instances": [
             ".cmp-layoutcontainer--sidebar .cmp-list",
             ".cmp-list--related"
@@ -289,7 +289,7 @@
           ],
           "style": null,
           "blocks": [
-            "cards-related"
+            "article-list"
           ],
           "defaultContent": []
         }

@@ -83,7 +83,7 @@ var CustomImportScript = (() => {
     element.replaceWith(block);
   }
 
-  // tools/importer/parsers/cards-teaser-secure.js
+  // tools/importer/parsers/article-list-members.js
   function parse3(element, { document }) {
     const SEL = ".cmp-teaser--secure";
     const teasers = Array.from(document.querySelectorAll(SEL));
@@ -95,35 +95,30 @@ var CustomImportScript = (() => {
       if (element.parentNode) element.remove();
       return;
     }
-    const cells = [];
+    const cells = [["members"], ["/us/en/magazine/query-index.json"]];
     teasers.forEach((teaser) => {
       const image = teaser.querySelector("img");
       const titleEl = teaser.querySelector('.cmp-teaser__title, [class*="title"], h1, h2, h3');
       const descEl = teaser.querySelector('.cmp-teaser__description, [class*="description"], p');
-      const cta = teaser.querySelector(".cmp-teaser__action-link, a.cmp-button, a[href]");
-      const textCell = [];
+      const body = [];
       if (titleEl) {
         const h = document.createElement("h3");
         h.textContent = titleEl.textContent.trim();
-        textCell.push(h);
+        body.push(h);
       }
       if (descEl && descEl.textContent.trim()) {
-        const p2 = document.createElement("p");
-        p2.textContent = descEl.textContent.trim();
-        textCell.push(p2);
+        const p = document.createElement("p");
+        p.textContent = descEl.textContent.trim();
+        body.push(p);
       }
-      const ctaText = cta && cta.textContent.trim() || "Read More";
-      const p = document.createElement("p");
+      const cta = document.createElement("p");
       const strong = document.createElement("strong");
-      strong.textContent = ctaText;
-      p.append(strong);
-      textCell.push(p);
-      cells.push([image || "", textCell.length ? textCell : ""]);
+      strong.textContent = "Read More";
+      cta.append(strong);
+      body.push(cta);
+      cells.push([body, image || ""]);
     });
-    const block = WebImporter.Blocks.createBlock(document, {
-      name: "cards-teaser (secure)",
-      cells
-    });
+    const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     teasers.slice(1).forEach((t) => {
       if (t.parentNode) t.remove();
     });
@@ -274,7 +269,7 @@ var CustomImportScript = (() => {
   var parsers = {
     "columns-featured": parse,
     "article-list": parse2,
-    "cards-teaser": parse3
+    "article-list-members": parse3
   };
   var PAGE_TEMPLATE = {
     "name": "magazine-landing",
@@ -297,7 +292,7 @@ var CustomImportScript = (() => {
         ]
       },
       {
-        "name": "cards-teaser",
+        "name": "article-list-members",
         "instances": [
           ".cmp-teaser--secure"
         ]
@@ -340,7 +335,7 @@ var CustomImportScript = (() => {
         ],
         "style": null,
         "blocks": [
-          "cards-teaser"
+          "article-list-members"
         ],
         "defaultContent": [
           "h2",

@@ -4,13 +4,15 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 const DEFAULT_INDEX = '/us/en/magazine/query-index.json';
 
 /**
- * Reads block config from single-cell rows (an index path and/or a limit).
+ * Reads block config from single-cell rows (an index path, a limit, and/or a
+ * `members` mode flag).
  * @param {Element} block
- * @returns {{ indexPath: string, limit: number }}
+ * @returns {{ indexPath: string, limit: number, members: boolean }}
  */
 function readConfig(block) {
   let indexPath = DEFAULT_INDEX;
   let limit = 0;
+  let members = false;
   block.querySelectorAll(':scope > div').forEach((row) => {
     const text = row.textContent.trim();
     const link = row.querySelector('a');
@@ -20,9 +22,48 @@ function readConfig(block) {
       indexPath = new URL(text, window.location.origin).pathname;
     } else if (/^\d+$/.test(text)) {
       limit = parseInt(text, 10);
+    } else if (/^members$/i.test(text)) {
+      members = true;
     }
   });
-  return { indexPath, limit };
+  return { indexPath, limit, members };
+}
+
+/**
+ * Builds one locked "Members Only" card <li> from a query-index entry.
+ * Matches the source secure teaser: lock badge on the title, grey text,
+ * a non-linking READ MORE affordance, and the image below the body.
+ * @param {object} item
+ * @returns {HTMLLIElement}
+ */
+function buildMemberCard(item) {
+  const li = document.createElement('li');
+
+  const body = document.createElement('div');
+  body.className = 'article-list-card-body';
+  const h3 = document.createElement('h3');
+  h3.textContent = item.title || item.path;
+  body.append(h3);
+  if (item.description) {
+    const p = document.createElement('p');
+    p.textContent = item.description;
+    body.append(p);
+  }
+  const cta = document.createElement('p');
+  const strong = document.createElement('strong');
+  strong.textContent = 'Read More';
+  cta.append(strong);
+  body.append(cta);
+
+  const imageCell = document.createElement('div');
+  imageCell.className = 'article-list-card-image';
+  if (item.image) {
+    const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '750' }]);
+    imageCell.append(pic);
+  }
+
+  li.append(body, imageCell);
+  return li;
 }
 
 /**
@@ -81,7 +122,7 @@ const CURATED_ORDER = {
 };
 
 export default async function decorate(block) {
-  const { indexPath, limit } = readConfig(block);
+  const { indexPath, limit, members } = readConfig(block);
   const landingPath = indexPath.replace(/\/query-index\.json$/, '');
   // Collection segment (last path part of the landing path) drives both the
   // "direct child" filter and the curated order — so the same block is reusable
@@ -103,18 +144,39 @@ export default async function decorate(block) {
     return i === -1 ? curated.length : i;
   };
 
+  // Normalize the current page path so an article never lists itself (related-articles
+  // use). Query-index paths look like "/us/en/magazine/arctic-surfing"; the rendered
+  // URL is "/content/us/en/..." locally or "/us/en/..." when published.
+  const currentPath = window.location.pathname
+    .replace(/^\/content(?=\/)/, '')
+    .replace(/\.html$/, '')
+    .replace(/\/$/, '');
+
+  // Truthy test for the index `members` flag (string "true"/"yes"/"1" or boolean).
+  const isMember = (it) => /^(true|yes|1)$/i.test(String(it.members || '').trim());
+
   let items = [];
   try {
     const resp = await fetch(indexPath);
     if (resp.ok) {
       const json = await resp.json();
-      items = (json.data || [])
-        // only real entries nested one level under the collection; exclude the landing page itself
-        .filter((it) => it.path && it.path !== landingPath && childRe.test(it.path))
-        // curated order first; then newest-first; then stable path tiebreak
-        .sort((a, b) => (rank(a.path) - rank(b.path))
-          || (parseDate(b.publicationDate) - parseDate(a.publicationDate))
-          || (a.path || '').localeCompare(b.path || ''));
+      if (members) {
+        // Members Only mode: pick just the flagged entries, sorted by path so the
+        // order is stable. These live deeper than the "All Articles" listing.
+        items = (json.data || [])
+          .filter((it) => it.path && it.path !== landingPath && isMember(it))
+          .sort((a, b) => (a.path || '').localeCompare(b.path || ''));
+      } else {
+        items = (json.data || [])
+          // only real entries nested one level under the collection; exclude the
+          // landing page, the current page, and any members-only entries
+          .filter((it) => it.path && it.path !== landingPath && it.path !== currentPath
+            && childRe.test(it.path) && !isMember(it))
+          // curated order first; then newest-first; then stable path tiebreak
+          .sort((a, b) => (rank(a.path) - rank(b.path))
+            || (parseDate(b.publicationDate) - parseDate(a.publicationDate))
+            || (a.path || '').localeCompare(b.path || ''));
+      }
       if (limit > 0) items = items.slice(0, limit);
     }
   } catch (e) {
@@ -122,6 +184,40 @@ export default async function decorate(block) {
   }
 
   const ul = document.createElement('ul');
+
+  // Members Only mode: render locked secure cards (title + desc + READ MORE,
+  // image below), reusing the cards-teaser "secure" visual. No tabs.
+  if (members) {
+    block.classList.add('secure');
+    if (items.length) {
+      // Dynamic: flagged members from the query index.
+      items.forEach((item) => ul.append(buildMemberCard(item)));
+    } else {
+      // Fallback: the query index has no members yet (e.g. helix-query.yaml not
+      // on main). Decorate the statically authored card rows (those carrying an
+      // image) so the section is never empty; config-only rows are skipped.
+      [...block.children]
+        .filter((row) => row.querySelector('picture, img'))
+        .forEach((row) => {
+          const li = document.createElement('li');
+          moveInstrumentation(row, li);
+          while (row.firstElementChild) li.append(row.firstElementChild);
+          [...li.children].forEach((div) => {
+            if (div.children.length === 1 && div.querySelector('picture, img')) div.className = 'article-list-card-image';
+            else div.className = 'article-list-card-body';
+          });
+          ul.append(li);
+        });
+      ul.querySelectorAll('picture > img').forEach((img) => {
+        const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+        moveInstrumentation(img, optimizedPic.querySelector('img'));
+        img.closest('picture').replaceWith(optimizedPic);
+      });
+    }
+    block.textContent = '';
+    block.append(ul);
+    return;
+  }
 
   if (items.length) {
     items.forEach((item) => {

@@ -110,6 +110,41 @@ Source: https://wknd.site/us/en.html → AEM Edge Delivery (`vrushabh-adobe-eds/
 - 16 detail pages: full-bleed carousel-gallery (controls in a white strip below image — dots centered, dark arrows far-right), breadcrumb autoblock (Adventures › Title), 2-column layout (spec sidebar left, tabs right), source-style tabs.
 - categories metadata on all adventures feeds the index + listing tabs.
 
+## Magazine — dynamic related + Members Only (branch mag-limit-fix)
+- **Article pages** (5): related "SHARE THIS STORY" section now uses the dynamic
+  `article-list` block (query index) instead of static `cards-related`. article-list
+  excludes the current page so an article never lists itself. Importer `a6` section
+  + page-templates.json repointed cards-related → article-list; bundle rebuilt; all
+  5 re-imported (config-only block, metadata preserved).
+- **Members Only** (magazine landing): now query-index driven. `article-list` gains a
+  `members` mode — filters the magazine index by a `members` flag, renders locked
+  secure cards (lock badge, grey text, READ MORE, image below), no tabs. Fixed
+  oversized cards (fixed ~388px width + 200px image height; was full-width 13/10).
+  New parser `article-list-members.js` (config: `members` + index path). Landing
+  re-imported (2 dynamic article-list blocks, static secure cards removed).
+- **Index**: helix-query.yaml magazine index gains a `members` field; dropped the
+  `members-only/**` exclude so member pages are indexed (they live 2 levels deep, so
+  the All Articles listing `/magazine/[^/]+$` still excludes them).
+- **Content**: 2 member pages created + uploaded to DA
+  (`/us/en/magazine/members-only/{alaskan-adventure,fly-fishing-the-amazon}`), each
+  with metadata (title/desc/image/template/members=true) — verified meta tags render.
+  Landing + member pages previewed on main.
+- **Verified**: block logic (mock index → 2 secure cards, no leaks, no tabs) and CSS
+  sizing (388px card / 200px image, lock badge) both confirmed via Playwright. Lint clean.
+- **Pushed**: commits c247ea6 + 9c163f0 on `origin/mag-limit-fix` (git opt-in enabled).
+- **Static-fallback fix (9c163f0)**: the query-index config is read from `main`, so a
+  purely-dynamic Members Only rendered EMPTY on previews (branch index has no members
+  column — confirmed empirically on the branch ref too). Fixed: the members parser now
+  serializes the 2 authored member cards as a fallback alongside the dynamic config,
+  and article-list members mode decorates them when the index has no members yet.
+  **VERIFIED on branch preview**: 2 secure cards render (388px card / 200px image, lock
+  badge, READ MORE) — matches source. Auto-upgrades to fully index-driven once
+  helix-query.yaml lands on main.
+- **Optional follow-up (fully dynamic)**: merge mag-limit-fix → main so helix-query.yaml
+  (members field) takes effect; then reindex the 2 member pages. `gh` not installed and
+  the injected git token isn't exposed for API use, so the PR must be opened via the
+  GitHub UI. Not required for correct rendering — the fallback already shows the cards.
+
 ## Header / Navigation (done)
 - WKND header migrated to blocks/header/ (header.js + header.css) + content/nav.plain.html.
 - Exact source styles: utility bar #202020 / text #ebebeb; nav links 14px uppercase #202020; hover/active #ffea00; search bg rgba(235,235,235,0.54), focus border 1px solid #202020.
