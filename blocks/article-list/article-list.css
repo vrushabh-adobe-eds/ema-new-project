@@ -14,6 +14,14 @@
   gap: 24px;
 }
 
+/* mobile single-column: source uses a roomier 32px gap between stacked cards */
+@media (width < 600px) {
+  .article-list > ul {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
 .article-list > ul > li {
   background-color: transparent;
 }
