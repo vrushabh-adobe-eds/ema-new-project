@@ -323,7 +323,7 @@ header nav .nav-hamburger-icon::after {
   display: block;
   position: relative;
   width: 24px;
-  height: 2px;
+  height: 3px; /* source bars are ~3px thick */
   background: var(--wknd-dark);
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
@@ -337,20 +337,21 @@ header nav .nav-hamburger-icon::after {
 
 /* Reproduce the source's "menu" glyph exactly: a left-aligned descending
    staircase — top bar longest, middle 78%, bottom 57% (measured from the
-   source wknd-icon-font glyph: 189 / 148 / 108 px at 180px). The ::before and
-   ::after use left:0, so all three bars share the icon's left edge. */
+   source wknd-icon-font glyph: 189 / 148 / 108 px at 180px). Sized to the
+   source's real ~29px width and ~8px bar pitch. The ::before and ::after use
+   left:0, so all three bars share the icon's left edge. */
 header nav .nav-hamburger-icon {
-  width: 19px; /* middle bar ≈ 78% */
+  width: 23px; /* middle bar ≈ 78% */
 }
 
 header nav .nav-hamburger-icon::before {
-  top: -7px;
-  width: 24px; /* top bar = 100% */
+  top: -8px;
+  width: 29px; /* top bar = 100% */
 }
 
 header nav .nav-hamburger-icon::after {
-  top: 7px;
-  width: 14px; /* bottom bar ≈ 57% */
+  top: 8px;
+  width: 17px; /* bottom bar ≈ 57% */
 }
 
 /* hamburger -> cross */
@@ -365,7 +366,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::before {
 
 header nav[aria-expanded='true'] .nav-hamburger-icon::after {
   top: 0;
-  width: 24px; /* restore full width so the close (X) is symmetric */
+  width: 29px; /* restore full width so the close (X) is symmetric */
   transform: rotate(-45deg);
 }
 
