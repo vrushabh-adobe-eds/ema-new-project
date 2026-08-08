@@ -266,6 +266,21 @@ header nav .nav-search-icon {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23202020' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
 }
 
+/* while a search is in flight, swap the magnifier for a spinning loader
+   (matches source: circular spinner in place of the search icon). */
+header nav .nav-search-form.is-loading .nav-search-icon {
+  background-image: none;
+  border: 2px solid rgb(32 32 32 / 25%);
+  border-top-color: var(--wknd-dark);
+  border-radius: 50%;
+  box-sizing: border-box;
+  animation: nav-search-spin 0.6s linear infinite;
+}
+
+@keyframes nav-search-spin {
+  to { transform: rotate(360deg); }
+}
+
 header nav .nav-search-form input {
   width: 166px;
   height: 40px;

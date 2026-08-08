@@ -135,6 +135,7 @@ function decorateSearch(search) {
   const closeResults = () => {
     results.hidden = true;
     results.innerHTML = '';
+    form.classList.remove('is-loading');
     input.setAttribute('aria-expanded', 'false');
     activeIndex = -1;
   };
@@ -151,10 +152,13 @@ function decorateSearch(search) {
 
   const render = (term) => {
     const q = term.trim().toLowerCase();
-    if (!q) { closeResults(); return; }
+    if (!q) { form.classList.remove('is-loading'); closeResults(); return; }
+    // show the spinner (in place of the search icon) while fetching results
+    form.classList.add('is-loading');
     loadSearchData().then((items) => {
       // ignore stale responses if the query changed while fetching
       if (input.value.trim().toLowerCase() !== q) return;
+      form.classList.remove('is-loading');
       matches = items.filter((it) => it.title.toLowerCase().includes(q)).slice(0, 8);
       if (!matches.length) { closeResults(); return; }
       const re = new RegExp(`(${escapeRegExp(term.trim())})`, 'i');
