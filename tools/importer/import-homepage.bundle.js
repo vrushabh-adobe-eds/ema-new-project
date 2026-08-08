@@ -43,32 +43,8 @@ var CustomImportScript = (() => {
 
   // tools/importer/parsers/carousel-hero.js
   function parse(element, { document }) {
-    const slides = Array.from(element.querySelectorAll(
-      ':scope .cmp-carousel__item, :scope [class*="carousel__item"]'
-    ));
-    const cells = [];
-    slides.forEach((slide) => {
-      const image = slide.querySelector(".cmp-teaser__image img, .cmp-image__image, img");
-      const titleEl = slide.querySelector(".cmp-teaser__title, .cmp-carousel__title, h1, h2, h3");
-      const descEl = slide.querySelector('.cmp-teaser__description, [class*="description"]');
-      const ctas = Array.from(slide.querySelectorAll(
-        ".cmp-teaser__action-link, a.cmp-button, a.button"
-      ));
-      if (!image && !titleEl && !descEl && ctas.length === 0) return;
-      const textCell = [];
-      if (titleEl) {
-        const heading = document.createElement("h2");
-        heading.textContent = titleEl.textContent.trim();
-        textCell.push(heading);
-      }
-      if (descEl && descEl.textContent.trim()) textCell.push(descEl);
-      textCell.push(...ctas);
-      cells.push([image || "", textCell.length ? textCell : ""]);
-    });
-    if (cells.length === 0) {
-      element.replaceWith(...element.childNodes);
-      return;
-    }
+    const indexPath = "/us/en/adventures/query-index.json";
+    const cells = [["3"], [indexPath]];
     const block = WebImporter.Blocks.createBlock(document, { name: "carousel-hero", cells });
     element.replaceWith(block);
   }
@@ -153,7 +129,16 @@ var CustomImportScript = (() => {
     const href = firstLink ? firstLink.getAttribute("href") : "";
     let indexPath = "/us/en/magazine/query-index.json";
     if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
-    const cells = [["4"], [indexPath]];
+    const isRelated = !!element.closest('.cmp-layoutcontainer--sidebar, [class*="sidebar"]');
+    const isLanding = !!element.closest(".image-list");
+    let cells;
+    if (isRelated) {
+      cells = [["related"], ["4"], [indexPath]];
+    } else if (isLanding) {
+      cells = [[indexPath]];
+    } else {
+      cells = [["4"], [indexPath]];
+    }
     const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     element.replaceWith(block);
   }
