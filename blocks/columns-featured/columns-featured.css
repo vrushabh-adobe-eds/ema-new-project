@@ -13,17 +13,18 @@
   object-fit: cover;
 }
 
-/* text column (grey panel) */
+/* text column (grey panel). On mobile the source stacks the CARD ABOVE the
+   image, so the text panel comes first (order 0) and the image second. */
 .columns-featured > div > div {
-  order: 1;
+  order: 0;
   background-color: var(--light-color, #ebebeb);
   padding: 40px;
   box-sizing: border-box;
 }
 
-/* image column first */
+/* image column below the card on mobile */
 .columns-featured > div > .columns-featured-img-col {
-  order: 0;
+  order: 1;
   background-color: transparent;
   padding: 0;
   line-height: 0;
@@ -36,10 +37,13 @@
   font-size: 18px;
 }
 
+/* heading — source mobile size 36px/54px with 18px vertical margin */
 .columns-featured > div > div h1,
 .columns-featured > div > div h2,
 .columns-featured > div > div h3 {
-  margin: 0 0 16px;
+  margin: 18px 0;
+  font-size: 36px;
+  line-height: 54px;
 }
 
 @media (width >= 900px) {

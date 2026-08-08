@@ -137,9 +137,11 @@ function buildWidgetAutoBlocks(main) {
 }
 
 /**
- * Builds a breadcrumb for adventure detail pages (/us/en/adventures/{slug}),
- * derived from the URL + page title, matching the source ("Adventures ›
- * {Title}"). Inserted at the top of main so it sits above the hero.
+ * Builds a breadcrumb for adventure detail (/us/en/adventures/{slug}) and
+ * magazine article (/us/en/magazine/{slug}) pages, derived from the URL + page
+ * title, matching the source ("Adventures › {Title}" / "Magazine › {Title}").
+ * Adventure pages get it at the top (above the hero); magazine articles get it
+ * after the lead image, above the title.
  * @param {Element} main The container element
  */
 function buildBreadcrumb(main) {
@@ -147,11 +149,19 @@ function buildBreadcrumb(main) {
   // fragments, which must not receive a breadcrumb.
   if (main !== document.querySelector('main')) return;
   const { pathname } = window.location;
-  const m = pathname.match(/^(\/[a-z-]+\/[a-z-]+\/adventures)\/([^/]+)$/);
+  const m = pathname.match(/^(\/[a-z-]+\/[a-z-]+\/(adventures|magazine))\/([^/]+)$/);
   if (!m) return;
-  const [, adventuresPath] = m;
-  const title = (document.querySelector('main h1')?.textContent
-    || document.title || '').trim();
+  const [, parentPath, section, slug] = m;
+  const parentLabel = section === 'magazine' ? 'Magazine' : 'Adventures';
+  // Current-page label from the URL slug, title-cased (matches the source's
+  // short breadcrumb label, e.g. "Western Australia" — not the full H1
+  // "Western Australia by Camper Van").
+  const title = slug
+    .replace(/\.html$/, '')
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+    .trim();
   if (!title) return;
 
   const nav = document.createElement('nav');
@@ -160,8 +170,8 @@ function buildBreadcrumb(main) {
   const ol = document.createElement('ol');
   const parent = document.createElement('li');
   const a = document.createElement('a');
-  a.href = adventuresPath;
-  a.textContent = 'Adventures';
+  a.href = parentPath;
+  a.textContent = parentLabel;
   parent.append(a);
   const current = document.createElement('li');
   current.setAttribute('aria-current', 'page');
@@ -172,7 +182,25 @@ function buildBreadcrumb(main) {
   const wrapper = document.createElement('div');
   wrapper.className = 'section breadcrumb-container';
   wrapper.append(nav);
-  main.prepend(wrapper);
+
+  if (section === 'magazine') {
+    // Source order: lead image → breadcrumb → title. buildAutoBlocks runs
+    // BEFORE decorateSections, so main's children are still the raw per-section
+    // <div>s (not .section wrappers). Insert after the raw div that holds the
+    // lead image, and tag it so CSS can widen that section's banner.
+    const leadImg = main.querySelector(':scope > div img, :scope > div picture');
+    const leadDiv = leadImg
+      ? [...main.children].find((d) => d.contains(leadImg))
+      : null;
+    if (leadDiv) {
+      leadDiv.classList.add('lead-image');
+      leadDiv.after(wrapper);
+    } else {
+      main.prepend(wrapper);
+    }
+  } else {
+    main.prepend(wrapper);
+  }
 }
 
 /**

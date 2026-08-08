@@ -5,54 +5,21 @@
  * Source: https://wknd.site/us/en/about-us.html
  *   (each person is a separate section.cmp-experience-fragment--contributor)
  *
- * The source renders TWO grids — "Our Contributors" (4 people) and "WKND
- * Guides" (3 people) — but each person is its own XF section sharing one parent
- * grid. This parser groups the person XFs by their nearest preceding heading
- * (H2) so it emits ONE multi-card `contributors` grid per section instead of
- * one block per person.
+ * The source renders TWO grids — "Our Contributors" and "WKND Guides" — split
+ * by the person's `type` field in the contributors query index.
  *
- * Block shape: 1 column, one row per person; each cell holds
- *   [ avatar, name (h3), role (p), social links ].
+ * IMPORTANT: contributors is a DYNAMIC block. At render time it reads the
+ * contributors query index and builds one card per person, filtered by `type`.
+ * The parser therefore emits ONLY a minimal config table and must NOT serialize
+ * the static source person cards into content (that would hardcode profile
+ * details in Document Authoring and duplicate the dynamically generated grid):
+ *   row 1: the contributors query-index path
+ *   row 2: the type filter for this section (contributor | guide)
+ *
+ * The section is detected from the group's nearest preceding H2 heading
+ * ("Our Contributors" → contributor, "WKND Guides" → guide) so the same block
+ * drives both grids from a single index.
  */
-function buildPersonCell(person, document) {
-  const image = person.querySelector('.cmp-image__image, .image img, img');
-  const titleEls = Array.from(person.querySelectorAll(
-    '.cmp-title__text, .cmp-title h1, .cmp-title h2, .cmp-title h3, .cmp-title h4, .cmp-title h5',
-  ));
-  const nameEl = titleEls[0] || null;
-  const roleEl = titleEls[1] || null;
-
-  const socialAnchors = Array.from(person.querySelectorAll(
-    'a.cmp-button[href], [class*="btn-list"] a[href], [class*="social"] a[href]',
-  )).map((a) => {
-    const href = a.getAttribute('href');
-    const labelEl = a.querySelector('.cmp-button__text');
-    const label = (labelEl ? labelEl.textContent : a.textContent).trim();
-    if (!href) return null;
-    const link = document.createElement('a');
-    link.setAttribute('href', href);
-    link.textContent = label || href;
-    return link;
-  }).filter(Boolean);
-
-  if (!image && !nameEl && !roleEl && socialAnchors.length === 0) return null;
-
-  const contentCell = [];
-  if (image) contentCell.push(image);
-  if (nameEl) {
-    const heading = document.createElement('h3');
-    heading.textContent = nameEl.textContent.trim();
-    contentCell.push(heading);
-  }
-  if (roleEl && roleEl.textContent.trim()) {
-    const role = document.createElement('p');
-    role.textContent = roleEl.textContent.trim();
-    contentCell.push(role);
-  }
-  contentCell.push(...socialAnchors);
-  return contentCell;
-}
-
 export default function parse(element, { document }) {
   const XF_SEL = '.cmp-experience-fragment--contributor';
   const allXf = Array.from(document.querySelectorAll(XF_SEL));
@@ -71,16 +38,17 @@ export default function parse(element, { document }) {
   let current = null;
   nodes.forEach((n) => {
     if (n.matches(XF_SEL)) {
-      if (!current) { current = { members: [] }; groups.push(current); }
+      if (!current) { current = { heading: null, members: [] }; groups.push(current); }
       current.members.push(n);
     } else {
-      // a section heading ends the current group
-      current = null;
+      // a section heading starts a new group and labels it
+      current = { heading: n.textContent.trim(), members: [] };
+      groups.push(current);
     }
   });
 
   // Find the group this element starts. Only act when `element` is the group's
-  // first member; build the grid and remove the group's other XFs so the
+  // first member; emit the config table and remove the group's other XFs so the
   // importer (which skips detached nodes) doesn't emit them as separate blocks.
   const group = groups.find((g) => g.members[0] === element);
   if (!group) {
@@ -89,12 +57,13 @@ export default function parse(element, { document }) {
     return;
   }
 
-  const cells = [];
-  group.members.forEach((person) => {
-    const cell = buildPersonCell(person, document);
-    if (cell) cells.push([cell]);
-  });
-  if (cells.length === 0) { element.replaceWith(...element.childNodes); return; }
+  // Derive the type filter from the section heading. "WKND Guides" → guide,
+  // everything else (e.g. "Our Contributors") → contributor.
+  const type = /guide/i.test(group.heading || '') ? 'guide' : 'contributor';
+  const indexPath = '/us/en/contributors/query-index.json';
+
+  // Config-only rows — the block builds the cards from the query index.
+  const cells = [[indexPath], [type]];
 
   // Remove the trailing members (keep the first to replace in place).
   group.members.slice(1).forEach((m) => { if (m.parentNode) m.remove(); });

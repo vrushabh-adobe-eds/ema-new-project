@@ -56,9 +56,47 @@ function decorateLocale(utility) {
   });
 }
 
+// Query indexes to search over (page titles + paths). Same data that drives
+// the dynamic listing blocks, so search results stay in sync with the site.
+const SEARCH_INDEXES = [
+  '/us/en/magazine/query-index.json',
+  '/us/en/adventures/query-index.json',
+];
+
+let searchDataPromise;
+/** Fetches + caches all query-index entries once (title + path pairs). */
+function loadSearchData() {
+  if (!searchDataPromise) {
+    searchDataPromise = Promise.all(SEARCH_INDEXES.map((idx) => fetch(idx)
+      .then((resp) => (resp.ok ? resp.json() : { data: [] }))
+      .catch(() => ({ data: [] }))))
+      .then((results) => {
+        const seen = new Set();
+        const items = [];
+        results.forEach((json) => (json.data || []).forEach((it) => {
+          // only real content pages (nested one level under the collection),
+          // skip landing pages and duplicates
+          if (!it.path || !it.title) return;
+          if (!/\/(magazine|adventures)\/[^/]+$/.test(it.path)) return;
+          if (seen.has(it.path)) return;
+          seen.add(it.path);
+          items.push({ title: it.title, path: it.path });
+        }));
+        return items;
+      });
+  }
+  return searchDataPromise;
+}
+
+/** Escapes a string for safe use inside a RegExp. */
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /**
- * Builds the search input (with magnifier icon) inside the search section.
- * Content-first: the fragment only carries a "Search" marker; the control is built here.
+ * Builds the search input (with magnifier icon) plus a query-index-driven
+ * typeahead: as the user types, page titles matching the term are suggested
+ * (matched text highlighted); selecting one navigates to that page.
  * @param {Element} search The search section element
  */
 function decorateSearch(search) {
@@ -78,9 +116,95 @@ function decorateSearch(search) {
   input.name = 'q';
   input.placeholder = 'SEARCH';
   input.setAttribute('aria-label', 'Search');
+  input.setAttribute('autocomplete', 'off');
+  input.setAttribute('role', 'combobox');
+  input.setAttribute('aria-expanded', 'false');
+  input.setAttribute('aria-autocomplete', 'list');
 
-  form.append(icon, input);
+  const results = document.createElement('ul');
+  results.className = 'nav-search-results';
+  results.setAttribute('role', 'listbox');
+  results.hidden = true;
+
+  form.append(icon, input, results);
   search.append(form);
+
+  let matches = [];
+  let activeIndex = -1;
+
+  const closeResults = () => {
+    results.hidden = true;
+    results.innerHTML = '';
+    form.classList.remove('is-loading');
+    input.setAttribute('aria-expanded', 'false');
+    activeIndex = -1;
+  };
+
+  const go = (path) => {
+    if (path) window.location.assign(path);
+  };
+
+  const setActive = (idx) => {
+    const options = results.querySelectorAll('.nav-search-result');
+    options.forEach((li, i) => li.classList.toggle('active', i === idx));
+    activeIndex = idx;
+  };
+
+  const render = (term) => {
+    const q = term.trim().toLowerCase();
+    if (!q) { form.classList.remove('is-loading'); closeResults(); return; }
+    // show the spinner (in place of the search icon) while fetching results
+    form.classList.add('is-loading');
+    loadSearchData().then((items) => {
+      // ignore stale responses if the query changed while fetching
+      if (input.value.trim().toLowerCase() !== q) return;
+      form.classList.remove('is-loading');
+      matches = items.filter((it) => it.title.toLowerCase().includes(q)).slice(0, 8);
+      if (!matches.length) { closeResults(); return; }
+      const re = new RegExp(`(${escapeRegExp(term.trim())})`, 'i');
+      results.innerHTML = '';
+      matches.forEach((m, i) => {
+        const li = document.createElement('li');
+        li.className = 'nav-search-result';
+        li.setAttribute('role', 'option');
+        li.id = `nav-search-result-${i}`;
+        // highlight the matched substring
+        li.innerHTML = m.title.replace(re, '<mark>$1</mark>');
+        li.addEventListener('mousedown', (e) => { e.preventDefault(); go(m.path); });
+        results.append(li);
+      });
+      results.hidden = false;
+      input.setAttribute('aria-expanded', 'true');
+      activeIndex = -1;
+    });
+  };
+
+  input.addEventListener('input', () => render(input.value));
+  input.addEventListener('focus', () => { if (input.value.trim()) render(input.value); });
+
+  input.addEventListener('keydown', (e) => {
+    if (results.hidden) return;
+    const options = results.querySelectorAll('.nav-search-result');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setActive(Math.min(activeIndex + 1, options.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActive(Math.max(activeIndex - 1, 0));
+    } else if (e.key === 'Enter') {
+      if (activeIndex >= 0 && matches[activeIndex]) {
+        e.preventDefault();
+        go(matches[activeIndex].path);
+      }
+    } else if (e.key === 'Escape') {
+      closeResults();
+    }
+  });
+
+  // close the dropdown when focus/click moves away
+  document.addEventListener('click', (e) => {
+    if (!form.contains(e.target)) closeResults();
+  });
 }
 
 /**
@@ -159,6 +283,16 @@ export default async function decorate(block) {
   hamburger.addEventListener('click', () => toggleMobileMenu(nav));
   nav.prepend(hamburger);
   nav.setAttribute('aria-expanded', 'false');
+
+  // scrim behind the mobile drawer — clicking it closes the menu (only visible
+  // on mobile via CSS). Placed just before the slide-in .nav-sections.
+  const scrim = document.createElement('button');
+  scrim.type = 'button';
+  scrim.className = 'nav-scrim';
+  scrim.setAttribute('aria-label', 'Close navigation');
+  scrim.tabIndex = -1;
+  scrim.addEventListener('click', () => closeMobileMenu(nav));
+  if (navSections) nav.insertBefore(scrim, navSections);
 
   // reset on breakpoint change
   isDesktop.addEventListener('change', () => closeMobileMenu(nav));

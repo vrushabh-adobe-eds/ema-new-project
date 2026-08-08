@@ -185,3 +185,50 @@
     --slide-content-width: auto;
   }
 }
+
+/* ---------- Mobile (< 600px): stacked layout (matches source) ----------
+   Image on top, then the content card below it (full width, not overlaid).
+   Controls strip: dots pinned left, arrows pinned right. */
+@media (width < 600px) {
+  /* let the slide grow to fit image + card instead of a fixed hero height */
+  .carousel-hero .carousel-hero-slide {
+    height: auto;
+    min-height: 0;
+    justify-content: flex-start;
+  }
+
+  /* image becomes a normal block on top (not absolutely positioned) with a
+     fixed banner height */
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture {
+    position: relative;
+    inset: auto;
+    display: block;
+  }
+
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture > img {
+    height: 233px;
+  }
+
+  /* card stacks below the image: full width, left-aligned text, no side gap */
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
+    align-self: stretch;
+    width: 100%;
+    margin: 0;
+    padding: 24px;
+  }
+
+  /* controls: dots to the far left, arrows to the far right */
+  .carousel-hero .carousel-hero-controls {
+    justify-content: flex-start;
+    min-height: 64px;
+    padding: 0 24px;
+  }
+
+  .carousel-hero .carousel-hero-slide-indicators {
+    justify-content: flex-start;
+  }
+
+  .carousel-hero .carousel-hero-navigation-buttons {
+    right: 24px;
+  }
+}

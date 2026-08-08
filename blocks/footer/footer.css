@@ -165,26 +165,61 @@ footer .footer .footer-legal a:any-link {
   }
 }
 
-/* ---------- Mobile layout (< 900px): stacked ---------- */
+/* ---------- Mobile layout (< 900px) ----------
+   Matches source: logo (left) and the nav links (a left-aligned vertical
+   list) share the top row; FOLLOW US and the social icons stack below it,
+   left-aligned with the logo; then the legal/description text. */
 @media (width < 900px) {
   footer .footer .footer-inner {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'brand nav'
+      'social social'
+      'legal legal';
     gap: 28px;
+    align-items: start;
+
+    /* match source insets: 28px sides, 16px top, 24px bottom */
+    padding: 16px 28px 24px;
   }
 
-  footer .footer .footer-nav ul {
-    flex-direction: column;
-    gap: 16px;
+  footer .footer .footer-brand {
+    grid-area: brand;
+  }
+
+  /* source footer logo is ~38px tall on mobile (smaller than the 48px base) */
+  footer .footer .footer-brand img {
+    height: 38px;
+  }
+
+  footer .footer .footer-nav {
+    grid-area: nav;
   }
 
   footer .footer .footer-social {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+    grid-area: social;
   }
 
   footer .footer .footer-legal {
+    grid-area: legal;
     margin-top: 0;
+  }
+
+  /* nav links: left-aligned vertical list beside the logo. ~24px gap gives the
+     source's ~43px row pitch. */
+  footer .footer .footer-nav ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  /* FOLLOW US label sits ABOVE the social icons (stacked), both left-aligned;
+     ~20px gap matches the source. */
+  footer .footer .footer-social,
+  footer .footer .footer-social > .default-content-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
   }
 }

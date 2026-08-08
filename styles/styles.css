@@ -418,3 +418,182 @@ main > .section.breadcrumb-container {
 .breadcrumb li[aria-current="page"] {
   color: #696969;
 }
+
+/* ---------- magazine article page (body.magazine-article) ----------
+   Source: two-column layout — article body on the LEFT, "SHARE THIS STORY"
+   related sidebar on the RIGHT (from the top), airy justified body copy (18/45),
+   wide lead-image banner. */
+body.magazine-article main > .section > div {
+  max-width: 1200px;
+}
+
+/* Tighten the vertical gaps between the article's sections (title/byline → body)
+   — the source flows them together (~20px), not the boilerplate's stacked 40+40. */
+body.magazine-article main > .section {
+  margin: 12px 0;
+}
+
+body.magazine-article main .default-content-wrapper p {
+  line-height: 1.6; /* tighter than the source's airy 2.5, for readability */
+  text-align: left; /* left-aligned (ragged-right) — no uneven justified word gaps */
+}
+
+/* Byline ("BY SOFIA SJÖBERG") — the source renders it small, bold, uppercase
+   sans-serif, not the large serif heading the boilerplate h4 gives it. */
+body.magazine-article main .default-content-wrapper h4 {
+  margin: 8px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Hide the duplicate article title: the body content fragment repeats the page
+   H1 as an <h3> at the very start of the body — the source doesn't show it. */
+body.magazine-article main .default-content-wrapper > h3:first-child {
+  display: none;
+}
+
+@media (width >= 900px) {
+  body.magazine-article main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    column-gap: 64px;
+    max-width: 1264px;
+    margin: 0 auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+  }
+
+  /* lead image + breadcrumb span the full width (rows 1 and 2) */
+  body.magazine-article main > .section.lead-image,
+  body.magazine-article main > .section.breadcrumb-container {
+    grid-column: 1 / -1;
+  }
+
+  /* related sidebar → right column, starting level with the title (row 3) */
+  body.magazine-article main > .section.article-list-container {
+    grid-column: 2;
+    grid-row: 3 / span 100;
+    align-self: start;
+  }
+
+  /* all other content (title, body, author byline) → left column */
+  body.magazine-article main > .section:not(.lead-image, .breadcrumb-container, .article-list-container) {
+    grid-column: 1;
+  }
+
+  /* inside the grid, sections fill their cell (no centered narrow column) */
+  body.magazine-article main > .section > div {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* breadcrumb spans full width but its content aligns left with the article
+     column (its direct child is a <nav>, not a wrapping <div>). */
+  body.magazine-article main > .section.breadcrumb-container {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  body.magazine-article main > .section.breadcrumb-container > .breadcrumb {
+    margin: 0;
+  }
+}
+
+/* pull-quote grey box (source: #ebebeb panel around the blockquote).
+   The "noun" label is authored as the paragraph immediately after the
+   blockquote; extend the grey box over it so they read as one card. */
+body.magazine-article main .default-content-wrapper blockquote {
+  background-color: #ebebeb;
+  margin: 24px 0 0;
+  padding: 40px 48px 0;
+  border: 0;
+  font-family: var(--heading-font-family);
+  font-size: 36px;
+  line-height: 54px;
+  text-align: left;
+}
+
+body.magazine-article main .default-content-wrapper blockquote p {
+  margin: 0;
+  line-height: 54px;
+  text-align: left;
+}
+
+/* short yellow accent bar below the quote text (source: blockquote::after,
+   80px wide, 2px solid #ffea00) */
+body.magazine-article main .default-content-wrapper blockquote::after {
+  content: '';
+  display: block;
+  width: 80px;
+  margin-top: 16px;
+  border-bottom: 2px solid var(--brand-primary);
+}
+
+/* the "noun" paragraph directly after the quote is part of the same grey box */
+body.magazine-article main .default-content-wrapper blockquote + p {
+  margin: 0 0 24px;
+  padding: 16px 48px 40px;
+  background-color: #ebebeb;
+  line-height: 27px;
+  text-align: left;
+}
+
+/* related list keeps the section's narrow column too */
+body.magazine-article .article-list:not(.related) > ul {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+/* related mode: title + date list with a left accent bar (source sidebar) */
+/* stylelint-disable-next-line no-descending-specificity */
+.article-list.related > ul {
+  display: block;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.article-list.related > ul > li {
+  margin: 0 0 28px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.article-list.related > ul > li a {
+  /* source accent bar: 5px light-grey left border on the link, spanning its
+     full height (16px padding). Turns black + card yellow on hover. */
+  display: block;
+  padding: 16px 20px;
+  border-left: 5px solid #ebebeb;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* whole card turns yellow on hover, with a solid black left accent bar
+   (matches the source "ULTIMATE GUIDE TO LA SKATEPARKS" hover) */
+.article-list.related > ul > li a:hover {
+  border-left-color: var(--text-color);
+  background-color: var(--brand-primary);
+}
+
+.article-list.related .article-list-related-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 400; /* source uses regular weight */
+  line-height: 27px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.article-list.related .article-list-related-date {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px; /* source date size */
+  line-height: 18px;
+  text-transform: uppercase;
+  color: #696969;
+}

@@ -48,26 +48,21 @@ var CustomImportScript = (() => {
     ));
     const cells = [];
     slides.forEach((slide) => {
-      const image = slide.querySelector(".cmp-teaser__image img, .cmp-image__image, img");
-      const titleEl = slide.querySelector(".cmp-teaser__title, .cmp-carousel__title, h1, h2, h3");
-      const descEl = slide.querySelector('.cmp-teaser__description, [class*="description"]');
-      const ctas = Array.from(slide.querySelectorAll(
-        ".cmp-teaser__action-link, a.cmp-button, a.button"
-      ));
-      if (!image && !titleEl && !descEl && ctas.length === 0) return;
-      const textCell = [];
-      if (titleEl) {
-        const heading = document.createElement("h2");
-        heading.textContent = titleEl.textContent.trim();
-        textCell.push(heading);
+      const cta = slide.querySelector(
+        ".cmp-teaser__action-link[href], a.cmp-button[href], a.button[href], a[href]"
+      );
+      const href = cta ? cta.getAttribute("href") : "";
+      if (!href) return;
+      let path = href;
+      try {
+        path = new URL(href, "https://wknd.site").pathname;
+      } catch (e) {
       }
-      if (descEl && descEl.textContent.trim()) textCell.push(descEl);
-      textCell.push(...ctas);
-      cells.push([image || "", textCell.length ? textCell : ""]);
+      path = path.replace(/\.html$/, "");
+      cells.push([path]);
     });
     if (cells.length === 0) {
-      element.replaceWith(...element.childNodes);
-      return;
+      ["/us/en/adventures", "/us/en/magazine/san-diego-surf", "/us/en/adventures/downhill-skiing-wyoming"].forEach((p) => cells.push([p]));
     }
     const block = WebImporter.Blocks.createBlock(document, { name: "carousel-hero", cells });
     element.replaceWith(block);
@@ -153,7 +148,16 @@ var CustomImportScript = (() => {
     const href = firstLink ? firstLink.getAttribute("href") : "";
     let indexPath = "/us/en/magazine/query-index.json";
     if (/\/adventures\//.test(href)) indexPath = "/us/en/adventures/query-index.json";
-    const cells = [["4"], [indexPath]];
+    const isRelated = !!element.closest('.cmp-layoutcontainer--sidebar, [class*="sidebar"]');
+    const isLanding = !!element.closest(".image-list");
+    let cells;
+    if (isRelated) {
+      cells = [["related"], ["4"], [indexPath]];
+    } else if (isLanding) {
+      cells = [[indexPath]];
+    } else {
+      cells = [["4"], [indexPath]];
+    }
     const block = WebImporter.Blocks.createBlock(document, { name: "article-list", cells });
     element.replaceWith(block);
   }
