@@ -77,6 +77,27 @@
   color: var(--text-color);
 }
 
+/* Mobile (< 900px): the source stacks image on top with the text flowing
+   below it (no overlay, no white box). Take the card out of absolute
+   positioning so it sits under the image, full width, left-aligned, and bump
+   the heading to the source's 36px/54px. */
+@media (width < 900px) {
+  .hero-promo > div:last-child {
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: none;
+    padding: 24px;
+    background-color: transparent;
+  }
+
+  .hero-promo > div:last-child :is(h1, h2, h3, h4, h5, h6) {
+    margin: 18px 0 0;
+    font-size: 36px;
+    line-height: 54px;
+  }
+}
+
 @media (width >= 900px) {
   .hero-promo > div:last-child {
     padding: 32px 28px 36px;
