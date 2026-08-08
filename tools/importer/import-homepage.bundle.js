@@ -43,8 +43,27 @@ var CustomImportScript = (() => {
 
   // tools/importer/parsers/carousel-hero.js
   function parse(element, { document }) {
-    const indexPath = "/us/en/adventures/query-index.json";
-    const cells = [["3"], [indexPath]];
+    const slides = Array.from(element.querySelectorAll(
+      ':scope .cmp-carousel__item, :scope [class*="carousel__item"]'
+    ));
+    const cells = [];
+    slides.forEach((slide) => {
+      const cta = slide.querySelector(
+        ".cmp-teaser__action-link[href], a.cmp-button[href], a.button[href], a[href]"
+      );
+      const href = cta ? cta.getAttribute("href") : "";
+      if (!href) return;
+      let path = href;
+      try {
+        path = new URL(href, "https://wknd.site").pathname;
+      } catch (e) {
+      }
+      path = path.replace(/\.html$/, "");
+      cells.push([path]);
+    });
+    if (cells.length === 0) {
+      ["/us/en/adventures", "/us/en/magazine/san-diego-surf", "/us/en/adventures/downhill-skiing-wyoming"].forEach((p) => cells.push([p]));
+    }
     const block = WebImporter.Blocks.createBlock(document, { name: "carousel-hero", cells });
     element.replaceWith(block);
   }

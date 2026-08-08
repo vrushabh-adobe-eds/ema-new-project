@@ -1,35 +1,40 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 import { fetchPlaceholders, moveInstrumentation } from '../../scripts/scripts.js';
 
-const DEFAULT_INDEX = '/us/en/adventures/query-index.json';
+// Query indexes the carousel can resolve slide paths against.
+const INDEXES = [
+  '/us/en/adventures/query-index.json',
+  '/us/en/magazine/query-index.json',
+];
 
 /**
- * Reads block config from single-cell rows: an optional query-index path and an
- * optional numeric limit (how many slides to show). Falls back to the default
- * adventures index when no path is authored.
+ * Reads block config: an ordered list of slide paths (the curated slides). Each
+ * config row holds one page path (as a link or plain text); the slide's image,
+ * title and description are then resolved from the query index — so nothing
+ * about the slide is hardcoded in Document Authoring.
  * @param {Element} block
- * @returns {{ indexPath: string, limit: number }}
+ * @returns {string[]} ordered, normalized slide paths
  */
 function readConfig(block) {
-  let indexPath = DEFAULT_INDEX;
-  let limit = 0;
+  const paths = [];
   block.querySelectorAll(':scope > div').forEach((row) => {
-    const text = row.textContent.trim();
     const link = row.querySelector('a');
-    if (link && /query-index\.json/.test(link.getAttribute('href') || '')) {
-      indexPath = new URL(link.getAttribute('href'), window.location.origin).pathname;
-    } else if (/query-index\.json$/.test(text)) {
-      indexPath = new URL(text, window.location.origin).pathname;
-    } else if (/^\d+$/.test(text)) {
-      limit = parseInt(text, 10);
-    }
+    const raw = (link ? link.getAttribute('href') : row.textContent).trim();
+    if (!raw || /query-index\.json$/.test(raw)) return;
+    // normalize to a query-index-style path: strip origin, /content prefix, .html
+    let path = raw;
+    try { path = new URL(raw, window.location.origin).pathname; } catch { /* keep raw */ }
+    path = path.replace(/^\/content(?=\/)/, '').replace(/\.html$/, '').replace(/\/$/, '');
+    if (path) paths.push(path);
   });
-  return { indexPath, limit };
+  return paths;
 }
 
 /**
  * Builds one carousel slide row (image column + content column) from a
  * query-index entry, matching the authored slide shape the decorator expects.
+ * The CTA label follows the source: magazine articles → "Full Article",
+ * the adventures landing → "View Trips", a single adventure → "View Trip".
  * @param {object} item
  * @returns {HTMLDivElement}
  */
@@ -54,7 +59,9 @@ function buildSlideRow(item) {
   const ctaP = document.createElement('p');
   const cta = document.createElement('a');
   cta.href = item.path;
-  cta.textContent = 'View Trip';
+  if (/\/magazine\//.test(item.path)) cta.textContent = 'Full Article';
+  else if (/\/adventures$/.test(item.path)) cta.textContent = 'View Trips';
+  else cta.textContent = 'View Trip';
   ctaP.append(cta);
   contentCol.append(ctaP);
 
@@ -63,42 +70,36 @@ function buildSlideRow(item) {
 }
 
 /**
- * Replaces the block's authored rows with slides built from the query index.
- * Curated order (matching the source homepage carousel) leads; anything else
- * falls back to index order. Leaves the authored rows in place if the index is
- * unavailable so the carousel is never empty.
+ * Replaces the block's config rows with the curated slides, resolving each
+ * configured path against the query indexes so all slide data (image, title,
+ * description) comes from the index. Leaves authored rows in place if the
+ * indexes are unavailable so the carousel is never empty.
  * @param {Element} block
  */
-const CAROUSEL_ORDER = ['climbing-new-zealand', 'colorado-rock-climbing', 'downhill-skiing-wyoming'];
 async function populateFromIndex(block) {
-  const { indexPath, limit } = readConfig(block);
-  // config-only block if it has no authored image rows
+  const paths = readConfig(block);
+  if (!paths.length) return; // authored (static) carousel — leave as-is
   const hasImageRows = !!block.querySelector('picture, img');
-  const slug = (p) => (p || '').split('/').pop();
-  const rank = (p) => {
-    const i = CAROUSEL_ORDER.indexOf(slug(p));
-    return i === -1 ? CAROUSEL_ORDER.length : i;
-  };
-  const childRe = /\/adventures\/[^/]+$/;
-  const landingPath = indexPath.replace(/\/query-index\.json$/, '');
 
-  let items = [];
-  try {
-    const resp = await fetch(indexPath);
-    if (resp.ok) {
+  // Fetch the indexes once and build a path → entry lookup.
+  const lookup = {};
+  await Promise.all(INDEXES.map(async (indexPath) => {
+    try {
+      const resp = await fetch(indexPath);
+      if (!resp.ok) return;
       const json = await resp.json();
-      items = (json.data || [])
-        .filter((it) => it.path && it.path !== landingPath && childRe.test(it.path) && it.image)
-        .sort((a, b) => (rank(a.path) - rank(b.path))
-          || (a.title || '').localeCompare(b.title || ''));
-      if (limit > 0) items = items.slice(0, limit);
+      (json.data || []).forEach((it) => {
+        if (it.path) lookup[it.path.replace(/\/$/, '')] = it;
+      });
+    } catch (e) {
+      // index unavailable — resolved entries just stay missing
     }
-  } catch (e) {
-    // index unavailable — keep authored rows
-  }
+  }));
+
+  // Resolve the configured slide paths, in order, to their index entries.
+  const items = paths.map((p) => lookup[p]).filter((it) => it && it.image);
 
   if (items.length) {
-    // clear config/authored rows, then append dynamic slide rows
     block.querySelectorAll(':scope > div').forEach((row) => row.remove());
     items.forEach((item) => block.append(buildSlideRow(item)));
   } else if (!hasImageRows) {
