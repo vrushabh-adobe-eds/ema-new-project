@@ -438,6 +438,17 @@ body.magazine-article main .default-content-wrapper p {
   text-align: left; /* left-aligned (ragged-right) — no uneven justified word gaps */
 }
 
+/* Byline ("BY SOFIA SJÖBERG") — the source renders it small, bold, uppercase
+   sans-serif, not the large serif heading the boilerplate h4 gives it. */
+body.magazine-article main .default-content-wrapper h4 {
+  margin: 8px 0 0;
+  font-family: var(--body-font-family);
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
 /* Hide the duplicate article title: the body content fragment repeats the page
    H1 as an <h3> at the very start of the body — the source doesn't show it. */
 body.magazine-article main .default-content-wrapper > h3:first-child {

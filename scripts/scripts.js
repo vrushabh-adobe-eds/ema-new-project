@@ -151,10 +151,17 @@ function buildBreadcrumb(main) {
   const { pathname } = window.location;
   const m = pathname.match(/^(\/[a-z-]+\/[a-z-]+\/(adventures|magazine))\/([^/]+)$/);
   if (!m) return;
-  const [, parentPath, section] = m;
+  const [, parentPath, section, slug] = m;
   const parentLabel = section === 'magazine' ? 'Magazine' : 'Adventures';
-  const title = (document.querySelector('main h1')?.textContent
-    || document.title || '').trim();
+  // Current-page label from the URL slug, title-cased (matches the source's
+  // short breadcrumb label, e.g. "Western Australia" — not the full H1
+  // "Western Australia by Camper Van").
+  const title = slug
+    .replace(/\.html$/, '')
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+    .trim();
   if (!title) return;
 
   const nav = document.createElement('nav');
