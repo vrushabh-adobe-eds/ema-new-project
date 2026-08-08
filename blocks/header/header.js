@@ -160,6 +160,16 @@ export default async function decorate(block) {
   nav.prepend(hamburger);
   nav.setAttribute('aria-expanded', 'false');
 
+  // scrim behind the mobile drawer — clicking it closes the menu (only visible
+  // on mobile via CSS). Placed just before the slide-in .nav-sections.
+  const scrim = document.createElement('button');
+  scrim.type = 'button';
+  scrim.className = 'nav-scrim';
+  scrim.setAttribute('aria-label', 'Close navigation');
+  scrim.tabIndex = -1;
+  scrim.addEventListener('click', () => closeMobileMenu(nav));
+  if (navSections) nav.insertBefore(scrim, navSections);
+
   // reset on breakpoint change
   isDesktop.addEventListener('change', () => closeMobileMenu(nav));
 
