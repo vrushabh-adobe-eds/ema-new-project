@@ -179,10 +179,18 @@ footer .footer .footer-legal a:any-link {
       'legal legal';
     gap: 28px;
     align-items: start;
+
+    /* match source insets: 28px sides, 16px top, 24px bottom */
+    padding: 16px 28px 24px;
   }
 
   footer .footer .footer-brand {
     grid-area: brand;
+  }
+
+  /* source footer logo is ~38px tall on mobile (smaller than the 48px base) */
+  footer .footer .footer-brand img {
+    height: 38px;
   }
 
   footer .footer .footer-nav {
@@ -198,18 +206,20 @@ footer .footer .footer-legal a:any-link {
     margin-top: 0;
   }
 
-  /* nav links: left-aligned vertical list beside the logo */
+  /* nav links: left-aligned vertical list beside the logo. ~24px gap gives the
+     source's ~43px row pitch. */
   footer .footer .footer-nav ul {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 24px;
   }
 
-  /* FOLLOW US label sits ABOVE the social icons (stacked), both left-aligned */
+  /* FOLLOW US label sits ABOVE the social icons (stacked), both left-aligned;
+     ~20px gap matches the source. */
   footer .footer .footer-social,
   footer .footer .footer-social > .default-content-wrapper {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 20px;
   }
 }
