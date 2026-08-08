@@ -354,21 +354,8 @@ header nav .nav-hamburger-icon::after {
   width: 17px; /* bottom bar ≈ 57% */
 }
 
-/* hamburger -> cross */
-header nav[aria-expanded='true'] .nav-hamburger-icon {
-  background: transparent;
-}
-
-header nav[aria-expanded='true'] .nav-hamburger-icon::before {
-  top: 0;
-  transform: rotate(45deg);
-}
-
-header nav[aria-expanded='true'] .nav-hamburger-icon::after {
-  top: 0;
-  width: 29px; /* restore full width so the close (X) is symmetric */
-  transform: rotate(-45deg);
-}
+/* Open state keeps the same menu-staircase glyph (matches source — the icon
+   does NOT morph into an X; the drawer is dismissed via the scrim). */
 
 /* ---------- Mobile layout (< 900px) ---------- */
 @media (width < 900px) {
