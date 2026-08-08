@@ -108,6 +108,16 @@
   content: none;
 }
 
+/* Mobile: the source's intro hero image is contained and left-aligned
+   (~64% of the content width), not stretched full-width. */
+@media (width < 900px) {
+  .section.accordion-faq-container > .default-content-wrapper:first-child img {
+    width: auto;
+    max-width: 64%;
+    height: auto;
+  }
+}
+
 @media (width >= 900px) {
   .section.accordion-faq-container {
     display: grid;
