@@ -432,8 +432,7 @@ header nav[aria-expanded='true'] .nav-hamburger-icon::after {
     left: 0;
     z-index: 25;
     display: block;
-    width: 80%;
-    max-width: 320px;
+    width: 275px; /* source drawer is a fixed 275px, leaving a page strip right */
     height: 100vh;
     padding: 24px 0;
     background-color: var(--wknd-dark);
