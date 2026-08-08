@@ -36,14 +36,24 @@ function readConfig(block) {
  * The CTA label follows the source: magazine articles → "Full Article",
  * the adventures landing → "View Trips", a single adventure → "View Trip".
  * @param {object} item
+ * @param {boolean} [eager] Eager-load + prioritize the image (the LCP first slide)
  * @returns {HTMLDivElement}
  */
-function buildSlideRow(item) {
+function buildSlideRow(item, eager = false) {
   const row = document.createElement('div');
 
   const imageCol = document.createElement('div');
   if (item.image) {
-    const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '2000' }]);
+    const pic = createOptimizedPicture(item.image, item.title || '', eager, [{ width: '2000' }]);
+    if (eager) {
+      // LCP hint: load the first slide's image eagerly and with high priority so
+      // it's discoverable/prioritized immediately (PageSpeed "LCP request discovery").
+      const img = pic.querySelector('img');
+      if (img) {
+        img.setAttribute('loading', 'eager');
+        img.setAttribute('fetchpriority', 'high');
+      }
+    }
     imageCol.append(pic);
   }
 
@@ -101,7 +111,8 @@ async function populateFromIndex(block) {
 
   if (items.length) {
     block.querySelectorAll(':scope > div').forEach((row) => row.remove());
-    items.forEach((item) => block.append(buildSlideRow(item)));
+    // first slide is the LCP candidate — eager-load + prioritize its image
+    items.forEach((item, i) => block.append(buildSlideRow(item, i === 0)));
   } else if (!hasImageRows) {
     // no index data and no authored slides — nothing to show
     block.textContent = '';
