@@ -42,41 +42,6 @@ var CustomImportScript = (() => {
   });
 
   // tools/importer/parsers/contributors.js
-  function buildPersonCell(person, document) {
-    const image = person.querySelector(".cmp-image__image, .image img, img");
-    const titleEls = Array.from(person.querySelectorAll(
-      ".cmp-title__text, .cmp-title h1, .cmp-title h2, .cmp-title h3, .cmp-title h4, .cmp-title h5"
-    ));
-    const nameEl = titleEls[0] || null;
-    const roleEl = titleEls[1] || null;
-    const socialAnchors = Array.from(person.querySelectorAll(
-      'a.cmp-button[href], [class*="btn-list"] a[href], [class*="social"] a[href]'
-    )).map((a) => {
-      const href = a.getAttribute("href");
-      const labelEl = a.querySelector(".cmp-button__text");
-      const label = (labelEl ? labelEl.textContent : a.textContent).trim();
-      if (!href) return null;
-      const link = document.createElement("a");
-      link.setAttribute("href", href);
-      link.textContent = label || href;
-      return link;
-    }).filter(Boolean);
-    if (!image && !nameEl && !roleEl && socialAnchors.length === 0) return null;
-    const contentCell = [];
-    if (image) contentCell.push(image);
-    if (nameEl) {
-      const heading = document.createElement("h3");
-      heading.textContent = nameEl.textContent.trim();
-      contentCell.push(heading);
-    }
-    if (roleEl && roleEl.textContent.trim()) {
-      const role = document.createElement("p");
-      role.textContent = roleEl.textContent.trim();
-      contentCell.push(role);
-    }
-    contentCell.push(...socialAnchors);
-    return contentCell;
-  }
   function parse(element, { document }) {
     const XF_SEL = ".cmp-experience-fragment--contributor";
     const allXf = Array.from(document.querySelectorAll(XF_SEL));
@@ -91,12 +56,13 @@ var CustomImportScript = (() => {
     nodes.forEach((n) => {
       if (n.matches(XF_SEL)) {
         if (!current) {
-          current = { members: [] };
+          current = { heading: null, members: [] };
           groups.push(current);
         }
         current.members.push(n);
       } else {
-        current = null;
+        current = { heading: n.textContent.trim(), members: [] };
+        groups.push(current);
       }
     });
     const group = groups.find((g) => g.members[0] === element);
@@ -104,15 +70,9 @@ var CustomImportScript = (() => {
       if (element.parentNode) element.remove();
       return;
     }
-    const cells = [];
-    group.members.forEach((person) => {
-      const cell = buildPersonCell(person, document);
-      if (cell) cells.push([cell]);
-    });
-    if (cells.length === 0) {
-      element.replaceWith(...element.childNodes);
-      return;
-    }
+    const type = /guide/i.test(group.heading || "") ? "guide" : "contributor";
+    const indexPath = "/us/en/contributors/query-index.json";
+    const cells = [[indexPath], [type]];
     group.members.slice(1).forEach((m) => {
       if (m.parentNode) m.remove();
     });
