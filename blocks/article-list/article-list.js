@@ -4,6 +4,21 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 const DEFAULT_INDEX = '/us/en/magazine/query-index.json';
 
 /**
+ * Bump a generated <picture> from aem.js's default `optimize=medium` to
+ * `optimize=high` (~10% smaller, no visible quality loss) — PageSpeed
+ * "Improve image delivery".
+ * @param {HTMLPictureElement} pic
+ */
+function optimizeHigh(pic) {
+  pic.querySelectorAll('source').forEach((s) => {
+    const srcset = s.getAttribute('srcset');
+    if (srcset) s.setAttribute('srcset', srcset.replace(/optimize=medium/g, 'optimize=high'));
+  });
+  const img = pic.querySelector('img');
+  if (img && img.src) img.src = img.src.replace(/optimize=medium/g, 'optimize=high');
+}
+
+/**
  * Reads block config from single-cell rows (an index path, a limit, and/or a
  * `members` mode flag).
  * @param {Element} block
@@ -88,6 +103,7 @@ function buildMemberCard(item) {
   imageCell.className = 'article-list-card-image';
   if (item.image) {
     const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '750' }]);
+    optimizeHigh(pic);
     imageCell.append(pic);
   }
 
@@ -109,6 +125,7 @@ function buildCard(item) {
     const link = document.createElement('a');
     link.href = item.path;
     const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '750' }]);
+    optimizeHigh(pic);
     link.append(pic);
     imageCell.append(link);
   }
@@ -250,6 +267,7 @@ export default async function decorate(block) {
         });
       ul.querySelectorAll('picture > img').forEach((img) => {
         const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+        optimizeHigh(optimizedPic);
         moveInstrumentation(img, optimizedPic.querySelector('img'));
         img.closest('picture').replaceWith(optimizedPic);
       });
@@ -281,6 +299,7 @@ export default async function decorate(block) {
       });
     ul.querySelectorAll('picture > img').forEach((img) => {
       const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
+      optimizeHigh(optimizedPic);
       moveInstrumentation(img, optimizedPic.querySelector('img'));
       img.closest('picture').replaceWith(optimizedPic);
     });
