@@ -8,6 +8,21 @@ const INDEXES = [
 ];
 
 /**
+ * Bump the delivery optimization on a generated <picture> from the aem.js
+ * default `optimize=medium` to `optimize=high` (~10% smaller webp/jpeg with no
+ * visible quality loss at these sizes) — PageSpeed "Improve image delivery".
+ * @param {HTMLPictureElement} pic
+ */
+function optimizeHigh(pic) {
+  pic.querySelectorAll('source').forEach((s) => {
+    const srcset = s.getAttribute('srcset');
+    if (srcset) s.setAttribute('srcset', srcset.replace(/optimize=medium/g, 'optimize=high'));
+  });
+  const img = pic.querySelector('img');
+  if (img && img.src) img.src = img.src.replace(/optimize=medium/g, 'optimize=high');
+}
+
+/**
  * Reads block config: an ordered list of slide paths (the curated slides). Each
  * config row holds one page path (as a link or plain text); the slide's image,
  * title and description are then resolved from the query index — so nothing
@@ -51,6 +66,7 @@ function buildSlideRow(item, eager = false) {
       { media: '(min-width: 600px)', width: '2000' },
       { width: '750' },
     ]);
+    optimizeHigh(pic);
     if (eager) {
       // LCP hint: load the first slide's image eagerly and with high priority so
       // it's discoverable/prioritized immediately (PageSpeed "LCP request discovery").
