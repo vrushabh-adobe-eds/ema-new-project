@@ -4,6 +4,18 @@
   max-width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+
+  /* Reserve the block's final height before JS builds the slides, so the page
+     doesn't shift as the query-index carousel hydrates (PageSpeed CLS). Mobile
+     stacks image(233) + content card + controls(64) ≈ 660px; desktop is the
+     hero band (clamp) + 84px controls strip. */
+  min-height: 660px;
+}
+
+@media (width >= 600px) {
+  .carousel-hero {
+    min-height: calc(clamp(420px, 44vw, 640px) + 84px);
+  }
 }
 
 .carousel-hero .carousel-hero-slides-container {

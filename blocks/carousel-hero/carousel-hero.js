@@ -8,6 +8,21 @@ const INDEXES = [
 ];
 
 /**
+ * Bump the delivery optimization on a generated <picture> from the aem.js
+ * default `optimize=medium` to `optimize=high` (~10% smaller webp/jpeg with no
+ * visible quality loss at these sizes) — PageSpeed "Improve image delivery".
+ * @param {HTMLPictureElement} pic
+ */
+function optimizeHigh(pic) {
+  pic.querySelectorAll('source').forEach((s) => {
+    const srcset = s.getAttribute('srcset');
+    if (srcset) s.setAttribute('srcset', srcset.replace(/optimize=medium/g, 'optimize=high'));
+  });
+  const img = pic.querySelector('img');
+  if (img && img.src) img.src = img.src.replace(/optimize=medium/g, 'optimize=high');
+}
+
+/**
  * Reads block config: an ordered list of slide paths (the curated slides). Each
  * config row holds one page path (as a link or plain text); the slide's image,
  * title and description are then resolved from the query index — so nothing
@@ -36,14 +51,31 @@ function readConfig(block) {
  * The CTA label follows the source: magazine articles → "Full Article",
  * the adventures landing → "View Trips", a single adventure → "View Trip".
  * @param {object} item
+ * @param {boolean} [eager] Eager-load + prioritize the image (the LCP first slide)
  * @returns {HTMLDivElement}
  */
-function buildSlideRow(item) {
+function buildSlideRow(item, eager = false) {
   const row = document.createElement('div');
 
   const imageCol = document.createElement('div');
   if (item.image) {
-    const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '2000' }]);
+    // Responsive breakpoints: mobile pulls a ~750px image, tablet/desktop the
+    // large 2000px banner — so small screens don't download the huge variant
+    // (PageSpeed "Improve image delivery").
+    const pic = createOptimizedPicture(item.image, item.title || '', eager, [
+      { media: '(min-width: 600px)', width: '2000' },
+      { width: '750' },
+    ]);
+    optimizeHigh(pic);
+    if (eager) {
+      // LCP hint: load the first slide's image eagerly and with high priority so
+      // it's discoverable/prioritized immediately (PageSpeed "LCP request discovery").
+      const img = pic.querySelector('img');
+      if (img) {
+        img.setAttribute('loading', 'eager');
+        img.setAttribute('fetchpriority', 'high');
+      }
+    }
     imageCol.append(pic);
   }
 
@@ -101,7 +133,8 @@ async function populateFromIndex(block) {
 
   if (items.length) {
     block.querySelectorAll(':scope > div').forEach((row) => row.remove());
-    items.forEach((item) => block.append(buildSlideRow(item)));
+    // first slide is the LCP candidate — eager-load + prioritize its image
+    items.forEach((item, i) => block.append(buildSlideRow(item, i === 0)));
   } else if (!hasImageRows) {
     // no index data and no authored slides — nothing to show
     block.textContent = '';

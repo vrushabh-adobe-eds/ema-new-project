@@ -2,7 +2,9 @@
 
 /*
  * WKND fonts: Asar (serif display headings) + Source Sans Pro (body).
- * Primary load is via <link> in head.html (eager, for LCP). This lazy @import
- * is a redundant fallback loaded post-LCP by scripts.js loadFonts().
+ * Loaded lazily (post-LCP, or eagerly on desktop/repeat visits via the
+ * fonts-loaded flag) by scripts.js loadFonts() — NOT render-blocking in
+ * head.html, so the Google Fonts request stays off the critical path.
+ * display=swap avoids invisible text while the webfont downloads.
  */
 @import url('https://fonts.googleapis.com/css2?family=Asar&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');

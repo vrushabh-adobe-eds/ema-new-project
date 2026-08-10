@@ -29,18 +29,13 @@ export default function parse(element, { document }) {
   // layout container.
   const isRelated = !!element.closest('.cmp-layoutcontainer--sidebar, [class*="sidebar"]');
 
-  // Landing pages (the full ".image-list" grid) list ALL entries — no limit.
-  // Homepage teaser grids cap at 4.
-  const isLanding = !!element.closest('.image-list');
-
-  let cells;
-  if (isRelated) {
-    cells = [['related'], ['4'], [indexPath]];
-  } else if (isLanding) {
-    cells = [[indexPath]];
-  } else {
-    cells = [['4'], [indexPath]];
-  }
+  // Plain listing: emit ONLY the index path. The block decides how many cards
+  // to show by page context — a collection's own landing page lists everything,
+  // while the same block used as a teaser on another page (homepage grids) caps
+  // at 4. (Previously this parser tried to detect landing vs teaser via the
+  // ".image-list" class, but the source puts that class on the homepage grids
+  // too, so the intended limit was dropped and teasers rendered every entry.)
+  const cells = isRelated ? [['related'], ['4'], [indexPath]] : [[indexPath]];
 
   const block = WebImporter.Blocks.createBlock(document, { name: 'article-list', cells });
   element.replaceWith(block);

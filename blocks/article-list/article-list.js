@@ -1,19 +1,35 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
 
 const DEFAULT_INDEX = '/us/en/magazine/query-index.json';
 
 /**
+ * Bump a generated <picture> from aem.js's default `optimize=medium` to
+ * `optimize=high` (~10% smaller, no visible quality loss) — PageSpeed
+ * "Improve image delivery".
+ * @param {HTMLPictureElement} pic
+ */
+function optimizeHigh(pic) {
+  pic.querySelectorAll('source').forEach((s) => {
+    const srcset = s.getAttribute('srcset');
+    if (srcset) s.setAttribute('srcset', srcset.replace(/optimize=medium/g, 'optimize=high'));
+  });
+  const img = pic.querySelector('img');
+  if (img && img.src) img.src = img.src.replace(/optimize=medium/g, 'optimize=high');
+}
+
+/**
  * Reads block config from single-cell rows (an index path, a limit, and/or a
- * `members` mode flag).
+ * mode flag such as `members`, `related`, or `tabs`).
  * @param {Element} block
- * @returns {{ indexPath: string, limit: number, members: boolean }}
+ * @returns {{ indexPath: string, limit: number, members: boolean,
+ *   related: boolean, tabs: boolean }}
  */
 function readConfig(block) {
   let indexPath = DEFAULT_INDEX;
   let limit = 0;
   let members = false;
   let related = false;
+  let tabs = false;
   block.querySelectorAll(':scope > div').forEach((row) => {
     const text = row.textContent.trim();
     const link = row.querySelector('a');
@@ -27,10 +43,12 @@ function readConfig(block) {
       members = true;
     } else if (/^related$/i.test(text)) {
       related = true;
+    } else if (/^tabs$/i.test(text)) {
+      tabs = true;
     }
   });
   return {
-    indexPath, limit, members, related,
+    indexPath, limit, members, related, tabs,
   };
 }
 
@@ -88,6 +106,7 @@ function buildMemberCard(item) {
   imageCell.className = 'article-list-card-image';
   if (item.image) {
     const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '750' }]);
+    optimizeHigh(pic);
     imageCell.append(pic);
   }
 
@@ -109,6 +128,7 @@ function buildCard(item) {
     const link = document.createElement('a');
     link.href = item.path;
     const pic = createOptimizedPicture(item.image, item.title || '', false, [{ width: '750' }]);
+    optimizeHigh(pic);
     link.append(pic);
     imageCell.append(link);
   }
@@ -134,10 +154,12 @@ function buildCard(item) {
 /**
  * loads and decorates the article-list block.
  *
- * Dynamic listing block: fetches the magazine query index (helix-query.yaml
- * target) and renders one card per magazine article, so the author only
- * places a single `article-list` block. Falls back to statically authored
- * rows when the index is unavailable.
+ * Dynamic listing block: fetches the collection query index (helix-query.yaml
+ * target) and renders one card per entry, so the author only places a single
+ * `article-list` block carrying the index path (and optional limit). The plain
+ * listing is query-index driven ONLY — no static fallback. On a collection's
+ * own landing page it lists everything; as a teaser on another page (homepage
+ * grids) it caps at 4, matching the source.
  *
  * @param {Element} block The block element
  */
@@ -152,7 +174,7 @@ const CURATED_ORDER = {
 
 export default async function decorate(block) {
   const {
-    indexPath, limit, members, related,
+    indexPath, limit, members, related, tabs,
   } = readConfig(block);
   const landingPath = indexPath.replace(/\/query-index\.json$/, '');
   // Collection segment (last path part of the landing path) drives both the
@@ -186,6 +208,18 @@ export default async function decorate(block) {
   // Truthy test for the index `members` flag (string "true"/"yes"/"1" or boolean).
   const isMember = (it) => /^(true|yes|1)$/i.test(String(it.members || '').trim());
 
+  // Effective card cap. When no explicit limit is authored, a plain listing
+  // shows EVERYTHING on the collection's own landing page (e.g. /us/en/adventures)
+  // but caps at 4 when it appears as a teaser on another page (the homepage
+  // "Recent Articles" / "Where do you want to go?" grids show 4, matching the
+  // source). Members/related lists keep their own configured limit.
+  const HOMEPAGE_TEASER_LIMIT = 4;
+  let effectiveLimit = limit;
+  if (effectiveLimit === 0 && !members && !related && !tabs
+    && currentPath !== landingPath) {
+    effectiveLimit = HOMEPAGE_TEASER_LIMIT;
+  }
+
   let items = [];
   try {
     const resp = await fetch(indexPath);
@@ -208,7 +242,7 @@ export default async function decorate(block) {
             || (parseDate(b.publicationDate) - parseDate(a.publicationDate))
             || (a.path || '').localeCompare(b.path || ''));
       }
-      if (limit > 0) items = items.slice(0, limit);
+      if (effectiveLimit > 0) items = items.slice(0, effectiveLimit);
     }
   } catch (e) {
     // network/index unavailable — fall back to static rows below
@@ -226,65 +260,76 @@ export default async function decorate(block) {
   }
 
   // Members Only mode: render locked secure cards (title + desc + READ MORE,
-  // image below), reusing the cards-teaser "secure" visual. No tabs.
+  // image below) from the members-flagged query-index entries. Query-index
+  // driven only — no static fallback.
   if (members) {
     block.classList.add('secure');
-    if (items.length) {
-      // Dynamic: flagged members from the query index.
-      items.forEach((item) => ul.append(buildMemberCard(item)));
-    } else {
-      // Fallback: the query index has no members yet (e.g. helix-query.yaml not
-      // on main). Decorate the statically authored card rows (those carrying an
-      // image) so the section is never empty; config-only rows are skipped.
-      [...block.children]
-        .filter((row) => row.querySelector('picture, img'))
-        .forEach((row) => {
-          const li = document.createElement('li');
-          moveInstrumentation(row, li);
-          while (row.firstElementChild) li.append(row.firstElementChild);
-          [...li.children].forEach((div) => {
-            if (div.children.length === 1 && div.querySelector('picture, img')) div.className = 'article-list-card-image';
-            else div.className = 'article-list-card-body';
-          });
-          ul.append(li);
-        });
-      ul.querySelectorAll('picture > img').forEach((img) => {
-        const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-        moveInstrumentation(img, optimizedPic.querySelector('img'));
-        img.closest('picture').replaceWith(optimizedPic);
-      });
-    }
+    items.forEach((item) => ul.append(buildMemberCard(item)));
     block.textContent = '';
     block.append(ul);
     return;
   }
 
-  if (items.length) {
-    // Plain card list straight from the query index — no category tabs (the
-    // source listings have none).
-    items.forEach((item) => ul.append(buildCard(item)));
-  } else {
-    // Fallback: decorate any statically authored rows as cards. Only rows that
-    // actually carry an image are real cards — config-only rows (a bare limit
-    // or an index path) are skipped so they never render as empty cards.
-    [...block.children]
-      .filter((row) => row.querySelector('picture, img'))
-      .forEach((row) => {
-        const li = document.createElement('li');
-        moveInstrumentation(row, li);
-        while (row.firstElementChild) li.append(row.firstElementChild);
-        [...li.children].forEach((div) => {
-          if (div.children.length === 1 && div.querySelector('picture')) div.className = 'article-list-card-image';
-          else div.className = 'article-list-card-body';
-        });
-        ul.append(li);
-      });
-    ul.querySelectorAll('picture > img').forEach((img) => {
-      const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-      moveInstrumentation(img, optimizedPic.querySelector('img'));
-      img.closest('picture').replaceWith(optimizedPic);
+  // Tabs mode: a category tab bar (All + each distinct `categories` value from
+  // the query index) filters the same card grid — matching the source
+  // "Current Adventures" tabs. Query-index driven only, no static fallback.
+  if (tabs) {
+    block.classList.add('tabbed');
+
+    // A card may carry several comma-separated categories (e.g. "Cycling,
+    // Travel") — in the source such a card appears under EACH of its tabs.
+    const catsOf = (it) => String(it.categories || '')
+      .split(',')
+      .map((c) => c.trim())
+      .filter(Boolean);
+    // Distinct categories, alphabetical — matching the source tab order.
+    const categories = [...new Set(items.flatMap(catsOf))].sort((a, b) => a.localeCompare(b));
+
+    // Build one card per item once; tab switching toggles visibility (no
+    // re-render). Tag each card with its categories (space-joined) so the
+    // filter can match any one of them.
+    items.forEach((item) => {
+      const li = buildCard(item);
+      li.dataset.categories = catsOf(item).join('|');
+      ul.append(li);
     });
+
+    // Tab bar: "All" first, then each category alphabetically.
+    const tablist = document.createElement('div');
+    tablist.className = 'article-list-tabs';
+    tablist.setAttribute('role', 'tablist');
+    const labels = ['All', ...categories];
+    const buttons = labels.map((label, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'article-list-tab';
+      btn.setAttribute('role', 'tab');
+      btn.textContent = label;
+      btn.dataset.category = i === 0 ? '' : label;
+      btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      tablist.append(btn);
+      return btn;
+    });
+
+    const select = (category) => {
+      buttons.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.category === category)));
+      ul.querySelectorAll(':scope > li').forEach((li) => {
+        const cats = (li.dataset.categories || '').split('|').filter(Boolean);
+        li.hidden = category !== '' && !cats.includes(category);
+      });
+    };
+    buttons.forEach((b) => b.addEventListener('click', () => select(b.dataset.category)));
+
+    block.textContent = '';
+    block.append(tablist, ul);
+    select('');
+    return;
   }
+
+  // Plain card list straight from the query index — no category tabs (the
+  // source listings have none) and no static fallback: this listing is
+  // query-index driven only.
+  items.forEach((item) => ul.append(buildCard(item)));
 
   block.textContent = '';
   block.append(ul);
