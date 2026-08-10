@@ -204,12 +204,56 @@ function buildBreadcrumb(main) {
 }
 
 /**
+ * Reunites the FAQ page's "Need more help?" panel. The heading is authored at
+ * the end of the accordion section, but a section break splits its contact
+ * body (phone/email) into a separate section below — so on the desktop
+ * two-column layout the right rail shows only the heading and the contact copy
+ * drops full-width beneath the grid. Move the trailing section's default
+ * content back in after the heading (before decorateSections runs, while main's
+ * children are still the raw per-section divs) so heading + body form one
+ * trailing wrapper and render together in the right column.
+ * @param {Element} main The container element
+ */
+function buildFaqLayout(main) {
+  if (main !== document.querySelector('main')) return;
+  const faq = main.querySelector('.accordion-faq');
+  if (!faq) return;
+  const faqDiv = [...main.children].find((d) => d.contains(faq));
+  if (!faqDiv) return;
+
+  // Anchor after which the contact copy is inserted: the heading that follows
+  // the accordion block ("Need more help?"), or the accordion block itself.
+  const faqChild = [...faqDiv.children].find((c) => c === faq || c.contains(faq));
+  let anchor = faqChild;
+  for (let el = faqChild?.nextElementSibling; el; el = el.nextElementSibling) {
+    if (/^H[1-6]$/.test(el.tagName)) { anchor = el; break; }
+  }
+  if (!anchor) return;
+
+  // Pull in following sibling sections that hold only default content (no
+  // blocks), preserving order, then drop the now-empty section divs.
+  for (let sib = faqDiv.nextElementSibling; sib;) {
+    const next = sib.nextElementSibling;
+    const hasBlock = [...sib.children].some((c) => c.tagName === 'DIV' && c.className);
+    if (hasBlock) break;
+    const children = [...sib.children];
+    for (let i = 0; i < children.length; i += 1) {
+      anchor.after(children[i]);
+      anchor = children[i];
+    }
+    sib.remove();
+    sib = next;
+  }
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
 function buildAutoBlocks(main) {
   try {
     buildBreadcrumb(main);
+    buildFaqLayout(main);
     // auto load `*/fragments/*` references
     const fragments = [...main.querySelectorAll('a[href*="/fragments/"]')].filter((f) => !f.closest('.fragment'));
     if (fragments.length > 0) {
