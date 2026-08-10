@@ -33,6 +33,31 @@
   padding-top: 0;
 }
 
+/* Mobile/tablet: the source lays the specs out as compact content-width rows
+   that wrap (Activity + Adventure Type, then Trip Length + Group Size +
+   Difficulty, then Price) rather than one tall single column. Use flex-wrap
+   with content-sized items so the same natural wrapping falls out; the per-item
+   left accent border + padding keeps the columns visually separated. (The
+   desktop >=900px rule below stacks them in the narrow left sidebar instead.) */
+@media (width < 900px) {
+  .adventure-details .adventure-details-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .adventure-details .adventure-details-item {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+
+  /* on mobile there is no tabs row to align to, so give the first item the
+     same top padding as the rest */
+  .adventure-details .adventure-details-item:first-child {
+    padding-top: 4px;
+  }
+}
+
 .adventure-details .adventure-details-item dt {
   margin: 0 0 4px;
   font-size: 12px;
