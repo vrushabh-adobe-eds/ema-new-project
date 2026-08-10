@@ -1,0 +1,5 @@
+{
+  "project": "WKND (ema-new-project)",
+  "editUrlLabel": "Edit in DA",
+  "editUrlPattern": "https://da.live/edit#{{pathname}}"
+}
