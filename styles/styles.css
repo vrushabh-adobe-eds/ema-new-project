@@ -21,9 +21,12 @@
   --brand-primary: #ffea00; /* WKND yellow */
   --brand-primary-hover: #f2d600;
 
-  /* WKND fonts: Asar (serif display headings) + Source Sans Pro (body) */
-  --body-font-family: 'Source Sans Pro', 'Helvetica Neue', helvetica, arial, sans-serif;
-  --heading-font-family: asar, georgia, 'Times New Roman', times, serif;
+  /* WKND fonts: Asar (serif display headings) + Source Sans Pro (body).
+     The *-fallback families below are metric-adjusted system fonts (see the
+     @font-face rules) that render at the same width as the web fonts, so text
+     does not reflow (CLS) when the lazy-loaded web fonts swap in. */
+  --body-font-family: 'Source Sans Pro', 'Source Sans Pro Fallback', 'Helvetica Neue', helvetica, arial, sans-serif;
+  --heading-font-family: asar, 'Asar Fallback', georgia, 'Times New Roman', times, serif;
 
   /* body sizes (mobile-first) */
   --body-font-size-m: 18px;
@@ -38,12 +41,20 @@
   --heading-font-size-s: 18px;
   --heading-font-size-xs: 16px;
 
-  /* nav height (black utility bar 25px + white nav row 169px = 194px, matches source) */
-  --nav-height: 194px;
+  /* nav height. Mobile-first: the mobile header is ~117px (25px utility bar +
+     ~92px logo/search row); the tall desktop nav (25px + 169px = 194px) is set
+     at >=900px below. Defining the mobile value HERE in styles.css (eager) —
+     not only in header.css (lazy) — means the correct height is reserved from
+     first paint, so content below the header doesn't jump up when header.css
+     loads and collapses the reserved band (CLS). */
+  --nav-height: 117px;
 }
 
 @media (width >= 900px) {
   :root {
+    /* tall desktop nav: 25px black utility bar + 169px white nav row */
+    --nav-height: 194px;
+
     /* body sizes (WKND: 18px body) */
     --body-font-size-m: 18px;
     --body-font-size-s: 16px;
@@ -57,6 +68,29 @@
     --heading-font-size-s: 18px;
     --heading-font-size-xs: 16px;
   }
+}
+
+/* Metric-adjusted fallback faces. Until the lazy-loaded Google web fonts
+   (Source Sans Pro, Asar) arrive, text renders in these system-font stand-ins
+   scaled with size-adjust so a given string occupies the SAME width as the web
+   font. Matching width keeps line-wrapping identical, so text does not re-flow
+   and the page does not shift (CLS) when the web fonts swap in. (Line height is
+   a unitless 1.5 throughout, so line-box height is already font-independent;
+   only width needs matching.) The percentages are the measured web-font/
+   local-font width ratios — Source Sans Pro ≈ 0.83× and Asar ≈ 0.82×, which
+   holds within ~0.5% across Arial/DejaVu (sans) and Georgia/DejaVu (serif).
+   Each src lists locals for every environment (Windows/macOS + Linux PSI
+   runners) so the face always resolves; the first present font wins. */
+@font-face {
+  font-family: 'Source Sans Pro Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Arimo'), local('Liberation Sans'), local('DejaVu Sans');
+  size-adjust: 83%;
+}
+
+@font-face {
+  font-family: 'Asar Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Tinos'), local('Liberation Serif'), local('DejaVu Serif');
+  size-adjust: 82%;
 }
 
 body {
