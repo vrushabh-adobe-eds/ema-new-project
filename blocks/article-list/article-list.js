@@ -1,5 +1,4 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
 
 const DEFAULT_INDEX = '/us/en/magazine/query-index.json';
 
@@ -261,35 +260,11 @@ export default async function decorate(block) {
   }
 
   // Members Only mode: render locked secure cards (title + desc + READ MORE,
-  // image below), reusing the cards-teaser "secure" visual. No tabs.
+  // image below) from the members-flagged query-index entries. Query-index
+  // driven only — no static fallback.
   if (members) {
     block.classList.add('secure');
-    if (items.length) {
-      // Dynamic: flagged members from the query index.
-      items.forEach((item) => ul.append(buildMemberCard(item)));
-    } else {
-      // Fallback: the query index has no members yet (e.g. helix-query.yaml not
-      // on main). Decorate the statically authored card rows (those carrying an
-      // image) so the section is never empty; config-only rows are skipped.
-      [...block.children]
-        .filter((row) => row.querySelector('picture, img'))
-        .forEach((row) => {
-          const li = document.createElement('li');
-          moveInstrumentation(row, li);
-          while (row.firstElementChild) li.append(row.firstElementChild);
-          [...li.children].forEach((div) => {
-            if (div.children.length === 1 && div.querySelector('picture, img')) div.className = 'article-list-card-image';
-            else div.className = 'article-list-card-body';
-          });
-          ul.append(li);
-        });
-      ul.querySelectorAll('picture > img').forEach((img) => {
-        const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-        optimizeHigh(optimizedPic);
-        moveInstrumentation(img, optimizedPic.querySelector('img'));
-        img.closest('picture').replaceWith(optimizedPic);
-      });
-    }
+    items.forEach((item) => ul.append(buildMemberCard(item)));
     block.textContent = '';
     block.append(ul);
     return;
