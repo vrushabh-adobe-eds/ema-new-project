@@ -20,15 +20,17 @@ function optimizeHigh(pic) {
 
 /**
  * Reads block config from single-cell rows (an index path, a limit, and/or a
- * `members` mode flag).
+ * mode flag such as `members`, `related`, or `tabs`).
  * @param {Element} block
- * @returns {{ indexPath: string, limit: number, members: boolean }}
+ * @returns {{ indexPath: string, limit: number, members: boolean,
+ *   related: boolean, tabs: boolean }}
  */
 function readConfig(block) {
   let indexPath = DEFAULT_INDEX;
   let limit = 0;
   let members = false;
   let related = false;
+  let tabs = false;
   block.querySelectorAll(':scope > div').forEach((row) => {
     const text = row.textContent.trim();
     const link = row.querySelector('a');
@@ -42,10 +44,12 @@ function readConfig(block) {
       members = true;
     } else if (/^related$/i.test(text)) {
       related = true;
+    } else if (/^tabs$/i.test(text)) {
+      tabs = true;
     }
   });
   return {
-    indexPath, limit, members, related,
+    indexPath, limit, members, related, tabs,
   };
 }
 
@@ -171,7 +175,7 @@ const CURATED_ORDER = {
 
 export default async function decorate(block) {
   const {
-    indexPath, limit, members, related,
+    indexPath, limit, members, related, tabs,
   } = readConfig(block);
   const landingPath = indexPath.replace(/\/query-index\.json$/, '');
   // Collection segment (last path part of the landing path) drives both the
@@ -212,7 +216,8 @@ export default async function decorate(block) {
   // source). Members/related lists keep their own configured limit.
   const HOMEPAGE_TEASER_LIMIT = 4;
   let effectiveLimit = limit;
-  if (effectiveLimit === 0 && !members && !related && currentPath !== landingPath) {
+  if (effectiveLimit === 0 && !members && !related && !tabs
+    && currentPath !== landingPath) {
     effectiveLimit = HOMEPAGE_TEASER_LIMIT;
   }
 
@@ -287,6 +292,62 @@ export default async function decorate(block) {
     }
     block.textContent = '';
     block.append(ul);
+    return;
+  }
+
+  // Tabs mode: a category tab bar (All + each distinct `categories` value from
+  // the query index) filters the same card grid — matching the source
+  // "Current Adventures" tabs. Query-index driven only, no static fallback.
+  if (tabs) {
+    block.classList.add('tabbed');
+
+    // A card may carry several comma-separated categories (e.g. "Cycling,
+    // Travel") — in the source such a card appears under EACH of its tabs.
+    const catsOf = (it) => String(it.categories || '')
+      .split(',')
+      .map((c) => c.trim())
+      .filter(Boolean);
+    // Distinct categories, alphabetical — matching the source tab order.
+    const categories = [...new Set(items.flatMap(catsOf))].sort((a, b) => a.localeCompare(b));
+
+    // Build one card per item once; tab switching toggles visibility (no
+    // re-render). Tag each card with its categories (space-joined) so the
+    // filter can match any one of them.
+    items.forEach((item) => {
+      const li = buildCard(item);
+      li.dataset.categories = catsOf(item).join('|');
+      ul.append(li);
+    });
+
+    // Tab bar: "All" first, then each category alphabetically.
+    const tablist = document.createElement('div');
+    tablist.className = 'article-list-tabs';
+    tablist.setAttribute('role', 'tablist');
+    const labels = ['All', ...categories];
+    const buttons = labels.map((label, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'article-list-tab';
+      btn.setAttribute('role', 'tab');
+      btn.textContent = label;
+      btn.dataset.category = i === 0 ? '' : label;
+      btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+      tablist.append(btn);
+      return btn;
+    });
+
+    const select = (category) => {
+      buttons.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.category === category)));
+      ul.querySelectorAll(':scope > li').forEach((li) => {
+        const cats = (li.dataset.categories || '').split('|').filter(Boolean);
+        li.hidden = category !== '' && !cats.includes(category);
+      });
+    };
+    buttons.forEach((b) => b.addEventListener('click', () => select(b.dataset.category)));
+
+    block.textContent = '';
+    block.append(tablist, ul);
+    select('');
     return;
   }
 
