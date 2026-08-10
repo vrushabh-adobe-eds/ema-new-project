@@ -44,7 +44,13 @@ function buildSlideRow(item, eager = false) {
 
   const imageCol = document.createElement('div');
   if (item.image) {
-    const pic = createOptimizedPicture(item.image, item.title || '', eager, [{ width: '2000' }]);
+    // Responsive breakpoints: mobile pulls a ~750px image, tablet/desktop the
+    // large 2000px banner — so small screens don't download the huge variant
+    // (PageSpeed "Improve image delivery").
+    const pic = createOptimizedPicture(item.image, item.title || '', eager, [
+      { media: '(min-width: 600px)', width: '2000' },
+      { width: '750' },
+    ]);
     if (eager) {
       // LCP hint: load the first slide's image eagerly and with high priority so
       // it's discoverable/prioritized immediately (PageSpeed "LCP request discovery").
