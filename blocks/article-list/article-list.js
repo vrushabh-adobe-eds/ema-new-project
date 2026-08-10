@@ -151,10 +151,12 @@ function buildCard(item) {
 /**
  * loads and decorates the article-list block.
  *
- * Dynamic listing block: fetches the magazine query index (helix-query.yaml
- * target) and renders one card per magazine article, so the author only
- * places a single `article-list` block. Falls back to statically authored
- * rows when the index is unavailable.
+ * Dynamic listing block: fetches the collection query index (helix-query.yaml
+ * target) and renders one card per entry, so the author only places a single
+ * `article-list` block carrying the index path (and optional limit). The plain
+ * listing is query-index driven ONLY — no static fallback. On a collection's
+ * own landing page it lists everything; as a teaser on another page (homepage
+ * grids) it caps at 4, matching the source.
  *
  * @param {Element} block The block element
  */
@@ -203,6 +205,17 @@ export default async function decorate(block) {
   // Truthy test for the index `members` flag (string "true"/"yes"/"1" or boolean).
   const isMember = (it) => /^(true|yes|1)$/i.test(String(it.members || '').trim());
 
+  // Effective card cap. When no explicit limit is authored, a plain listing
+  // shows EVERYTHING on the collection's own landing page (e.g. /us/en/adventures)
+  // but caps at 4 when it appears as a teaser on another page (the homepage
+  // "Recent Articles" / "Where do you want to go?" grids show 4, matching the
+  // source). Members/related lists keep their own configured limit.
+  const HOMEPAGE_TEASER_LIMIT = 4;
+  let effectiveLimit = limit;
+  if (effectiveLimit === 0 && !members && !related && currentPath !== landingPath) {
+    effectiveLimit = HOMEPAGE_TEASER_LIMIT;
+  }
+
   let items = [];
   try {
     const resp = await fetch(indexPath);
@@ -225,7 +238,7 @@ export default async function decorate(block) {
             || (parseDate(b.publicationDate) - parseDate(a.publicationDate))
             || (a.path || '').localeCompare(b.path || ''));
       }
-      if (limit > 0) items = items.slice(0, limit);
+      if (effectiveLimit > 0) items = items.slice(0, effectiveLimit);
     }
   } catch (e) {
     // network/index unavailable — fall back to static rows below
@@ -277,33 +290,10 @@ export default async function decorate(block) {
     return;
   }
 
-  if (items.length) {
-    // Plain card list straight from the query index — no category tabs (the
-    // source listings have none).
-    items.forEach((item) => ul.append(buildCard(item)));
-  } else {
-    // Fallback: decorate any statically authored rows as cards. Only rows that
-    // actually carry an image are real cards — config-only rows (a bare limit
-    // or an index path) are skipped so they never render as empty cards.
-    [...block.children]
-      .filter((row) => row.querySelector('picture, img'))
-      .forEach((row) => {
-        const li = document.createElement('li');
-        moveInstrumentation(row, li);
-        while (row.firstElementChild) li.append(row.firstElementChild);
-        [...li.children].forEach((div) => {
-          if (div.children.length === 1 && div.querySelector('picture')) div.className = 'article-list-card-image';
-          else div.className = 'article-list-card-body';
-        });
-        ul.append(li);
-      });
-    ul.querySelectorAll('picture > img').forEach((img) => {
-      const optimizedPic = createOptimizedPicture(img.src, img.alt, false, [{ width: '750' }]);
-      optimizeHigh(optimizedPic);
-      moveInstrumentation(img, optimizedPic.querySelector('img'));
-      img.closest('picture').replaceWith(optimizedPic);
-    });
-  }
+  // Plain card list straight from the query index — no category tabs (the
+  // source listings have none) and no static fallback: this listing is
+  // query-index driven only.
+  items.forEach((item) => ul.append(buildCard(item)));
 
   block.textContent = '';
   block.append(ul);
