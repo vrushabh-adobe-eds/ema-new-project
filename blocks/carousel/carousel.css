@@ -1,0 +1,461 @@
+/* Carousel — base block with `hero` and `gallery` variants. The decorator
+   re-applies the legacy `carousel-hero` / `carousel-gallery` classes, so the
+   rules below (kept verbatim from the original blocks) match unchanged. */
+
+/* Pre-hydration CLS reservation: before JS adds the `carousel-hero` class the
+   block only has `carousel hero`, so reserve the hero's final height here too
+   (mirrors the .carousel-hero reservation below) to avoid layout shift. */
+.carousel.hero {
+  min-height: 660px;
+}
+
+@media (width >= 600px) {
+  .carousel.hero {
+    min-height: calc(clamp(420px, 44vw, 640px) + 84px);
+  }
+}
+
+/* ============================================================
+   HERO variant (was carousel-hero)
+   ============================================================ */
+
+/* full-bleed: break out of the section's centered max-width */
+.carousel-hero {
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+
+  /* Reserve the block's final height before JS builds the slides, so the page
+     doesn't shift as the query-index carousel hydrates (PageSpeed CLS). Mobile
+     stacks image(233) + content card + controls(64) ≈ 660px; desktop is the
+     hero band (clamp) + 84px controls strip. */
+  min-height: 660px;
+}
+
+@media (width >= 600px) {
+  .carousel-hero {
+    min-height: calc(clamp(420px, 44vw, 640px) + 84px);
+  }
+}
+
+.carousel-hero .carousel-hero-slides-container {
+  position: relative;
+}
+
+.carousel-hero .carousel-hero-slides,
+.carousel-hero .carousel-hero-slide-indicators {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.carousel-hero .carousel-hero-slides {
+  display: flex;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overflow: scroll clip;
+}
+
+.carousel-hero .carousel-hero-slides::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-hero .carousel-hero-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  position: relative;
+  width: 100%;
+
+  /* stable hero height (source ~640px at 1440) so the image can't inflate it */
+  height: clamp(420px, 44vw, 640px);
+  min-height: clamp(420px, 44vw, 640px);
+}
+
+.carousel-hero .carousel-hero-slide:has(.carousel-hero-slide-content[data-align='center']) {
+  align-items: center;
+}
+
+.carousel-hero .carousel-hero-slide:has(.carousel-hero-slide-content[data-align='right']) {
+  align-items: flex-end;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture {
+  position: absolute;
+  inset: 0;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture > img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* white content box — fixed width that matches the source (1192px), centered.
+   Like the source, the card stays this width and the side margins grow on
+   wider viewports; on narrower screens it shrinks with a small side gap.
+   Bottom edge sits at the image bottom. */
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
+  z-index: 1;
+  align-self: center;
+  width: min(100% - 108px, 1192px);
+  margin: 0 auto;
+  padding: 20px 28px 24px;
+  color: var(--text-color);
+  background-color: #fff;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* compact inner spacing so the box matches the source height */
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content > *:first-child {
+  margin-top: 0;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h1,
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h2,
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content h3 {
+  margin: 0 0 8px;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content p {
+  margin: 0 0 16px;
+}
+
+.carousel-hero .carousel-hero-slide .carousel-hero-slide-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* control strip BELOW the slides (white), holds dots + arrows (matches source) */
+.carousel-hero .carousel-hero-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 84px;
+  padding: 0 32px;
+  background-color: #fff;
+}
+
+/* indicator dots — centered in the strip */
+.carousel-hero .carousel-hero-slide-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.carousel-hero .carousel-hero-slide-indicator button {
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background-color: #cfcfcf;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.carousel-hero .carousel-hero-slide-indicator button:disabled,
+.carousel-hero .carousel-hero-slide-indicator button:hover,
+.carousel-hero .carousel-hero-slide-indicator button:focus-visible {
+  background-color: var(--text-color);
+}
+
+/* prev/next arrows — far right of the same strip */
+.carousel-hero .carousel-hero-navigation-buttons {
+  position: absolute;
+  top: 50%;
+  right: 32px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.carousel-hero .carousel-hero-navigation-buttons button {
+  position: relative;
+  width: 26px;
+  height: 24px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.carousel-hero .carousel-hero-navigation-buttons button::after {
+  display: block;
+  content: '';
+  border: 2px solid var(--text-color);
+  border-bottom: 0;
+  border-left: 0;
+  height: 11px;
+  width: 11px;
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 3px);
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+.carousel-hero .carousel-hero-navigation-buttons button.slide-next::after {
+  transform: translate(-50%, -50%) rotate(45deg);
+  left: calc(50% - 3px);
+}
+
+@media (width >= 600px) {
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
+    --slide-content-width: auto;
+  }
+}
+
+/* ---------- Mobile (< 600px): stacked layout (matches source) ----------
+   Image on top, then the content card below it (full width, not overlaid).
+   Controls strip: dots pinned left, arrows pinned right. */
+@media (width < 600px) {
+  /* let the slide grow to fit image + card instead of a fixed hero height */
+  .carousel-hero .carousel-hero-slide {
+    height: auto;
+    min-height: 0;
+    justify-content: flex-start;
+  }
+
+  /* image becomes a normal block on top (not absolutely positioned) with a
+     fixed banner height */
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture {
+    position: relative;
+    inset: auto;
+    display: block;
+  }
+
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-image picture > img {
+    height: 233px;
+  }
+
+  /* card stacks below the image: full width, left-aligned text, no side gap */
+  .carousel-hero .carousel-hero-slide .carousel-hero-slide-content {
+    align-self: stretch;
+    width: 100%;
+    margin: 0;
+    padding: 24px;
+  }
+
+  /* controls: dots to the far left, arrows to the far right */
+  .carousel-hero .carousel-hero-controls {
+    justify-content: flex-start;
+    min-height: 64px;
+    padding: 0 24px;
+  }
+
+  .carousel-hero .carousel-hero-slide-indicators {
+    justify-content: flex-start;
+  }
+
+  .carousel-hero .carousel-hero-navigation-buttons {
+    right: 24px;
+  }
+}
+
+/* ============================================================
+   GALLERY variant (was carousel-gallery)
+   ============================================================ */
+
+/* The hero and gallery variants are independent, self-scoped stylesheets
+   merged into one file; each passed no-descending-specificity on its own, but
+   concatenation trips the rule across variants. Disable it for this section. */
+/* stylelint-disable no-descending-specificity */
+
+/* full-bleed: break out of the section's centered max-width so the hero
+   spans the full viewport width (matches source). */
+.carousel-gallery-container .carousel-gallery-wrapper,
+.carousel-gallery {
+  max-width: unset;
+}
+
+.carousel-gallery {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.carousel-gallery .carousel-gallery-slides-container {
+  position: relative;
+}
+
+.carousel-gallery .carousel-gallery-slides,
+.carousel-gallery .carousel-gallery-slide-indicators {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.carousel-gallery .carousel-gallery-slides {
+  display: flex;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overflow: scroll clip;
+}
+
+.carousel-gallery .carousel-gallery-slides::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel-gallery .carousel-gallery-slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+
+  /* stable hero height (source ~640px at 1440); avoids collapse from an
+     undefined --header-height in the previous calc(). */
+  height: clamp(320px, 44vw, 640px);
+  min-height: clamp(320px, 44vw, 640px);
+}
+
+.carousel-gallery .carousel-gallery-slide:has(.carousel-gallery-slide-content[data-align='center']) {
+  align-items: center;
+}
+
+.carousel-gallery .carousel-gallery-slide:has(.carousel-gallery-slide-content[data-align='right']) {
+  align-items: flex-end;
+}
+
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image picture {
+  position: absolute;
+  inset: 0;
+}
+
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-image picture > img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content {
+  z-index: 1;
+  margin: 68px;
+  padding: 16px;
+  color: white;
+  background-color: rgb(19 19 19 / 75%);
+  position: relative;
+  width: var(--slide-content-width, auto);
+}
+
+/* control strip BELOW the image (matches source): dots centered, arrows
+   far-right, dark on white. */
+.carousel-gallery .carousel-gallery-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 24px;
+}
+
+.carousel-gallery .carousel-gallery-slide-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+
+  /* center the dots across the strip, independent of the right-aligned arrows */
+  position: absolute;
+  left: 0;
+  right: 0;
+  line-height: 0;
+}
+
+.carousel-gallery .carousel-gallery-slide-indicator button {
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgb(0 0 0 / 40%);
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.2s;
+}
+
+.carousel-gallery .carousel-gallery-slide-indicator button:disabled,
+.carousel-gallery .carousel-gallery-slide-indicator button:hover,
+.carousel-gallery .carousel-gallery-slide-indicator button:focus-visible {
+  background-color: rgb(0 0 0 / 80%);
+  border-color: rgb(0 0 0 / 80%);
+}
+
+.carousel-gallery .carousel-gallery-navigation-buttons {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 1;
+}
+
+.carousel-gallery .carousel-gallery-navigation-buttons button {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background-color: transparent;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.carousel-gallery .carousel-gallery-navigation-buttons button:hover,
+.carousel-gallery .carousel-gallery-navigation-buttons button:focus-visible {
+  background-color: transparent;
+  opacity: 0.7;
+}
+
+.carousel-gallery .carousel-gallery-navigation-buttons button::after {
+  display: block;
+  content: '';
+  border: 2px solid;
+  border-bottom: 0;
+  border-left: 0;
+  height: 14px;
+  width: 14px;
+  position: absolute;
+  top: 50%;
+  left: calc(50% + 2px);
+  transform: translate(-50%, -50%) rotate(-135deg);
+}
+
+.carousel-gallery .carousel-gallery-navigation-buttons button.slide-next::after {
+  transform: translate(-50%, -50%) rotate(45deg);
+  left: calc(50% - 2px);
+}
+
+@media (width >= 600px) {
+  .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content {
+    --slide-content-width: calc((100% - 184px) / 2);
+
+    margin: 92px;
+  }
+
+  .carousel-gallery .carousel-gallery-slide .carousel-gallery-slide-content[data-align='justify'] {
+    --slide-content-width: auto;
+  }
+}
+
+/* stylelint-enable no-descending-specificity */

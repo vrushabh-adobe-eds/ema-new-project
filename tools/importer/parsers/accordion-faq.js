@@ -40,6 +40,6 @@ export default function parse(element, { document }) {
     return;
   }
 
-  const block = WebImporter.Blocks.createBlock(document, { name: 'accordion-faq', cells });
+  const block = WebImporter.Blocks.createBlock(document, { name: 'accordion (faq)', cells });
   element.replaceWith(block);
 }

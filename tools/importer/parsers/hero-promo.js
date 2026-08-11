@@ -39,6 +39,6 @@ export default function parse(element, { document }) {
   contentCell.push(...ctas);
   cells.push([contentCell]);
 
-  const block = WebImporter.Blocks.createBlock(document, { name: 'hero-promo', cells });
+  const block = WebImporter.Blocks.createBlock(document, { name: 'hero (promo)', cells });
   element.replaceWith(block);
 }

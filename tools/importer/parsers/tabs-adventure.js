@@ -46,6 +46,6 @@ export default function parse(element, { document }) {
     return;
   }
 
-  const block = WebImporter.Blocks.createBlock(document, { name: 'tabs-adventure', cells });
+  const block = WebImporter.Blocks.createBlock(document, { name: 'tabs (adventure)', cells });
   element.replaceWith(block);
 }
