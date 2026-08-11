@@ -40,6 +40,6 @@ export default function parse(element, { document }) {
     image || '',
   ]];
 
-  const block = WebImporter.Blocks.createBlock(document, { name: 'columns-featured', cells });
+  const block = WebImporter.Blocks.createBlock(document, { name: 'columns (featured)', cells });
   element.replaceWith(block);
 }

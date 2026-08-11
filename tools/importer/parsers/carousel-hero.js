@@ -40,6 +40,6 @@ export default function parse(element, { document }) {
       .forEach((p) => cells.push([p]));
   }
 
-  const block = WebImporter.Blocks.createBlock(document, { name: 'carousel-hero', cells });
+  const block = WebImporter.Blocks.createBlock(document, { name: 'carousel (hero)', cells });
   element.replaceWith(block);
 }

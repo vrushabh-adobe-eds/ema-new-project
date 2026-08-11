@@ -50,6 +50,6 @@ export default function parse(element, { document }) {
     return;
   }
 
-  const block = WebImporter.Blocks.createBlock(document, { name: 'carousel-gallery', cells });
+  const block = WebImporter.Blocks.createBlock(document, { name: 'carousel (gallery)', cells });
   element.replaceWith(block);
 }
