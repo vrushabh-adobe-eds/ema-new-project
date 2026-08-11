@@ -1,6 +1,18 @@
-export default function decorate(block) {
+/*
+ * Columns — base block with a `featured` variant:
+ *   Columns              → generic side-by-side columns (boilerplate).
+ *   Columns (featured)   → WKND Featured Article teaser (image + grey panel).
+ *                          Was columns-featured.
+ *
+ * The featured path swaps the block to the legacy `columns-featured` identity
+ * (removing the base `columns`/`featured` classes so the base `.columns` rules
+ * do NOT apply) and uses the legacy sub-element class names, so all existing
+ * styling matches byte-for-byte.
+ */
+
+function decorateColumns(block, prefix) {
   const cols = [...block.firstElementChild.children];
-  block.classList.add(`columns-${cols.length}-cols`);
+  block.classList.add(`${prefix}-${cols.length}-cols`);
 
   // setup image columns
   [...block.children].forEach((row) => {
@@ -10,9 +22,24 @@ export default function decorate(block) {
         const picWrapper = pic.closest('div');
         if (picWrapper && picWrapper.children.length === 1) {
           // picture is only content in column
-          picWrapper.classList.add('columns-img-col');
+          picWrapper.classList.add(`${prefix}-img-col`);
         }
       }
     });
   });
+}
+
+export default function decorate(block) {
+  if (block.classList.contains('featured')) {
+    // Swap to the legacy variant identity so base `.columns` rules don't apply.
+    block.classList.add('columns-featured');
+    block.classList.remove('columns', 'featured');
+    if (block.parentElement) block.parentElement.classList.add('columns-featured-wrapper');
+    const section = block.closest('.section');
+    if (section) section.classList.add('columns-featured-container');
+    decorateColumns(block, 'columns-featured');
+    return;
+  }
+
+  decorateColumns(block, 'columns');
 }

@@ -216,7 +216,10 @@ function buildBreadcrumb(main) {
  */
 function buildFaqLayout(main) {
   if (main !== document.querySelector('main')) return;
-  const faq = main.querySelector('.accordion-faq');
+  // Match the FAQ accordion whether authored as the legacy `accordion-faq`
+  // block or the consolidated `accordion (faq)` variant (class `accordion faq`)
+  // — this runs before block decoration re-applies the legacy class.
+  const faq = main.querySelector('.accordion-faq, .accordion.faq');
   if (!faq) return;
   const faqDiv = [...main.children].find((d) => d.contains(faq));
   if (!faqDiv) return;

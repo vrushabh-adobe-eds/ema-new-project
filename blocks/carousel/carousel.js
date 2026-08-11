@@ -1,0 +1,292 @@
+import { createOptimizedPicture } from '../../scripts/aem.js';
+import { fetchPlaceholders, moveInstrumentation } from '../../scripts/scripts.js';
+
+/*
+ * Carousel — a single base block with two variants:
+ *   Carousel (hero)    → homepage full-bleed promo carousel, query-index driven
+ *   Carousel (gallery) → adventure-detail image gallery (authored images)
+ *
+ * To keep ALL existing styling and behavior byte-for-byte, the decorator
+ * re-applies the legacy root/wrapper/container classes (`carousel-hero` /
+ * `carousel-gallery`) and generates the same legacy-prefixed sub-element
+ * classes the original blocks used, so every existing CSS selector and script
+ * hook keeps matching exactly. The only difference is where the block lives.
+ */
+
+// Query indexes the hero carousel can resolve slide paths against.
+const INDEXES = [
+  '/us/en/adventures/query-index.json',
+  '/us/en/magazine/query-index.json',
+];
+
+/**
+ * Bump the delivery optimization on a generated <picture> from the aem.js
+ * default `optimize=medium` to `optimize=high` (~10% smaller, no visible loss).
+ * @param {HTMLPictureElement} pic
+ */
+function optimizeHigh(pic) {
+  pic.querySelectorAll('source').forEach((s) => {
+    const srcset = s.getAttribute('srcset');
+    if (srcset) s.setAttribute('srcset', srcset.replace(/optimize=medium/g, 'optimize=high'));
+  });
+  const img = pic.querySelector('img');
+  if (img && img.src) img.src = img.src.replace(/optimize=medium/g, 'optimize=high');
+}
+
+/**
+ * Reads hero config: an ordered list of slide paths (curated slides). Each
+ * config row holds one page path; the slide image/title/description are then
+ * resolved from the query index — nothing about the slide is hardcoded.
+ * @param {Element} block
+ * @returns {string[]} ordered, normalized slide paths
+ */
+function readConfig(block) {
+  const paths = [];
+  block.querySelectorAll(':scope > div').forEach((row) => {
+    const link = row.querySelector('a');
+    const raw = (link ? link.getAttribute('href') : row.textContent).trim();
+    if (!raw || /query-index\.json$/.test(raw)) return;
+    let path = raw;
+    try { path = new URL(raw, window.location.origin).pathname; } catch { /* keep raw */ }
+    path = path.replace(/^\/content(?=\/)/, '').replace(/\.html$/, '').replace(/\/$/, '');
+    if (path) paths.push(path);
+  });
+  return paths;
+}
+
+/**
+ * Builds one hero slide row (image col + content col) from a query-index entry.
+ * CTA label follows the source: magazine → "Full Article", adventures landing →
+ * "View Trips", a single adventure → "View Trip".
+ * @param {object} item
+ * @param {boolean} [eager] Eager-load + prioritize the image (LCP first slide)
+ */
+function buildSlideRow(item, eager = false) {
+  const row = document.createElement('div');
+
+  const imageCol = document.createElement('div');
+  if (item.image) {
+    const pic = createOptimizedPicture(item.image, item.title || '', eager, [
+      { media: '(min-width: 600px)', width: '2000' },
+      { width: '750' },
+    ]);
+    optimizeHigh(pic);
+    if (eager) {
+      const img = pic.querySelector('img');
+      if (img) {
+        img.setAttribute('loading', 'eager');
+        img.setAttribute('fetchpriority', 'high');
+      }
+    }
+    imageCol.append(pic);
+  }
+
+  const contentCol = document.createElement('div');
+  const h2 = document.createElement('h2');
+  h2.textContent = item.title || '';
+  contentCol.append(h2);
+  if (item.description) {
+    const p = document.createElement('p');
+    p.textContent = item.description;
+    contentCol.append(p);
+  }
+  const ctaP = document.createElement('p');
+  const cta = document.createElement('a');
+  cta.href = item.path;
+  if (/\/magazine\//.test(item.path)) cta.textContent = 'Full Article';
+  else if (/\/adventures$/.test(item.path)) cta.textContent = 'View Trips';
+  else cta.textContent = 'View Trip';
+  ctaP.append(cta);
+  contentCol.append(ctaP);
+
+  row.append(imageCol, contentCol);
+  return row;
+}
+
+/**
+ * Replaces the hero block's config rows with the curated slides, resolving each
+ * configured path against the query indexes so all slide data comes from the
+ * index (query-index driven only). Leaves authored rows if the indexes are
+ * unavailable so the carousel is never empty.
+ * @param {Element} block
+ */
+async function populateFromIndex(block) {
+  const paths = readConfig(block);
+  if (!paths.length) return; // authored (static) carousel — leave as-is
+  const hasImageRows = !!block.querySelector('picture, img');
+
+  const lookup = {};
+  await Promise.all(INDEXES.map(async (indexPath) => {
+    try {
+      const resp = await fetch(indexPath);
+      if (!resp.ok) return;
+      const json = await resp.json();
+      (json.data || []).forEach((it) => {
+        if (it.path) lookup[it.path.replace(/\/$/, '')] = it;
+      });
+    } catch (e) {
+      // index unavailable — resolved entries just stay missing
+    }
+  }));
+
+  const items = paths.map((p) => lookup[p]).filter((it) => it && it.image);
+
+  if (items.length) {
+    block.querySelectorAll(':scope > div').forEach((row) => row.remove());
+    items.forEach((item, i) => block.append(buildSlideRow(item, i === 0)));
+  } else if (!hasImageRows) {
+    block.textContent = '';
+  }
+}
+
+function updateActiveSlide(block, prefix, slide) {
+  const slideIndex = parseInt(slide.dataset.slideIndex, 10);
+  block.dataset.activeSlide = slideIndex;
+
+  const slides = block.querySelectorAll(`.${prefix}-slide`);
+  slides.forEach((aSlide, idx) => {
+    aSlide.setAttribute('aria-hidden', idx !== slideIndex);
+    aSlide.querySelectorAll('a').forEach((link) => {
+      if (idx !== slideIndex) link.setAttribute('tabindex', '-1');
+      else link.removeAttribute('tabindex');
+    });
+  });
+
+  const indicators = block.querySelectorAll(`.${prefix}-slide-indicator`);
+  indicators.forEach((indicator, idx) => {
+    if (idx !== slideIndex) indicator.querySelector('button').removeAttribute('disabled');
+    else indicator.querySelector('button').setAttribute('disabled', 'true');
+  });
+}
+
+function showSlide(block, prefix, slideIndex = 0) {
+  const slides = block.querySelectorAll(`.${prefix}-slide`);
+  let realSlideIndex = slideIndex < 0 ? slides.length - 1 : slideIndex;
+  if (slideIndex >= slides.length) realSlideIndex = 0;
+  const activeSlide = slides[realSlideIndex];
+
+  activeSlide.querySelectorAll('a').forEach((link) => link.removeAttribute('tabindex'));
+  block.querySelector(`.${prefix}-slides`).scrollTo({
+    top: 0,
+    left: activeSlide.offsetLeft,
+    behavior: 'smooth',
+  });
+}
+
+function bindEvents(block, prefix) {
+  const slideIndicators = block.querySelector(`.${prefix}-slide-indicators`);
+  if (!slideIndicators) return;
+
+  slideIndicators.querySelectorAll('button').forEach((button) => {
+    button.addEventListener('click', (e) => {
+      const slideIndicator = e.currentTarget.parentElement;
+      showSlide(block, prefix, parseInt(slideIndicator.dataset.targetSlide, 10));
+    });
+  });
+
+  block.querySelector('.slide-prev').addEventListener('click', () => {
+    showSlide(block, prefix, parseInt(block.dataset.activeSlide, 10) - 1);
+  });
+  block.querySelector('.slide-next').addEventListener('click', () => {
+    showSlide(block, prefix, parseInt(block.dataset.activeSlide, 10) + 1);
+  });
+
+  const slideObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) updateActiveSlide(block, prefix, entry.target);
+    });
+  }, { threshold: 0.5 });
+  block.querySelectorAll(`.${prefix}-slide`).forEach((slide) => slideObserver.observe(slide));
+}
+
+function createSlide(row, slideIndex, id, prefix) {
+  const slide = document.createElement('li');
+  slide.dataset.slideIndex = slideIndex;
+  slide.setAttribute('id', `${prefix}-${id}-slide-${slideIndex}`);
+  slide.classList.add(`${prefix}-slide`);
+
+  row.querySelectorAll(':scope > div').forEach((column, colIdx) => {
+    column.classList.add(`${prefix}-slide-${colIdx === 0 ? 'image' : 'content'}`);
+    slide.append(column);
+  });
+
+  const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
+  if (labeledBy) slide.setAttribute('aria-labelledby', labeledBy.getAttribute('id'));
+
+  return slide;
+}
+
+let carouselId = 0;
+export default async function decorate(block) {
+  // Variant detection. Default to hero (the original single-block behavior)
+  // unless the block is explicitly the gallery variant.
+  const gallery = block.classList.contains('gallery');
+  const prefix = gallery ? 'carousel-gallery' : 'carousel-hero';
+
+  // Re-apply the legacy classes so all existing CSS + hooks match verbatim.
+  block.classList.add(prefix);
+  if (block.parentElement) block.parentElement.classList.add(`${prefix}-wrapper`);
+  const section = block.closest('.section');
+  if (section) section.classList.add(`${prefix}-container`);
+
+  carouselId += 1;
+  block.setAttribute('id', `${prefix}-${carouselId}`);
+
+  // Hero variant is query-index driven: build slides from the index.
+  if (!gallery) await populateFromIndex(block);
+
+  const rows = block.querySelectorAll(':scope > div');
+  // Gallery always shows controls (matches source); hero gates on multi-slide.
+  const showControls = gallery || rows.length > 1;
+
+  const placeholders = await fetchPlaceholders();
+  block.setAttribute('role', 'region');
+  block.setAttribute('aria-roledescription', placeholders.carousel || 'Carousel');
+
+  const container = document.createElement('div');
+  container.classList.add(`${prefix}-slides-container`);
+
+  const slidesWrapper = document.createElement('ul');
+  slidesWrapper.classList.add(`${prefix}-slides`);
+  block.prepend(slidesWrapper);
+
+  let slideIndicators;
+  if (showControls) {
+    const slideIndicatorsNav = document.createElement('nav');
+    slideIndicatorsNav.classList.add(`${prefix}-controls`);
+    slideIndicatorsNav.setAttribute('aria-label', placeholders.carouselSlideControls || 'Carousel Slide Controls');
+    slideIndicators = document.createElement('ol');
+    slideIndicators.classList.add(`${prefix}-slide-indicators`);
+    slideIndicatorsNav.append(slideIndicators);
+
+    const slideNavButtons = document.createElement('div');
+    slideNavButtons.classList.add(`${prefix}-navigation-buttons`);
+    slideNavButtons.innerHTML = `
+      <button type="button" class= "slide-prev" aria-label="${placeholders.previousSlide || 'Previous Slide'}"></button>
+      <button type="button" class="slide-next" aria-label="${placeholders.nextSlide || 'Next Slide'}"></button>
+    `;
+    slideIndicatorsNav.append(slideNavButtons);
+
+    block.append(slideIndicatorsNav);
+  }
+
+  rows.forEach((row, idx) => {
+    const slide = createSlide(row, idx, carouselId, prefix);
+    moveInstrumentation(row, slide);
+    slidesWrapper.append(slide);
+
+    if (slideIndicators) {
+      const indicator = document.createElement('li');
+      indicator.classList.add(`${prefix}-slide-indicator`);
+      indicator.dataset.targetSlide = idx;
+      indicator.innerHTML = `<button type="button" aria-label="${placeholders.showSlide || 'Show Slide'} ${idx + 1} ${placeholders.of || 'of'} ${rows.length}"></button>`;
+      slideIndicators.append(indicator);
+    }
+    row.remove();
+  });
+
+  container.append(slidesWrapper);
+  block.prepend(container);
+
+  if (showControls) bindEvents(block, prefix);
+}

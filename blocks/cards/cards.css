@@ -25,3 +25,210 @@
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
+
+/* Base + teaser + related are independent, self-scoped stylesheets merged into
+   one file; concatenation trips no-descending-specificity across them. */
+/* stylelint-disable no-descending-specificity */
+
+/* ============================================================
+   TEASER variant (was cards-teaser). The decorator swaps the block to the
+   legacy `cards-teaser` class, so these rules match exactly as before.
+   ============================================================ */
+
+.cards-teaser > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(257px, 1fr));
+  gap: 24px;
+}
+
+.cards-teaser > ul > li {
+  background-color: transparent;
+}
+
+.cards-teaser .cards-teaser-card-body {
+  margin: 16px 0 0;
+}
+
+/* card title — uppercase sans-serif (matches source), not the global Asar heading.
+   Clamp to 2 lines so cards stay aligned like the source. */
+.cards-teaser .cards-teaser-card-body h3 {
+  margin: 0 0 12px;
+  font-family: var(--body-font-family);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.cards-teaser .cards-teaser-card-body h3 a:any-link {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.cards-teaser .cards-teaser-card-body h3 a:hover {
+  text-decoration: underline;
+}
+
+/* card description — smaller uppercase grey, clamped to 1 line with ellipsis
+   (matches source's truncated teaser text) */
+.cards-teaser .cards-teaser-card-body p {
+  margin: 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #696969;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.cards-teaser .cards-teaser-card-image {
+  line-height: 0;
+}
+
+.cards-teaser > ul > li img {
+  width: 100%;
+  aspect-ratio: 13 / 10;
+  object-fit: cover;
+}
+
+/* ---------- secure sub-variant (Members Only locked teasers) ---------- */
+
+/* Source: fixed ~388px cards, left-aligned (not full-width), image locked to
+   ~200px tall (no 13/10 aspect that balloons on wide screens). */
+.cards-teaser.secure > ul {
+  grid-template-columns: 1fr;
+  gap: 48px 56px;
+  justify-content: start;
+}
+
+@media (width >= 900px) {
+  .cards-teaser.secure > ul {
+    grid-template-columns: repeat(2, minmax(0, 388px));
+  }
+}
+
+/* body (title + desc + READ MORE) sits above the image */
+.cards-teaser.secure > ul > li {
+  display: flex;
+  flex-direction: column;
+}
+
+/* fixed image height (matches source ~200px); override the teaser 13/10 ratio */
+.cards-teaser.secure > ul > li img {
+  aspect-ratio: auto;
+  height: 200px;
+}
+
+.cards-teaser.secure .cards-teaser-card-body {
+  order: 0;
+  margin: 0 0 20px;
+}
+
+.cards-teaser.secure .cards-teaser-card-image {
+  order: 1;
+}
+
+/* lock badge: yellow corner triangle + padlock glyph before the title */
+.cards-teaser.secure .cards-teaser-card-body h3 {
+  position: relative;
+  padding-left: 44px;
+  color: #9b9b9b;
+  -webkit-line-clamp: 2;
+}
+
+.cards-teaser.secure .cards-teaser-card-body h3::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 34px;
+  height: 34px;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23202020'%3E%3Cpath d='M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm3 8H9V6a3 3 0 0 1 6 0z'/%3E%3C/svg%3E") no-repeat 2px 8px / 16px 16px,
+    linear-gradient(45deg, var(--brand-primary) 50%, transparent 50%);
+}
+
+.cards-teaser.secure .cards-teaser-card-body p {
+  color: #9b9b9b;
+}
+
+/* READ MORE button (grey, source style — non-link locked affordance) */
+.cards-teaser.secure .cards-teaser-card-body p:last-child strong {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 12px 28px;
+  background-color: #ebebeb;
+  color: #9b9b9b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================================
+   RELATED variant (was cards-related). Compact "up next" list: linked title +
+   publication date, no images. The decorator swaps the block to the legacy
+   `cards-related` class.
+   ============================================================ */
+
+.cards-related > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cards-related > ul > li {
+  border-bottom: 1px solid #dadada;
+  background-color: var(--background-color);
+}
+
+.cards-related > ul > li:first-child {
+  border-top: 1px solid #dadada;
+}
+
+.cards-related .cards-related-card-body {
+  margin: 16px 0;
+}
+
+.cards-related .cards-related-card-body h2,
+.cards-related .cards-related-card-body h3,
+.cards-related .cards-related-card-body h4 {
+  margin: 0 0 4px;
+  font-size: var(--body-font-size-m);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cards-related .cards-related-card-body a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cards-related .cards-related-card-body a:hover {
+  text-decoration: underline;
+}
+
+/* publication date rendered below the linked title */
+.cards-related .cards-related-card-body p {
+  margin: 0;
+  color: #6f6f6f;
+  font-size: var(--body-font-size-s);
+}
+
+/* no-images variant: hide any stray image cell if one is authored */
+.cards-related .cards-related-card-image {
+  display: none;
+}
+
+/* stylelint-enable no-descending-specificity */
