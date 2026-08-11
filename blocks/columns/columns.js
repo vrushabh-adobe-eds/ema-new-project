@@ -30,6 +30,15 @@ function decorateColumns(block, prefix) {
 }
 
 export default function decorate(block) {
+  // Guard: an empty columns block (all cells blank — e.g. a stray table an
+  // author left in the editor) renders nothing but still costs layout/decoration
+  // work in the critical path. Remove it so it can't hurt LCP/FCP.
+  if (!block.textContent.trim() && !block.querySelector('picture, img, a')) {
+    const wrapper = block.closest('.columns-wrapper') || block.parentElement;
+    (wrapper || block).remove();
+    return;
+  }
+
   if (block.classList.contains('featured')) {
     // Swap to the legacy variant identity so base `.columns` rules don't apply.
     block.classList.add('columns-featured');
