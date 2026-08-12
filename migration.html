@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>WKND → EDS Migration Analysis</title>
+  <style>
+    :root {
+      --bg: #0f1420; --panel: #171e2e; --panel-2: #1e2740; --line: #2a3450;
+      --ink: #e8edf7; --muted: #9aa7c2; --brand: #ff5e3a; --brand-2: #ffb35a;
+      --green: #34d399; --yellow: #fbbf24; --red: #f87171; --blue: #60a5fa;
+      --radius: 14px; --maxw: 1180px;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: radial-gradient(1200px 600px at 70% -10%, #1b2540 0%, var(--bg) 55%);
+      color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55; -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px 80px; }
+    header.hero {
+      padding: 48px 0 28px; border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,94,58,.08), transparent);
+    }
+    .eyebrow { color: var(--brand-2); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; font-size: .72rem; margin: 0 0 10px; }
+    h1 { margin: 0 0 8px; font-size: clamp(1.7rem, 4vw, 2.6rem); line-height: 1.1; }
+    .sub { color: var(--muted); margin: 0; font-size: 1.02rem; }
+    .sub a { color: var(--blue); text-decoration: none; }
+    .sub a:hover { text-decoration: underline; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .chip { background: var(--panel-2); border: 1px solid var(--line); color: var(--muted); padding: 6px 12px; border-radius: 999px; font-size: .8rem; }
+    .chip b { color: var(--ink); }
+
+    /* tabs */
+    nav.tabs { display: flex; gap: 6px; margin: 26px 0 22px; flex-wrap: wrap; position: sticky; top: 0; background: var(--bg); padding: 12px 0; z-index: 5; border-bottom: 1px solid var(--line); }
+    .tab-btn {
+      appearance: none; border: 1px solid var(--line); background: var(--panel);
+      color: var(--muted); padding: 10px 18px; border-radius: 999px; cursor: pointer;
+      font-size: .92rem; font-weight: 600; transition: all .15s ease;
+    }
+    .tab-btn:hover { color: var(--ink); border-color: var(--brand); }
+    .tab-btn[aria-selected="true"] { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #1a1005; border-color: transparent; }
+    .panel { display: none; animation: fade .25s ease; }
+    .panel.active { display: block; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* cards */
+    .cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 8px 0 30px; }
+    .stat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; text-align: center; }
+    .stat .n { font-size: 2.2rem; font-weight: 800; line-height: 1; background: linear-gradient(135deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .stat .l { color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: .08em; margin-top: 8px; }
+
+    h2 { font-size: 1.3rem; margin: 34px 0 6px; }
+    h2:first-child { margin-top: 6px; }
+    .lead { color: var(--muted); margin: 0 0 16px; }
+    .callout { background: linear-gradient(135deg, rgba(96,165,250,.1), rgba(52,211,153,.06)); border: 1px solid var(--line); border-left: 3px solid var(--blue); border-radius: 10px; padding: 14px 18px; margin: 14px 0 22px; }
+    .callout ul { margin: 8px 0 0; padding-left: 18px; }
+    .callout li { margin: 4px 0; color: var(--muted); }
+    .callout li b { color: var(--ink); }
+
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; margin: 6px 0 26px; font-size: .92rem; }
+    th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+    th { background: var(--panel-2); color: var(--muted); font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; }
+    tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,.02); }
+    td.num, th.num { text-align: center; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .76rem; font-weight: 700; }
+    .b-reuse { background: rgba(52,211,153,.16); color: var(--green); }
+    .b-variant { background: rgba(251,191,36,.16); color: var(--yellow); }
+    .b-build { background: rgba(248,113,113,.16); color: var(--red); }
+    .b-ok { background: rgba(52,211,153,.16); color: var(--green); }
+
+    /* phases */
+    .phase { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; overflow: hidden; }
+    .phase summary { cursor: pointer; padding: 15px 18px; display: flex; align-items: center; gap: 14px; font-weight: 600; list-style: none; }
+    .phase summary::-webkit-details-marker { display: none; }
+    .phase .pnum { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #1a1005; width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; font-weight: 800; flex: none; }
+    .phase .ptitle { flex: 1; }
+    .phase .pcount { color: var(--muted); font-size: .82rem; }
+    .phase .pbody { padding: 0 18px 16px 66px; color: var(--muted); }
+    .phase .pbody code { background: var(--panel-2); padding: 1px 6px; border-radius: 5px; font-size: .85em; }
+
+    /* filter bar */
+    .filterbar { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 14px; }
+    .filterbar input, .filterbar select { background: var(--panel); border: 1px solid var(--line); color: var(--ink); padding: 9px 12px; border-radius: 9px; font-size: .9rem; }
+    .filterbar input { flex: 1; min-width: 200px; }
+    .count-note { color: var(--muted); font-size: .82rem; margin: 0 0 14px; }
+    footer { color: var(--muted); font-size: .82rem; border-top: 1px solid var(--line); padding-top: 18px; margin-top: 30px; }
+    .legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 0 0 12px; color: var(--muted); font-size: .84rem; }
+
+    @media (min-width: 700px) { .cards { grid-template-columns: repeat(6, 1fr); } }
+    @media (max-width: 640px) { .ppath { max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <p class="eyebrow">Experience Modernization Agent · Analysis Module</p>
+      <h1>WKND → Edge Delivery Services Migration Analysis</h1>
+      <p class="sub">Source: <a href="https://wknd.site/us/en.html" target="_blank" rel="noopener">wknd.site/us/en</a> · Platform detected: <b>Adobe Experience Manager (AEM)</b> · Target: <b>EDS + Document Authoring</b></p>
+      <div class="meta-row">
+        <span class="chip">Method: <b>crawl + live HTTP verify</b></span>
+        <span class="chip">Content source: <b>Document Authoring (da.live)</b></span>
+        <span class="chip">Locale: <b>/us/en</b></span>
+        <span class="chip">Repo: <b>vrushabh-adobe-eds/ema-new-project</b></span>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="analysis">Analysis</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="plan">Migration Plan</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="inventory">Page Inventory</button>
+    </nav>
+
+    <!-- ANALYSIS -->
+    <section class="panel active" id="analysis" role="tabpanel">
+      <div class="cards">
+        <div class="stat"><div class="n">28</div><div class="l">Total URLs</div></div>
+        <div class="stat"><div class="n">28</div><div class="l">In Scope</div></div>
+        <div class="stat"><div class="n">28</div><div class="l">HTTP 200</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">Off-Domain</div></div>
+        <div class="stat"><div class="n">7</div><div class="l">Templates</div></div>
+        <div class="stat"><div class="n">21</div><div class="l">Blocks</div></div>
+      </div>
+
+      <h2>Executive Summary</h2>
+      <p class="lead">WKND is a compact AEM demo site migrated to Edge Delivery Services with <b>Document Authoring</b> as the content source. A homepage-only crawl reaches ~16 pages; expanding through the Adventures and Magazine listings (plus the gated Members Only articles) surfaces the full <b>28</b>. Every URL returns HTTP&nbsp;200 with no redirects, so <b>all 28 are in scope</b>. The inventory is dominated by the repeating <b>Adventure Detail</b> template (16 pages).</p>
+
+      <div class="callout">
+        <b>Key decisions &amp; notes</b>
+        <ul>
+          <li><b>No sitemap.xml</b> — inventory is crawl-derived; detail pages are only linked from listing pages, so a shallow crawl under-counts.</li>
+          <li><b>Query-index driven listings</b> — Recent Articles, "Where do you want to go?", Adventures (tabs), Members Only and Contributors all render from <code>helix-query.yaml</code> indexes at runtime (config-only authored rows, no static fallback).</li>
+          <li><b>Content Fragments → metadata block</b> — Adventure detail pages carry structured spec fields (price, duration, difficulty, group size) → a small <b>adventure-details</b> block.</li>
+          <li><b>Experience Fragments → EDS fragments</b> — header, footer and shared CTAs.</li>
+          <li><b>Block consolidation</b> — derived blocks were folded into base blocks as variants (see Block Inventory) so authors pick <code>Base (variant)</code> from one Document Authoring library.</li>
+        </ul>
+      </div>
+
+      <h2>Scope by Section</h2>
+      <table>
+        <thead><tr><th>Section</th><th class="num">Total</th><th class="num">In Scope</th><th class="num">Redirect / Out</th></tr></thead>
+        <tbody>
+          <tr><td>Adventures</td><td class="num">17</td><td class="num">17</td><td class="num">0</td></tr>
+          <tr><td>Magazine</td><td class="num">8</td><td class="num">8</td><td class="num">0</td></tr>
+          <tr><td>Top-level</td><td class="num">3</td><td class="num">3</td><td class="num">0</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Template Inventory</h2>
+      <table>
+        <thead><tr><th class="num">#</th><th>Template</th><th class="num">Pages</th><th>Primary Blocks</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td>Adventure Detail</td><td class="num">16</td><td>Breadcrumb, Carousel (gallery), Adventure Details, Tabs (adventure)</td></tr>
+          <tr><td class="num">2</td><td>Magazine Article</td><td class="num">5</td><td>Breadcrumb, Title, Text, Image, Article Author, Article List (related)</td></tr>
+          <tr><td class="num">3</td><td>Homepage</td><td class="num">1</td><td>Carousel (hero), Columns (featured), Hero (promo), Article List</td></tr>
+          <tr><td class="num">4</td><td>Adventures Listing</td><td class="num">1</td><td>Hero (promo), Article List (tabs) — query-index + category filter</td></tr>
+          <tr><td class="num">5</td><td>Magazine Listing</td><td class="num">1</td><td>Columns (featured), Article List, Article List (members)</td></tr>
+          <tr><td class="num">6</td><td>About / Content</td><td class="num">1</td><td>Contributors (query-index, split by type)</td></tr>
+          <tr><td class="num">7</td><td>FAQs</td><td class="num">1</td><td>Accordion (faq) — sheet-driven, Default content</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Block Inventory &amp; Reuse Plan</h2>
+      <div class="legend"><span><span class="badge b-reuse">Reuse</span> Block Collection as-is</span><span><span class="badge b-variant">Variant</span> base block + variant</span><span><span class="badge b-build">Build</span> custom block</span></div>
+      <table>
+        <thead><tr><th>Block</th><th>Source</th><th>Decision</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Header / Nav</td><td>Block Collection</td><td><span class="badge b-reuse">Reuse</span></td><td>Logo, main nav, search typeahead, mobile drawer</td></tr>
+          <tr><td>Footer</td><td>Block Collection</td><td><span class="badge b-reuse">Reuse</span></td><td>Multi-column links + social</td></tr>
+          <tr><td>Breadcrumb</td><td>Block Collection</td><td><span class="badge b-reuse">Reuse</span></td><td>Auto-blocked on detail + article pages</td></tr>
+          <tr><td>Carousel (hero / gallery)</td><td>Block Collection</td><td><span class="badge b-variant">Variant</span></td><td>hero = homepage query-index spotlight; gallery = adventure images</td></tr>
+          <tr><td>Hero (promo / intro)</td><td>Block Collection</td><td><span class="badge b-variant">Variant</span></td><td>Next Adventures promo card + listing intro banner</td></tr>
+          <tr><td>Columns (featured)</td><td>Block Collection</td><td><span class="badge b-variant">Variant</span></td><td>Featured Article teaser (image + grey panel)</td></tr>
+          <tr><td>Cards (teaser / related)</td><td>Block Collection</td><td><span class="badge b-variant">Variant</span></td><td>Teaser grid + related-articles list</td></tr>
+          <tr><td>Accordion (faq)</td><td>Block Collection</td><td><span class="badge b-variant">Variant</span></td><td>FAQs — sheet-driven from <code>faq-data.json</code></td></tr>
+          <tr><td>Tabs (adventure)</td><td>Block Collection</td><td><span class="badge b-variant">Variant</span></td><td>Overview / Itinerary / What to Bring</td></tr>
+          <tr><td>Article List</td><td>Custom (query-index)</td><td><span class="badge b-build">Build</span></td><td>Dynamic listing + tabs / members / related variants</td></tr>
+          <tr><td>Contributors</td><td>Custom (query-index)</td><td><span class="badge b-build">Build</span></td><td>About Us — split by <code>type</code> (contributor / guide)</td></tr>
+          <tr><td>Adventure Details</td><td>Custom</td><td><span class="badge b-build">Build</span></td><td>Content Fragment fields → spec block</td></tr>
+          <tr><td>Article Author</td><td>Custom</td><td><span class="badge b-build">Build</span></td><td>Byline card at article foot</td></tr>
+          <tr><td>Fragment</td><td>Block Collection</td><td><span class="badge b-reuse">Reuse</span></td><td>AEM XF → EDS fragment includes</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Discovery Notes — Why Crawling Under-counts</h2>
+      <table>
+        <thead><tr><th>Miss Category</th><th>Description</th><th class="num">~Pages</th></tr></thead>
+        <tbody>
+          <tr><td>No XML sitemap</td><td>wknd.site exposes none; inventory is crawl-derived</td><td class="num">—</td></tr>
+          <tr><td>Listing-driven discovery</td><td>Detail pages only linked from listing pages</td><td class="num">~10</td></tr>
+          <tr><td>Gated content</td><td>Members Only articles nested under <code>/magazine/members-only/</code></td><td class="num">2</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- PLAN -->
+    <section class="panel" id="plan" role="tabpanel">
+      <h2>Migration Phases &amp; Sequencing</h2>
+      <p class="lead">Ordered by dependency then page-count descending — biggest template ships first after foundations. Each phase is independently deployable and testable.</p>
+
+      <details class="phase" open><summary><span class="pnum">0</span><span class="ptitle">Foundations</span><span class="pcount">setup</span></summary><div class="pbody">Extract WKND design tokens (brand yellow, Asar + Source Sans Pro type scale, spacing) into <code>styles/styles.css</code>. Configure the Document Authoring content source and re-host assets. Metric-adjusted fallback fonts to prevent CLS.</div></details>
+      <details class="phase"><summary><span class="pnum">1</span><span class="ptitle">Global Elements — Header &amp; Footer</span><span class="pcount">all pages</span></summary><div class="pbody">Site-wide header (nav, search typeahead, mobile slide-in drawer) and footer. Reserve <code>--nav-height</code> eagerly to avoid hydrate shift.</div></details>
+      <details class="phase"><summary><span class="pnum">2</span><span class="ptitle">Homepage</span><span class="pcount">1 page</span></summary><div class="pbody">Validate the core block set — carousel (hero, query-index driven), columns (featured), hero (promo), article-list grids — and design tokens.</div></details>
+      <details class="phase"><summary><span class="pnum">3</span><span class="ptitle">Adventure Detail — highest volume</span><span class="pcount">16 pages</span></summary><div class="pbody">Build the repeating detail template (breadcrumb + adventure-details spec block + tabs + gallery carousel) and bulk-import all 16. Largest single win.</div></details>
+      <details class="phase"><summary><span class="pnum">4</span><span class="ptitle">Magazine Article</span><span class="pcount">5 pages</span></summary><div class="pbody">Article layout with rich text, byline (article-author) and a query-index related-articles list. Includes the 2 gated Members Only articles.</div></details>
+      <details class="phase"><summary><span class="pnum">5</span><span class="ptitle">Listings &amp; Content</span><span class="pcount">3 pages</span></summary><div class="pbody">Adventures listing (article-list tabs + category filter + search index), Magazine listing (+ Members Only), and About Us (contributors split by type). All query-index driven.</div></details>
+      <details class="phase"><summary><span class="pnum">6</span><span class="ptitle">FAQs</span><span class="pcount">1 page</span></summary><div class="pbody">Accordion (faq) variant, sheet-driven from <code>/us/en/faqs/faq-data.json</code>. Two-column "Need more help?" layout.</div></details>
+      <details class="phase"><summary><span class="pnum">7</span><span class="ptitle">Block Consolidation &amp; Library</span><span class="pcount">refactor</span></summary><div class="pbody">Fold derived blocks into base + variant (carousel / hero / columns / cards / accordion / tabs), keeping query-index blocks separate. Publish a Document Authoring block library so authors insert <code>Base (variant)</code> from one panel.</div></details>
+      <details class="phase"><summary><span class="pnum">8</span><span class="ptitle">Cleanup &amp; QA</span><span class="pcount">final</span></summary><div class="pbody">Wire the search indexes (<code>helix-query.yaml</code>), and a final performance + accessibility QA pass (Lighthouse ~100 mobile + desktop, CWV in "good").</div></details>
+    </section>
+
+    <!-- INVENTORY -->
+    <section class="panel" id="inventory" role="tabpanel">
+      <h2>Page Inventory</h2>
+      <div class="filterbar">
+        <input id="q" type="search" placeholder="Filter by path…" aria-label="Filter by path">
+        <select id="fsec" aria-label="Filter by section"><option value="">All sections</option><option>Adventures</option><option>Magazine</option><option>Top-level</option></select>
+        <select id="ftpl" aria-label="Filter by template"><option value="">All templates</option><option>Adventure Detail</option><option>Magazine Article</option><option>Magazine Article (members)</option><option>Homepage</option><option>Adventures Listing</option><option>Magazine Listing</option><option>About / Content</option><option>FAQs</option></select>
+      </div>
+      <p class="count-note" id="countNote"></p>
+      <table>
+        <thead><tr><th>Path</th><th>Section</th><th>Template</th><th class="num">HTTP</th><th class="num">In Scope</th></tr></thead>
+        <tbody id="invBody"></tbody>
+      </table>
+    </section>
+
+    <footer>
+      Generated by the Experience Modernization Agent · Analysis Module v1.0 · Aligned with Adobe Edge Delivery Services (EDS) migration methodology. All 28 URLs re-verified live (HTTP 200, in scope).
+    </footer>
+  </div>
+
+  <script>
+    const URLS = [
+      ["/us/en.html","Top-level","Homepage"],
+      ["/us/en/about-us.html","Top-level","About / Content"],
+      ["/us/en/faqs.html","Top-level","FAQs"],
+      ["/us/en/adventures.html","Adventures","Adventures Listing"],
+      ["/us/en/adventures/bali-surf-camp.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/beervana-portland.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/climbing-new-zealand.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/colorado-rock-climbing.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/cycling-southern-utah.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/cycling-tuscany.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/downhill-skiing-wyoming.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/gastronomic-marais-tour.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/napa-wine-tasting.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/riverside-camping-australia.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/ski-touring-mont-blanc.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/surf-camp-costa-rica.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/tahoe-skiing.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/west-coast-cycling.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/whistler-mountain-biking.html","Adventures","Adventure Detail"],
+      ["/us/en/adventures/yosemite-backpacking.html","Adventures","Adventure Detail"],
+      ["/us/en/magazine.html","Magazine","Magazine Listing"],
+      ["/us/en/magazine/arctic-surfing.html","Magazine","Magazine Article"],
+      ["/us/en/magazine/guide-la-skateparks.html","Magazine","Magazine Article"],
+      ["/us/en/magazine/san-diego-surf.html","Magazine","Magazine Article"],
+      ["/us/en/magazine/ski-touring.html","Magazine","Magazine Article"],
+      ["/us/en/magazine/western-australia.html","Magazine","Magazine Article"],
+      ["/us/en/magazine/members-only/alaskan-adventure.html","Magazine","Magazine Article (members)"],
+      ["/us/en/magazine/members-only/fly-fishing-the-amazon.html","Magazine","Magazine Article (members)"]
+    ];
+
+    // tabs
+    const btns = document.querySelectorAll('.tab-btn');
+    btns.forEach(b => b.addEventListener('click', () => {
+      btns.forEach(x => x.setAttribute('aria-selected', 'false'));
+      b.setAttribute('aria-selected', 'true');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(b.dataset.tab).classList.add('active');
+    }));
+
+    // inventory render + filter
+    const body = document.getElementById('invBody');
+    const q = document.getElementById('q'), fsec = document.getElementById('fsec'), ftpl = document.getElementById('ftpl');
+    const note = document.getElementById('countNote');
+    function render() {
+      const term = q.value.trim().toLowerCase(), sec = fsec.value, tpl = ftpl.value;
+      const rows = URLS.filter(([p, s, t]) =>
+        (!term || p.toLowerCase().includes(term)) && (!sec || s === sec) && (!tpl || t === tpl));
+      body.innerHTML = rows.map(([p, s, t]) =>
+        `<tr><td><span class="ppath">${p}</span></td><td>${s}</td><td>${t}</td><td class="num">200</td><td class="num"><span class="badge b-ok">Yes</span></td></tr>`
+      ).join('');
+      note.textContent = `Showing ${rows.length} of ${URLS.length} URLs — all HTTP 200, all in scope.`;
+    }
+    [q, fsec, ftpl].forEach(el => el.addEventListener('input', render));
+    render();
+  </script>
+</body>
+</html>
